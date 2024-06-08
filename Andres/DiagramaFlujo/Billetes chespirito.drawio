@@ -1,4 +1,4 @@
-<mxfile host="Electron" modified="2024-06-08T16:34:22.115Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.2.1 Chrome/112.0.5615.87 Electron/24.1.2 Safari/537.36" etag="CxvVLTkWa_qTyxMKGFDx" version="21.2.1" type="device">
+<mxfile host="Electron" modified="2024-06-08T16:43:10.979Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.2.1 Chrome/112.0.5615.87 Electron/24.1.2 Safari/537.36" etag="xetONaGH5VVv_Tr_qlQs" version="21.2.1" type="device">
   <diagram id="6a731a19-8d31-9384-78a2-239565b7b9f0" name="Page-1">
     <mxGraphModel dx="1050" dy="1448" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
       <root>
@@ -8,10 +8,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="2" value="Inicio" style="shape=mxgraph.flowchart.terminator;strokeWidth=2;gradientColor=none;gradientDirection=north;fontStyle=0;html=1;" parent="1" vertex="1">
-          <mxGeometry x="270" y="-10" width="120" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="3" value="Abrir pagína&lt;br&gt;explorar productos" style="shape=mxgraph.flowchart.data;strokeWidth=2;gradientColor=none;gradientDirection=north;fontStyle=0;html=1;" parent="1" vertex="1">
-          <mxGeometry x="240.5" y="460" width="159" height="80" as="geometry" />
+          <mxGeometry x="260" y="-10" width="120" height="30" as="geometry" />
         </mxCell>
         <mxCell id="vl98MqrP3Ofdz1qiC75w-56" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0000CC;" edge="1" parent="1" source="6" target="vl98MqrP3Ofdz1qiC75w-55">
           <mxGeometry relative="1" as="geometry" />
@@ -25,11 +22,6 @@
         </mxCell>
         <mxCell id="6" value="Desea comprar?" style="shape=mxgraph.flowchart.decision;strokeWidth=2;gradientColor=none;gradientDirection=north;fontStyle=0;html=1;" parent="1" vertex="1">
           <mxGeometry x="250" y="620" width="140" height="90" as="geometry" />
-        </mxCell>
-        <mxCell id="9" style="entryX=0.5;entryY=0;entryPerimeter=0;fontStyle=1;strokeColor=#0000CC;strokeWidth=1;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="3" target="6" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="320" y="500" as="sourcePoint" />
-          </mxGeometry>
         </mxCell>
         <mxCell id="45" value="" style="edgeStyle=elbowEdgeStyle;elbow=horizontal;exitX=1;exitY=0.5;exitPerimeter=0;entryX=0.905;entryY=0.5;entryPerimeter=0;fontStyle=1;strokeColor=#003366;strokeWidth=1;html=1;" parent="1" target="34" edge="1">
           <mxGeometry width="100" height="100" as="geometry">
@@ -77,7 +69,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="vl98MqrP3Ofdz1qiC75w-69" value="Usuario" style="shape=mxgraph.flowchart.data;strokeWidth=2;gradientColor=none;gradientDirection=north;fontStyle=0;html=1;" vertex="1" parent="1">
-          <mxGeometry x="250" y="80" width="159" height="80" as="geometry" />
+          <mxGeometry x="240" y="80" width="159" height="80" as="geometry" />
         </mxCell>
         <mxCell id="vl98MqrP3Ofdz1qiC75w-75" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#0000CC;" edge="1" parent="1" source="vl98MqrP3Ofdz1qiC75w-72" target="vl98MqrP3Ofdz1qiC75w-74">
           <mxGeometry relative="1" as="geometry">
@@ -88,7 +80,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="vl98MqrP3Ofdz1qiC75w-72" value="Administrador?" style="shape=mxgraph.flowchart.decision;strokeWidth=2;gradientColor=none;gradientDirection=north;fontStyle=0;html=1;" vertex="1" parent="1">
-          <mxGeometry x="259.5" y="220" width="140" height="90" as="geometry" />
+          <mxGeometry x="250" y="220" width="140" height="90" as="geometry" />
         </mxCell>
         <mxCell id="vl98MqrP3Ofdz1qiC75w-77" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#0000CC;" edge="1" parent="1" source="vl98MqrP3Ofdz1qiC75w-74" target="vl98MqrP3Ofdz1qiC75w-76">
           <mxGeometry relative="1" as="geometry" />
@@ -109,11 +101,19 @@
         <mxCell id="vl98MqrP3Ofdz1qiC75w-76" value="Iniciar sesión&lt;br&gt;Subir producto&lt;br&gt;Modificar Producto&lt;br&gt;Registrar inventario&lt;br&gt;Cerrar sesión&lt;br&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="585" y="225" width="120" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="vl98MqrP3Ofdz1qiC75w-83" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.563;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;strokeColor=#0000CC;" edge="1" parent="1" source="vl98MqrP3Ofdz1qiC75w-80" target="3">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="vl98MqrP3Ofdz1qiC75w-83" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#0000CC;" edge="1" parent="1" source="vl98MqrP3Ofdz1qiC75w-80" target="vl98MqrP3Ofdz1qiC75w-85">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330.01700000000005" y="460" as="targetPoint" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="vl98MqrP3Ofdz1qiC75w-80" value="&lt;font color=&quot;#0000cc&quot;&gt;no&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="300" y="350" width="60" height="30" as="geometry" />
+          <mxGeometry x="290" y="350" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vl98MqrP3Ofdz1qiC75w-86" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="vl98MqrP3Ofdz1qiC75w-85" target="6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vl98MqrP3Ofdz1qiC75w-85" value="Abrir pagína&lt;br&gt;explorar productos" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="260" y="470" width="120" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
