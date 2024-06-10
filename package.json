@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/AndresRojo12/chespirito/issues"
   },
-  "homepage": "https://github.com/AndresRojo12/chespirito#readme"
+  "homepage": "https://github.com/AndresRojo12/chespirito#readme",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
 }
