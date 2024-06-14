@@ -7,8 +7,7 @@ module.exports = {
   up: async (queryInterface) => {
     const adminPasswordHash = await bcrypt.hash(config.passwordAdmin, 10);
 
-    // Inserta usuarios
-    await queryInterface.bulkInsert('usuarios', [
+    await queryInterface.bulkInsert('users', [
       {
         email: config.emailAdmin,
         password: adminPasswordHash,
@@ -20,7 +19,7 @@ module.exports = {
   },
 
   down: async (queryInterface) => {
-    await queryInterface.bulkDelete('usuarios', {
+    await queryInterface.bulkDelete('users', {
       email: [config.emailSuperAdmin, config.emailAdmin]
     }, {});
   },
