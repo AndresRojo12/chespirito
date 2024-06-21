@@ -1,4 +1,8 @@
 const express = require('express');
+const sharp = require('sharp');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
 const CategoryService = require('../services/categories.services');
 const validatorHandler = require('../middlewares/validator.handler');
@@ -11,6 +15,9 @@ const {
 
 const router = express.Router();
 const service = new CategoryService();
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 router.get('/', async (req, res, next) => {
   try {
@@ -33,18 +40,38 @@ router.get(
   },
 );
 
-router.post(
-  '/',
+router.post('/', upload.single('image'),
   validatorHandler(createCategorySchema, 'body'),
   async (req, res, next) => {
-    try {
-      const body = req.body;
-      res.json(await service.create(body));
-    } catch (error) {
-      next(error);
-    }
-  },
-);
+  try {
+    const { name, description } = req.body;
+    const imagenOriginal = req.file.buffer;
+
+    const imagenOptimizada = await sharp(imagenOriginal).resize(800).toBuffer();
+    const imagenBase64 = imagenOptimizada.toString('base64');
+
+    const imagePath = path.join(
+      __dirname,
+      '..',
+      'uploads',
+      req.file.originalname,
+    );
+
+    fs.writeFileSync(imagePath, imagenOptimizada);
+
+    const categoryData = {
+      name,
+      description,
+      imageBase64: Buffer.from(imagenBase64, 'base64'),
+      imagePath: `http://localhost:8000/uploads/${req.file.originalname}`,
+    };
+    const category = await service.create(categoryData);
+
+    res.json(category);
+  } catch (error) {
+    next(error);
+  }
+});
 
 router.patch(
   '/:id',

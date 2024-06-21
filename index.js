@@ -1,5 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const path = require('path')
 const cors = require('cors');
 const { logError, errorHandler, boomErrorHandler, ormErrorHandler } = require('./middlewares/errorHandler');
 
@@ -13,6 +14,13 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+const optionCors = {
+  origin: '*',
+};
+
+app.use(cors(optionCors));
 
 app.get('/',(req, res) => {
     res.send('Hola servidor');
