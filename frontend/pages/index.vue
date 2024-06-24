@@ -1,4 +1,13 @@
 <template>
+  <LoginUser></LoginUser>
+</template>
+
+<script setup>
+import LoginUser from '~/components/user/LoginUser.vue';
+
+</script>
+
+<!-- <template>
   <div class="page">
     <h1>Lista de Imágenes</h1>
     <div class="card-container">
@@ -59,4 +68,5 @@ export default {
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
 }
-</style>
+</style> -->
+
