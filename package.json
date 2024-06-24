@@ -24,6 +24,7 @@
   "homepage": "https://github.com/AndresRojo12/chespirito#readme",
   "dependencies": {
     "@hapi/boom": "^10.0.1",
+    "@pinia/nuxt": "^0.5.1",
     "@vueuse/core": "^10.11.0",
     "bcrypt": "^5.1.1",
     "buffer": "^6.0.3",
