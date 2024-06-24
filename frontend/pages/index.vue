@@ -27,7 +27,7 @@ export default {
   },
   async mounted() {
     try {
-      const response = await fetch("http://localhost:8000/api/v1/categories");
+      const response = await useFetch("http://localhost:8000/api/v1/categories");
       const data = await response.json();
 
       const images = data.map(item => {

@@ -3,6 +3,8 @@ const sharp = require('sharp');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const passport = require('passport');
+
 
 const CategoryService = require('../services/categories.services');
 const validatorHandler = require('../middlewares/validator.handler');
@@ -41,6 +43,7 @@ router.get(
 );
 
 router.post('/', upload.single('image'),
+  passport.authenticate('jwt', { session: false }),
   validatorHandler(createCategorySchema, 'body'),
   async (req, res, next) => {
   try {
