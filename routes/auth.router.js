@@ -1,6 +1,6 @@
 const express = require('express'); // se requiere express despues de instalarlo
 const passport = require('passport');
-
+const authenticate = require('../middlewares/authenticate');
 const User = require('../services/login.user');
 const service = new User();
 const router = express.Router();
@@ -18,6 +18,17 @@ router.post(
     }
   },
 );
+
+router.post('/change-password', authenticate, async (req, res, next) => {
+  try {
+    const { newPassword } = req.body;
+    const userId = req.userId;
+    const response = await service.changePassword(userId, newPassword);
+    res.json(response);
+  } catch (error) {
+    next(error);
+  }
+});
 
 // router.post(
 //   '/recovery',
