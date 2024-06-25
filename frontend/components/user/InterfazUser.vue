@@ -1,10 +1,74 @@
 <template>
   <div>
-    <h1>
-      Bienvenido
-    </h1>
+    <v-card>
+      <v-layout>
+        <v-navigation-drawer
+          v-model="drawer"
+          :rail="rail"
+          permanent
+          @click="rail = false"
+        >
+          <v-list-item
+            prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg"
+            title="John Leider"
+            nav
+          >
+            <template v-slot:append>
+              <v-btn
+                icon="mdi-chevron-left"
+                variant="text"
+                @click.stop="rail = !rail"
+              ></v-btn>
+            </template>
+          </v-list-item>
+
+          <v-divider></v-divider>
+
+          <v-list density="compact" nav>
+            <v-list-item prepend-icon="mdi-home-city" title="Home" value="home"></v-list-item>
+            <v-list-item prepend-icon="mdi-account" title="My Account" value="account"></v-list-item>
+            <v-list-item
+              @click.prevent="confirmLogout"
+              prepend-icon="mdi-logout"
+              title="Salir">
+            </v-list-item>
+          </v-list>
+        </v-navigation-drawer>
+        <v-main style="height: 250px"></v-main>
+      </v-layout>
+    </v-card>
   </div>
 </template>
 
 <script setup>
+  import { ref } from 'vue';
+  import { useAuth } from "~/store/auth";
+  import Swal from "sweetalert2";
+
+  const drawer = ref(true);
+  const rail = ref(true);
+
+  const router = useRouter();
+  const userStore = useAuth();
+
+  const confirmLogout = () => {
+  Swal.fire({
+    title: "¿Estás seguro?",
+    text: "¿Quieres cerrar sesión?",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: "Sí, cerrar sesión",
+    cancelButtonText: "Cancelar",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      handleLogout();
+    }
+  });
+};
+
+const handleLogout = () => {
+  userStore.logout();
+  router.push("/");
+};
 </script>
+
