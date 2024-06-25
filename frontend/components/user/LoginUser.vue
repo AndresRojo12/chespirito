@@ -30,7 +30,7 @@
           class="text-caption text-decoration-none text-blue"
           href="#"
           rel="noopener noreferrer"
-          target="_blank"
+          target="_blank" @click.prevent="changePassword"
         >
           olvido su contraseña?</a
         >
@@ -104,4 +104,7 @@ const togglePasswordVisibility = () => {
   visible.value = !visible.value;
 };
 
+const changePassword = () => {
+  router.push('/user/change-password');
+};
 </script>

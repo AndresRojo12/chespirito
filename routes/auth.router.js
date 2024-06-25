@@ -1,4 +1,4 @@
-const express = require('express'); 
+const express = require('express');
 const passport = require('passport');
 const authenticate = require('../middlewares/authenticate');
 const User = require('../services/login.user');
@@ -22,6 +22,9 @@ router.post(
 router.post('/change-password', authenticate, async (req, res, next) => {
   try {
     const { newPassword } = req.body;
+    if(!newPassword){
+      return res.status(400).json({ message: 'La nueva contraseña no puede estar vacía' });
+    }
     const userId = req.userId;
     const response = await service.changePassword(userId, newPassword);
     res.json(response);
