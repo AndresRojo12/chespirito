@@ -1,4 +1,4 @@
-const express = require('express'); // se requiere express despues de instalarlo
+const express = require('express'); 
 const passport = require('passport');
 const authenticate = require('../middlewares/authenticate');
 const User = require('../services/login.user');
