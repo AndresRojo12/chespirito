@@ -19,10 +19,6 @@ const CategorySchema = {
     allowNull: false,
     type: DataTypes.STRING,
   },
-  imageBase64: {
-    allowNull: false,
-    type: DataTypes.BLOB,
-  },
   imagePath: {
     type: DataTypes.STRING,
     allowNull: false,

@@ -1,11 +1,29 @@
 const boom = require('@hapi/boom');
+const sharp = require('sharp');
+const fs = require('fs');
+const path = require('path');
 
 const { models } = require('../libs/sequelize');
 
 class CategoryService {
-  async create(data) {
-    const newCategory = await models.Category.create(data);
-    return newCategory;
+  async create(data, file) {
+    const { name, description } = data;
+    const imagenOriginal = file.buffer;
+
+    const imagenOptimizada = await sharp(imagenOriginal).resize(800).toBuffer();
+
+    const imagePath = path.join(__dirname, '..', 'uploads', file.originalname);
+    fs.writeFileSync(imagePath, imagenOptimizada);
+
+    const categoryData = {
+      name,
+      description,
+      imagePath: `http://localhost:8000/uploads/${file.originalname}`,
+    };
+
+    const category = await models.Category.create(categoryData);
+
+    return category;
   }
 
   async find() {
@@ -24,15 +42,15 @@ class CategoryService {
   }
 
   async update(id, changes) {
-    const category = await this.findOne(id)
+    const category = await this.findOne(id);
     await category.update(changes);
     return category;
   }
 
   async delete(id) {
-    const category = await this.findOne(id)
-    await category.destroy()
-    return { id }
+    const category = await this.findOne(id);
+    await category.destroy();
+    return { id };
   }
 }
 
