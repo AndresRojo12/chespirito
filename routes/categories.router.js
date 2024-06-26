@@ -29,6 +29,19 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+router.get('/search',
+async (req, res, next) => {
+  try {
+    const query = req.query.query;
+    if(!query) {
+      return res.json([])
+    }
+    const categories = await service.search(query);
+    res.json(categories);
+  } catch (error) {
+    next(error);
+  }
+})
 router.get(
   '/:id',
   validatorHandler(getCategorySchema, 'params'),
@@ -41,6 +54,7 @@ router.get(
     }
   },
 );
+
 
 router.post(
   '/',

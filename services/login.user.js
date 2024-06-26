@@ -18,7 +18,11 @@ class User {
       sub:user.id,
       role:user.role
     }
-    const token = jwt.sign(payload, config.jwtSecret);
+
+    const options = {
+      expiresIn: '2d'
+    }
+    const token = jwt.sign(payload, config.jwtSecret, options);
     return {
       user,
       token

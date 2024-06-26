@@ -19,6 +19,9 @@
         placeholder="Dirección de correo"
         prepend-inner-icon="mdi-email-outline"
         variant="outlined"
+        autocomplete="email"
+        name="email"
+        id="email"
       ></v-text-field>
 
       <div
@@ -45,6 +48,9 @@
         prepend-inner-icon="mdi-lock-outline"
         variant="outlined"
         @click:append-inner="togglePasswordVisibility"
+        autocomplete="current-password"
+        name="password"
+        id="password"
       ></v-text-field>
 
       <v-btn class="mb-8" color="blue" size="large" variant="tonal" block @click.prevent="login">
@@ -107,4 +113,5 @@ const togglePasswordVisibility = () => {
 const changePassword = () => {
   router.push('/user/change-password');
 };
+
 </script>

@@ -2,95 +2,110 @@
   <div>
     <h1 style="display: flex; justify-content: center;">Chespirito</h1>
     <v-card>
-      <v-layout>
-        <v-navigation-drawer
-        v-model="drawer"
-        :rail="rail"
-        permanent
-        @click="rail = false"
-        >
-        <v-list-item
-        prepend-icon="mdi-account-circle"
-        :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
-        nav
-        >
-        <template v-slot:append>
-          <v-btn
-          icon="mdi-chevron-left"
-          variant="text"
-          @click.stop="rail = !rail"
-          ></v-btn>
+      <v-data-iterator :items="filteredCategories">
+        <template v-slot:header>
+          <v-toolbar style="padding-left: 75%;">
+            <v-text-field
+              v-model="search"
+              density="comfortable"
+              placeholder="Search"
+              prepend-inner-icon="mdi-magnify"
+              style="max-width: 300px;"
+              variant="solo"
+              clearable
+              hide-details
+            ></v-text-field>
+          </v-toolbar>
         </template>
-      </v-list-item>
-
-      <v-divider></v-divider>
-
-      <v-list density="compact" nav>
-        <v-list-item prepend-icon="mdi-home-city" title="Home" value="home"></v-list-item>
-            <v-list-item prepend-icon="mdi-account" title="My Account" value="account"></v-list-item>
-            <v-list-item
-            @click.prevent="confirmLogout"
-            prepend-icon="mdi-logout"
-            title="Salir">
+      </v-data-iterator>
+      <v-layout>
+        <v-navigation-drawer v-model="drawer" :rail="rail" permanent @click="rail = false">
+          <v-list-item prepend-icon="mdi-account-circle" :title="`${userStore.user ? userStore.user.role : 'Usuario'}`" nav>
+            <template v-slot:append>
+              <v-btn icon="mdi-chevron-left" variant="text" @click.stop="rail = !rail"></v-btn>
+            </template>
           </v-list-item>
-        </v-list>
-      </v-navigation-drawer>
-      <v-main style="height: 250px"></v-main>
-    </v-layout>
-  </v-card>
-</div>
-<div style="margin-left:10%; margin-top: 2%; display: flex; flex-wrap: wrap;">
-  <div v-for="cate in categories" :key="cate.id" style="flex: 1 1 22%; max-width: 22%; margin: 1%; box-sizing: border-box; text-align: center;">
-    <div>
-      <img style="width: 100%;" :src="getImageUrl(cate.imagePath)" />
-    </div>
-    <button style="width: 100%; padding: 10px; margin-top: 10px; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer;">
-      <h3 style="margin: 0;">{{ cate.name }}</h3>
-      <p style="margin: 0;">{{ cate.description }}</p>
-    </button>
+
+          <v-divider></v-divider>
+
+          <v-list density="compact" nav>
+            <v-list-item prepend-icon="mdi-home-city" title="Home" value="home"></v-list-item>
+            <v-list-item prepend-icon="mdi-account" title="My Account" value="account"></v-list-item>
+            <v-list-item @click.prevent="confirmLogout" prepend-icon="mdi-logout" title="Salir"></v-list-item>
+          </v-list>
+        </v-navigation-drawer>
+        <v-main style="height: 250px"></v-main>
+      </v-layout>
+    </v-card>
   </div>
-</div>
-
-
+  <div style="margin-left:10%; margin-top: 2%; display: flex; flex-wrap: wrap;">
+    <div v-for="cate in filteredCategories" :key="cate.id" style="flex: 1 1 22%; max-width: 22%; margin: 1%; box-sizing: border-box; text-align: center;">
+      <div>
+        <img style="width: 100%;" :src="getImageUrl(cate.imagePath)" />
+      </div>
+      <button style="width: 100%; padding: 10px; margin-top: 10px; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        <h3 style="margin: 0;">{{ cate.name }}</h3>
+        <p style="margin: 0;">{{ cate.description }}</p>
+      </button>
+    </div>
+  </div>
 </template>
 
 <script setup>
-  import { ref, onMounted } from 'vue';
-  import { useAuth } from "~/store/auth";
-  import Swal from "sweetalert2";
-  const CONFIG = useRuntimeConfig();
+import { ref, onMounted, watch } from 'vue';
+import { useAuth } from "~/store/auth";
+import Swal from "sweetalert2";
+const CONFIG = useRuntimeConfig();
 
-  const drawer = ref(true);
-  const rail = ref(true);
+const drawer = ref(true);
+const rail = ref(true);
 
-  const router = useRouter();
-  const userStore = useAuth();
+const router = useRouter();
+const userStore = useAuth();
 
-  const categories = ref([]);
+const categories = ref([]);
+const filteredCategories = ref([]);
+const search = ref('');
 
-  const getCategories = async () => {
-    try {
-      const { data, error } = await useFetch(
-        `${CONFIG.public.API_BASE_URL}categories`,
-        {
-          method:'GET'
-        }
-      )
-      categories.value = data.value;
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
+const getCategories = async () => {
+  try {
+    const { data, error } = await useFetch(
+      `${CONFIG.public.API_BASE_URL}categories`,
+      {
+        method: 'GET'
+      }
+    );
+    categories.value = data.value;
+    filteredCategories.value = data.value;
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+  }
+};
+
+const getImageUrl = (imagePath) => {
+  return imagePath;
+};
+
+onMounted(async () => {
+  await getCategories();
+});
+
+watch(search, async (newSearch) => {
+  if (!newSearch.trim()) {
+    filteredCategories.value = categories.value;
+    return;
   }
 
-  const getImageUrl = (imagePath) => {
-    return imagePath;
-  };
+  try {
+    const response = await fetch(`${CONFIG.public.API_BASE_URL}categories/search?query=${encodeURIComponent(newSearch.trim())}`);
+    const data = await response.json();
+    filteredCategories.value = data;
+  } catch (error) {
+    console.error("Error fetching filtered categories:", error);
+  }
+});
 
-  onMounted(async () => {
-    await getCategories();
-  })
-
-  const confirmLogout = () => {
+const confirmLogout = () => {
   Swal.fire({
     title: "¿Estás seguro?",
     text: "¿Quieres cerrar sesión?",
@@ -110,4 +125,3 @@ const handleLogout = () => {
   router.push("/");
 };
 </script>
-

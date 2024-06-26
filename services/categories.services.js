@@ -2,6 +2,7 @@ const boom = require('@hapi/boom');
 const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
+const { Op } = require('sequelize');
 
 const { models } = require('../libs/sequelize');
 
@@ -28,6 +29,17 @@ class CategoryService {
 
   async find() {
     const categories = await models.Category.findAll();
+    return categories;
+  }
+
+  async search(query) {
+    const categories = await models.Category.findAll({
+      where: {
+        name: {
+          [Op.iLike]: `%${query}%`
+        }
+      }
+    });
     return categories;
   }
 
