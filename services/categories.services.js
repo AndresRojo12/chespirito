@@ -18,7 +18,7 @@ class CategoryService {
     const categoryData = {
       name,
       description,
-      imagePath: `http://localhost:8000/uploads/${file.originalname}`,
+      imagePath: `http://localhost:3001/uploads/${file.originalname}`,
     };
 
     const category = await models.Category.create(categoryData);
