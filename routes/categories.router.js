@@ -23,25 +23,28 @@ const upload = multer({ storage });
 
 router.get('/', async (req, res, next) => {
   try {
-    res.json(await service.find());
+    const { page, pageSize } = req.query
+    const categories = await service.find({ page, pageSize })
+    res.json(categories);
   } catch (error) {
     next(error);
   }
 });
 
 router.get('/search',
-async (req, res, next) => {
-  try {
-    const query = req.query.query;
-    if(!query) {
-      return res.json([])
+  async (req, res, next) => {
+    try {
+      const query = req.query.query;
+      if(!query) {
+        return res.json([])
+      }
+      const categories = await service.search(query);
+      res.json(categories);
+    } catch (error) {
+      next(error);
     }
-    const categories = await service.search(query);
-    res.json(categories);
-  } catch (error) {
-    next(error);
-  }
-})
+  });
+
 router.get(
   '/:id',
   validatorHandler(getCategorySchema, 'params'),

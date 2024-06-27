@@ -3,7 +3,7 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 const { Op } = require('sequelize');
-
+const { config } = require('../config/config')
 const { models } = require('../libs/sequelize');
 
 class CategoryService {
@@ -19,7 +19,7 @@ class CategoryService {
     const categoryData = {
       name,
       description,
-      imagePath: `http://localhost:3001/uploads/${file.originalname}`,
+      imagePath: `${config.imagesPath}${file.originalname}`,
     };
 
     const category = await models.Category.create(categoryData);
@@ -27,10 +27,31 @@ class CategoryService {
     return category;
   }
 
-  async find() {
+
+  async find({ page = 1, pageSize = 10 } = {}) {
+
+    const limit = parseInt(pageSize) || 10;
+    const offset = ((parseInt(page) || 1) - 1) * limit;
+
+    const { count, rows } = await models.Category.findAndCountAll({
+      limit,
+      offset
+    });
+
+    return {
+      totalItems: count,
+      totalPages: Math.ceil(count / limit),
+      currentPage: parseInt(page) || 1,
+      data: rows
+    }
+
+  }
+  
+  async findAll() {
     const categories = await models.Category.findAll();
     return categories;
   }
+
 
   async search(query) {
     const categories = await models.Category.findAll({
