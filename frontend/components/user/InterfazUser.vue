@@ -63,7 +63,9 @@
     </v-card>
     <v-select
       v-model="pageSize"
-      style="max-width: 300px; margin-left: 12%; margin-top: 2%"
+      style="max-width: 300px;
+      margin-left: 12%;
+      margin-top: 2%"
       :items="[10, 20, 30, 40, 50]"
       label="Seleccionar datos por página"
       @change="getCategories"

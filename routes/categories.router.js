@@ -8,6 +8,7 @@ const passport = require('passport');
 
 const CategoryService = require('../services/categories.services');
 const validatorHandler = require('../middlewares/validator.handler');
+const { checkAdmindRole } = require('../middlewares/auth.handler');
 const {
   getCategorySchema,
   createCategorySchema,
@@ -63,6 +64,7 @@ router.post(
   '/',
   upload.single('image'),
   passport.authenticate('jwt', { session: false }),
+  checkAdmindRole,
   validatorHandler(createCategorySchema, 'body'),
   async (req, res, next) => {
     try {

@@ -10,6 +10,16 @@ const checkApiKey = (req, res, next) => {
   }
 }
 
+const checkAdmindRole = (req, res, next) => {
+  const user = req.user;
+  if(user.role === 'Admin') {
+    next();
+  }else{
+    next(boom.unauthorized());
+  }
+}
+
 module.exports = {
-  checkApiKey
+  checkApiKey,
+  checkAdmindRole
 }
