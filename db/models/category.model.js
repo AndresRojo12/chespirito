@@ -83,6 +83,11 @@ class Category extends Model {
       as: 'deletor',
       foreignKey: 'deleted_by',
     });
+
+    this.hasMany(models.Product, {
+      as:'Products',
+      foreignKey: 'categoryId'
+    })
   }
   static config(sequelize) {
     return {

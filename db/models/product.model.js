@@ -101,8 +101,7 @@ class Product extends Model {
     });
 
     this.belongsTo(models.Category, {
-      as: 'category',
-      foreignKey: 'category_id'
+      as: 'category'
     })
   }
   static config(sequelize) {
