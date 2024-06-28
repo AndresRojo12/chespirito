@@ -8,7 +8,7 @@ const { models } = require('../libs/sequelize');
 
 class ProductService {
   async create(data, file) {
-    const { name, description, price } = data;
+    const { categoryId, name, description, price } = data;
     const imagenOriginal = file.buffer;
 
     const imagenOptimizada = await sharp(imagenOriginal).resize(800).toBuffer();
