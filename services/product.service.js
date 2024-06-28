@@ -36,6 +36,7 @@ class ProductService {
     const offset = ((parseInt(page) || 1) - 1) * limit;
 
     const { count, rows } = await models.Product.findAndCountAll({
+      include:['category'],
       limit,
       offset
     });
@@ -68,7 +69,6 @@ class ProductService {
 
   async findOne(id) {
     const products = await models.Product.findByPk(id, {
-      // include: ['products'],
     });
     if (!products) {
       throw boom.notFound('Product not found');

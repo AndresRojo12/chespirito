@@ -85,7 +85,7 @@ class Category extends Model {
     });
 
     this.hasMany(models.Product, {
-      as:'Products',
+      as:'products',
       foreignKey: 'categoryId'
     })
   }
