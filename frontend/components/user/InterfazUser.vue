@@ -1,13 +1,13 @@
 <template>
   <div>
-    <v-card style="max-height:10rem ;">
+    <v-card style="max-height:10rem;">
       <h1 style="display: flex; background-color: #007bff; justify-content: center">Chespirito</h1>
       <v-data-iterator :items="filteredCategories.data" style="margin-top: 2%">
         <template v-slot:header>
           <v-text-field
             v-model="search"
             density="comfortable"
-            placeholder="Search"
+            placeholder="Buscar categorías"
             prepend-inner-icon="mdi-magnify"
             style="max-width: 300px; margin-left: 75%"
             variant="solo"
@@ -43,13 +43,12 @@
           <v-list density="compact" nav>
             <v-list-item
               prepend-icon="mdi-home-city"
-              title="Home"
-              value="home"
+              title="Inicio"
+              @click="goHome"
             ></v-list-item>
             <v-list-item
               prepend-icon="mdi-account"
-              title="My Account"
-              value="account"
+              title="Mi cuenta"
             ></v-list-item>
             <v-list-item
               @click.prevent="confirmLogout"
@@ -63,11 +62,9 @@
     </v-card>
     <v-select
       v-model="pageSize"
-      style="max-width: 300px;
-      margin-left: 12%;
-      margin-top: 2%"
+      style="max-width: 300px; margin-left: 12%; margin-top: 2%"
       :items="[10, 20, 30, 40, 50]"
-      label="Seleccionar datos por página"
+      label="Seleccionar categorías por página"
       @change="getCategories"
     ></v-select>
   </div>
@@ -86,21 +83,23 @@
       <div>
         <img style="width: 100%" :src="getImageUrl(cate.imagePath)" />
       </div>
-      <button
-        style="
-          width: 100%;
-          padding: 10px;
-          margin-top: 10px;
-          background-color: #007bff;
-          color: white;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-        "
-      >
-        <h3 style="margin: 0">{{ cate.name }}</h3>
-        <p style="margin: 0">{{ cate.description }}</p>
-      </button>
+      <nuxt-link :to="`/categories/${cate.id}`">
+        <button
+          style="
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+          "
+        >
+          <h3 style="margin: 0">{{ cate.name }}</h3>
+          <p style="margin: 0">{{ cate.description }}</p>
+        </button>
+      </nuxt-link>
     </div>
   </div>
   <div class="text-center">
@@ -209,5 +208,9 @@ const confirmLogout = () => {
 const handleLogout = () => {
   userStore.logout();
   router.push("/");
+};
+
+const goHome = () => {
+  router.push("/home");
 };
 </script>
