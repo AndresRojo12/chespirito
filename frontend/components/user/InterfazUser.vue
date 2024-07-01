@@ -47,8 +47,9 @@
               @click="goHome"
             ></v-list-item>
             <v-list-item
-              prepend-icon="mdi-account"
-              title="Mi cuenta"
+              prepend-icon=""
+              title="Productos"
+              @click.prevent="products"
             ></v-list-item>
             <v-list-item
               @click.prevent="confirmLogout"
@@ -211,6 +212,10 @@ const handleLogout = () => {
 };
 
 const goHome = () => {
-  router.push("/home");
+  router.push("/user/gestion");
 };
+
+const products = () => {
+  router.push('/product/list')
+}
 </script>

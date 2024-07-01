@@ -1,14 +1,13 @@
-
 <template>
   <div>
-    <v-card style="max-height:10rem ;">
+    <v-card style="max-height:10rem;">
       <h1 style="display: flex; background-color: #007bff; justify-content: center">Chespirito</h1>
-      <v-data-iterator :items="filteredProducts.data" style="margin-top: 2%">
+      <v-data-iterator :items="filteredProducts.data || []" style="margin-top: 2%">
         <template v-slot:header>
           <v-text-field
             v-model="search"
             density="comfortable"
-            placeholder="Search"
+            placeholder="Buscar Productos"
             prepend-inner-icon="mdi-magnify"
             style="max-width: 300px; margin-left: 75%"
             variant="solo"
@@ -44,13 +43,12 @@
           <v-list density="compact" nav>
             <v-list-item
               prepend-icon="mdi-home-city"
-              title="Home"
-              value="home"
+              title="Inicio"
+              @click="goHome"
             ></v-list-item>
             <v-list-item
               prepend-icon="mdi-account"
-              title="My Account"
-              value="account"
+              title="Mi cuenta"
             ></v-list-item>
             <v-list-item
               @click.prevent="confirmLogout"
@@ -64,17 +62,15 @@
     </v-card>
     <v-select
       v-model="pageSize"
-      style="max-width: 300px;
-      margin-left: 12%;
-      margin-top: 2%"
+      style="max-width: 300px; margin-left: 12%; margin-top: 2%"
       :items="[10, 20, 30, 40, 50]"
-      label="Seleccionar datos por página"
-      @change="getCategories"
+      label="Seleccionar categorías por página"
+      @change="getProducts"
     ></v-select>
   </div>
   <div style="margin-left: 10%; margin-top: 2%; display: flex; flex-wrap: wrap">
     <div
-      v-for="pro in filteredProducts.data"
+      v-for="pro in filteredProducts.data || []"
       :key="pro.id"
       style="
         flex: 1 1 22%;
@@ -102,7 +98,6 @@
         <h3 style="margin: 0">{{ pro.name }}</h3>
         <p style="margin: 0">{{ pro.description }}</p>
         <p style="margin: 0">{{ pro.price }}</p>
-
       </button>
     </div>
   </div>
@@ -113,7 +108,7 @@
           <v-container class="max-width">
             <v-pagination
               v-model="page"
-              :length="filteredProducts.totalPages"
+              :length="filteredProducts.totalPages || 1"
               class="my-4"
               @input="getProducts"
             ></v-pagination>
@@ -125,92 +120,97 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
-import { useAuth } from "~/store/auth";
-import Swal from "sweetalert2";
-const CONFIG = useRuntimeConfig();
+import { ref, onMounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuth } from '~/store/auth'
+import Swal from 'sweetalert2'
+const CONFIG = useRuntimeConfig()
 
-const drawer = ref(true);
-const rail = ref(true);
-const page = ref(1);
-const pageSize = ref(10);
-const router = useRouter();
-const userStore = useAuth();
+const drawer = ref(true)
+const rail = ref(true)
+const page = ref(1)
+const pageSize = ref(10)
+const router = useRouter()
+const userStore = useAuth()
 
-const products = ref([]);
-const filteredProducts = ref({ data: [], totalPages: 1 });
-const search = ref("");
+const products = ref([])
+const filteredProducts = ref({ data: [], totalPages: 1 })
+const search = ref('')
 
 const getProducts = async () => {
   try {
     const { data } = await useFetch(
       `${CONFIG.public.API_BASE_URL}products?page=${page.value}&pageSize=${pageSize.value}`,
       {
-        method: "GET",
-      },
-    );
-    products.value = data.value.data;
-    filteredProducts.value = data.value;
+        method: 'GET',
+      }
+    )
+    products.value = data.value.data
+    filteredProducts.value = { data: data.value.data, totalPages: data.value.totalPages }
   } catch (error) {
-    console.error("Error fetching categories:", error);
-    filteredProducts.value = { data: [], totalPages: 1 };
+    console.error('Error fetching products:', error)
+    filteredProducts.value = { data: [], totalPages: 1 }
   }
-};
+}
 
 const getImageUrl = (imagePath) => {
-  return imagePath;
-};
+  return imagePath
+}
 
 onMounted(async () => {
-  await getProducts();
-});
+  await getProducts()
+})
 
 watch(search, async (newSearch) => {
   if (!newSearch.trim()) {
     filteredProducts.value = {
       data: products.value,
       totalPages: filteredProducts.value.totalPages,
-    };
-    return;
+    }
+    return
   }
 
   try {
     const response = await fetch(
-      `${CONFIG.public.API_BASE_URL}products/search?query=${encodeURIComponent(newSearch.trim())}`,
-    );
-    const data = await response.json();
-    filteredProducts.value = { data, totalPages: 1 };
+      `${CONFIG.public.API_BASE_URL}products/search?query=${encodeURIComponent(newSearch.trim())}`
+    )
+    const data = await response.json()
+    filteredProducts.value = { data: data.data, totalPages: 1 }
   } catch (error) {
-    console.error("Error fetching filtered products:", error);
-    filteredProducts.value = { data: [], totalPages: 1 };
+    console.error('Error fetching filtered products:', error)
+    filteredProducts.value = { data: [], totalPages: 1 }
   }
-});
+})
 
 watch(page, async () => {
-  await getProducts();
-});
+  await getProducts()
+})
 
 watch(pageSize, async () => {
-  await getProducts();
-});
+  await getProducts()
+})
 
 const confirmLogout = () => {
   Swal.fire({
-    title: "¿Estás seguro?",
-    text: "¿Quieres cerrar sesión?",
-    icon: "question",
+    title: '¿Estás seguro?',
+    text: '¿Quieres cerrar sesión?',
+    icon: 'question',
     showCancelButton: true,
-    confirmButtonText: "Sí, cerrar sesión",
-    cancelButtonText: "Cancelar",
+    confirmButtonText: 'Sí, cerrar sesión',
+    cancelButtonText: 'Cancelar',
   }).then((result) => {
     if (result.isConfirmed) {
-      handleLogout();
+      handleLogout()
     }
-  });
-};
+  })
+}
 
 const handleLogout = () => {
-  userStore.logout();
-  router.push("/");
-};
+  userStore.logout()
+  router.push('/')
+}
+
+const goHome = () => {
+  router.push('/user/gestion')
+}
 </script>
