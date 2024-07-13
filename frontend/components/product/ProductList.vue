@@ -48,7 +48,8 @@
             ></v-list-item>
             <v-list-item
               prepend-icon="mdi-account"
-              title="Mi cuenta"
+              title="Registrar producto"
+              @click.prevent="product"
             ></v-list-item>
             <v-list-item
               @click.prevent="confirmLogout"
@@ -95,9 +96,9 @@
           cursor: pointer;
         "
       >
-        <h3 style="margin: 0">{{ pro.name }}</h3>
-        <p style="margin: 0">{{ pro.description }}</p>
-        <p style="margin: 0">{{ pro.price }}</p>
+        <h3 style="margin: 0">Nombre: {{ pro.name }}</h3>
+        <p style="margin: 0">Descripción: {{ pro.description }}</p>
+        <p style="margin: 0">Precio: {{ pro.price }}</p>
       </button>
     </div>
   </div>
@@ -212,5 +213,9 @@ const handleLogout = () => {
 
 const goHome = () => {
   router.push('/user/gestion')
+}
+
+const product = () => {
+  router.push('/product/register')
 }
 </script>
