@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card style="max-height:10rem;">
-      <h1 style="display: flex; background-color: #007bff; justify-content: center">Chespirito</h1>
+      <h1 style="display: flex; background-color: #aeb0b3; justify-content: center">Chespirito</h1>
       <v-data-iterator :items="filteredCategories.data" style="margin-top: 2%">
         <template v-slot:header>
           <v-text-field
@@ -17,49 +17,45 @@
         </template>
       </v-data-iterator>
       <v-layout>
-        <v-navigation-drawer
-          v-model="drawer"
-          style="background-color: #007bff;"
-          :rail="rail"
-          permanent
-          @click="rail = false"
-        >
+      <v-navigation-drawer
+        style="background-color:#aeb0b3;
+        max-width: 155px;"
+        expand-on-hover
+        rail
+      >
+        <v-list>
           <v-list-item
             prepend-icon="mdi-account-circle"
             :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
-            nav
-          >
-            <template v-slot:append>
-              <v-btn
-                icon="mdi-chevron-left"
-                variant="text"
-                @click.stop="rail = !rail"
-              ></v-btn>
-            </template>
-          </v-list-item>
+          ></v-list-item>
+        </v-list>
 
-          <v-divider></v-divider>
+        <v-divider></v-divider>
 
-          <v-list density="compact" nav>
-            <v-list-item
+        <v-list density="compact" nav>
+          <v-list-item
               prepend-icon="mdi-home-city"
               title="Inicio"
               @click="goHome"
             ></v-list-item>
+
             <v-list-item
               prepend-icon=""
               title="Productos"
               @click.prevent="products"
             ></v-list-item>
+
             <v-list-item
               @click.prevent="confirmLogout"
               prepend-icon="mdi-logout"
               title="Salir"
             ></v-list-item>
-          </v-list>
-        </v-navigation-drawer>
-        <v-main style="height: 250px"></v-main>
-      </v-layout>
+
+        </v-list>
+      </v-navigation-drawer>
+
+      <v-main style="height: 250px"></v-main>
+    </v-layout>
     </v-card>
     <v-select
       v-model="pageSize"
@@ -101,6 +97,12 @@
           <p style="margin: 0">{{ cate.description }}</p>
         </button>
       </nuxt-link>
+        <v-icon>
+          mdi-pencil
+        </v-icon>
+        <v-icon>
+          mdi-delete
+        </v-icon>
     </div>
   </div>
   <div class="text-center">
@@ -218,4 +220,6 @@ const goHome = () => {
 const products = () => {
   router.push('/product/list')
 }
+
 </script>
+
