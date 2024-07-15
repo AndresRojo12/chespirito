@@ -28,23 +28,31 @@ class CategoryService {
   }
 
 
-  async find({ page = 1, pageSize = 10 } = {}) {
+  async find({ page = 1, pageSize = 10, paginated = true } = {}) {
+    if (!paginated) {
+      const categories = await models.Category.findAll();
+      return {
+        totalItems: categories.length,
+        totalPages: 1,
+        currentPage: 1,
+        data: categories,
+      };
+    }
 
     const limit = parseInt(pageSize) || 10;
     const offset = ((parseInt(page) || 1) - 1) * limit;
 
     const { count, rows } = await models.Category.findAndCountAll({
       limit,
-      offset
+      offset,
     });
 
     return {
       totalItems: count,
       totalPages: Math.ceil(count / limit),
       currentPage: parseInt(page) || 1,
-      data: rows
-    }
-
+      data: rows,
+    };
   }
 
   async findAll() {

@@ -24,8 +24,9 @@ const upload = multer({ storage });
 
 router.get('/', async (req, res, next) => {
   try {
-    const { page, pageSize } = req.query
-    const categories = await service.find({ page, pageSize })
+    const { page, pageSize, paginated } = req.query;
+    const paginatedOption = paginated !== 'false';
+    const categories = await service.find({ page, pageSize, paginated: paginatedOption });
     res.json(categories);
   } catch (error) {
     next(error);
