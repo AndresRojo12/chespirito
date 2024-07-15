@@ -1,64 +1,109 @@
 <template>
-  <v-container>
-    <form @submit.prevent="registerProduct">
-      <v-text-field v-model="name" label="Nombre"> </v-text-field>
-
-      <v-textarea
-        v-model="description"
-        bg-color="light-blue"
-        color="black"
-        label="Descripción"
-      ></v-textarea>
-
-      <v-file-input v-model="image" label="File input"> </v-file-input>
-
-      <v-select :items="items" label="Categoria"></v-select>
-
-      <v-checkbox label="Option" type="checkbox" value="1"></v-checkbox>
-
-      <v-btn class="me-4" type="submit"> submit </v-btn>
-
-      <v-btn @click="handleReset"> clear </v-btn>
+  <v-container style="width: 600px;
+    margin-top: 2%;
+    border-style: groove;">
+    <h1>Registro de productos</h1>
+    <form style="margin-top: 5%;" @submit.prevent="registerProduct">
+      <v-text-field v-model="name" label="Nombre" required></v-text-field>
+      <v-textarea v-model="description" label="Descripción" required></v-textarea>
+      <v-text-field v-model="price" label="Precio" required></v-text-field>
+      <v-file-input v-model="image" label="Seleccionar Imagen" accept="image/*" required></v-file-input>
+      <v-autocomplete v-model="selectedCategory" :items="categories" item-text="name" item-value="id" label="Seleccionar Categoría" required></v-autocomplete>
+      <v-btn type="submit">Enviar</v-btn>
+      <v-btn @click="handleReset">Limpiar</v-btn>
     </form>
   </v-container>
 </template>
+
 <script setup>
-import { ref, onMounted } from "vue";
-import Swal from "sweetalert2";
+import { ref, onMounted, nextTick } from 'vue';
+import Swal from 'sweetalert2';
 const CONFIG = useRuntimeConfig();
 
-//const categoryId = ref([])
-const name = ref("");
-const description = ref("");
-const image = ref("");
+const name = ref('');
+const description = ref('');
 const price = ref(0);
+const image = ref(null);
+const categories = ref([]);
+const selectedCategory = ref('');
 
-const registerProduct = async () => {
-  const { data, error } = await useFetch(
-    `${CONFIG.public.API_BASE_URL}/products`,
-    {
-      method: "POST",
-      body: {
-        name: name.value,
-        description: description.value,
-        image: image.value,
-        price: price.value,
-      },
-    },
-  );
-  if (data.value != null) {
+const fetchCategories = async () => {
+  try {
+    const { data, error } = await useFetch(`${CONFIG.public.API_BASE_URL}/categories`);
+    if (!error.value) {
+      categories.value = data.value.data.map((e) => ({
+        id: e.id,
+        name: e.name,
+      }));
+    } else {
+      throw new Error(error.value.message);
+    }
+  } catch (err) {
+    console.error('Error loading categories:', err);
     Swal.fire({
-      title: "Producto registrado con exito!",
-      icon: "success",
-      confirmButtonText: "Accept",
-    });
-  } else {
-    Swal.fire({
-      title: "Ops!",
-      icon: "warning",
-      text: `${error.value?.data.message}`,
-      confirmButtonText: "Accept",
+      title: 'Error al cargar categorías',
+      icon: 'error',
+      text: 'No se pudieron cargar las categorías.',
+      confirmButtonText: 'Aceptar',
     });
   }
 };
+
+const registerProduct = async () => {
+  if (!name.value || !description.value || !image.value || !selectedCategory.value) {
+    Swal.fire('Error', 'Por favor complete todos los campos y suba una imagen.', 'error');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('name', name.value);
+  formData.append('description', description.value);
+  formData.append('price', price.value);
+  formData.append('image', image.value);
+  formData.append('categoryId', selectedCategory.value);
+
+  try {
+    const response = await fetch(`${CONFIG.public.API_BASE_URL}products`, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+
+    if (response.ok) {
+      Swal.fire({
+        title: 'Producto registrado con éxito!',
+        icon: 'success',
+        confirmButtonText: 'Aceptar',
+      });
+      console.log('Respuesta del servidor:', response);
+    } else {
+      const errorData = await response.text();
+      throw new Error(errorData || 'Error al registrar el producto.');
+    }
+  } catch (err) {
+    console.error('Error registering product:', err);
+    Swal.fire({
+      title: 'Error al registrar el producto',
+      icon: 'error',
+      text: err.message || 'No se pudo registrar el producto.',
+      confirmButtonText: 'Aceptar',
+    });
+  }
+};
+
+const handleReset = () => {
+  name.value = '';
+  description.value = '';
+  price.value = 0;
+  image.value = null;
+  selectedCategory.value = '';
+};
+
+onMounted(async () => {
+  await nextTick();
+  await fetchCategories();
+});
 </script>
+
