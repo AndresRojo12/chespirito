@@ -97,29 +97,44 @@
           <p style="margin: 0">{{ cate.description }}</p>
         </button>
       </nuxt-link>
-        <v-icon>
-          mdi-pencil
-        </v-icon>
+      <v-tooltip text="">
+        <template v-slot:activator="{ props }">
+          <v-icon v-bind="props" @click="editPetSpecie(cate)">
+            mdi-pencil
+          </v-icon>
+        </template>
+      </v-tooltip>
         <v-icon>
           mdi-delete
         </v-icon>
+      </div>
     </div>
-  </div>
-  <div class="text-center">
-    <v-container>
-      <v-row justify="center">
-        <v-col cols="8">
-          <v-container class="max-width">
-            <v-pagination
+    <div class="text-center">
+      <v-container>
+        <v-row justify="center">
+          <v-col cols="8">
+            <v-container class="max-width">
+              <v-pagination
               v-model="page"
               :length="filteredCategories.totalPages"
               class="my-4"
               @input="getCategories"
-            ></v-pagination>
-          </v-container>
-        </v-col>
-      </v-row>
-    </v-container>
+              ></v-pagination>
+            </v-container>
+          </v-col>
+        </v-row>
+      </v-container>
+      <v-dialog v-model="showEditDialog" max-width="600px">
+      <v-card>
+        <v-card-title class="headline">Editar Categoría</v-card-title>
+        <v-card-text>
+          <CategoriesProductUpdate :category="editingCategory" @save="handleSave" />
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="blue darken-1" text @click="showEditDialog = false">Cancelar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -127,6 +142,7 @@
 import { ref, onMounted, watch } from "vue";
 import { useAuth } from "~/store/auth";
 import Swal from "sweetalert2";
+import CategoriesProductUpdate from "../categories/CategoriesProductUpdate.vue";
 const CONFIG = useRuntimeConfig();
 
 const drawer = ref(true);
@@ -135,6 +151,8 @@ const page = ref(1);
 const pageSize = ref(10);
 const router = useRouter();
 const userStore = useAuth();
+const showEditDialog = ref(false);
+const editingCategory = ref(null);
 
 const categories = ref([]);
 const filteredCategories = ref({ data: [], totalPages: 1 });
@@ -206,6 +224,27 @@ const confirmLogout = () => {
       handleLogout();
     }
   });
+};
+const editPetSpecie = (cate) => {
+  if (cate && cate.id) {
+    editingCategory.value = { ...cate };
+    showEditDialog.value = true;
+  } else {
+    console.error("El objeto pet no tiene una propiedad id válida.");
+  }
+};
+
+const handleSave = (updatedCategory) => {
+  if (updatedCategory) {
+    const index = filteredCategories.value.data.findIndex(
+      (item) => item.id === updatedCategory.id
+      );
+      if(index !== -1) {
+        filteredCategories.value.data[index] = updatedCategory;
+      }
+  }
+
+  showEditDialog.value = false;
 };
 
 const handleLogout = () => {
