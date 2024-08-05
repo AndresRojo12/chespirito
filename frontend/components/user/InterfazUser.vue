@@ -40,7 +40,7 @@
             ></v-list-item>
 
             <v-list-item
-              prepend-icon=""
+              prepend-icon="mdi-cash"
               title="Productos"
               @click.prevent="products"
             ></v-list-item>

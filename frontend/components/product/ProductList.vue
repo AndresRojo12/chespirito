@@ -4,7 +4,7 @@
       <h1 style="display: flex; background-color: #aeb0b3; justify-content: center">Chespirito</h1>
       <v-data-iterator :items="filteredProducts.data || []" style="margin-top: 2%">
         <template v-slot:header>
-          <v-text-field
+            <v-text-field
             v-model="search"
             density="comfortable"
             placeholder="Buscar Productos"
@@ -13,7 +13,11 @@
             variant="solo"
             clearable
             hide-details
-          ></v-text-field>
+            ></v-text-field>
+            <v-row>
+              <v-btn @click.prevent="product" style="margin-left: 10%;
+              ">Registrar producto</v-btn>
+            </v-row>
         </template>
       </v-data-iterator>
       <v-layout>
@@ -38,19 +42,11 @@
               title="Inicio"
               @click="goHome"
             ></v-list-item>
-
-            <v-list-item
-              prepend-icon=""
-              title="Registrar Producto"
-              @click.prevent="product"
-            ></v-list-item>
-
             <v-list-item
               @click.prevent="confirmLogout"
               prepend-icon="mdi-logout"
               title="Salir"
             ></v-list-item>
-
         </v-list>
       </v-navigation-drawer>
 
