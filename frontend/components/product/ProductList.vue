@@ -103,13 +103,16 @@
         <p style="margin: 0">Descripción: {{ pro.description }}</p>
         <p style="margin: 0">Precio: {{ pro.price }}</p>
       </button>
-      <v-tooltip text="">
+      <v-tooltip text="Editar">
         <template v-slot:activator="{ props }">
           <v-icon v-bind="props" @click="editProduct(pro)">
             mdi-pencil
           </v-icon>
         </template>
       </v-tooltip>
+      <v-icon>
+        mdi-delete
+      </v-icon>
     </div>
   </div>
   <div class="text-center">
