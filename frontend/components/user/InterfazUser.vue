@@ -99,7 +99,7 @@
       </nuxt-link>
       <v-tooltip text="">
         <template v-slot:activator="{ props }">
-          <v-icon v-bind="props" @click="editPetSpecie(cate)">
+          <v-icon v-bind="props" @click="editCategory(cate)">
             mdi-pencil
           </v-icon>
         </template>
@@ -225,7 +225,7 @@ const confirmLogout = () => {
     }
   });
 };
-const editPetSpecie = (cate) => {
+const editCategory = (cate) => {
   if (cate && cate.id) {
     editingCategory.value = { ...cate };
     showEditDialog.value = true;
