@@ -26,9 +26,9 @@
             hide-details
           ></v-text-field>
           <v-row>
-            <v-btn @click.prevent="product" style="margin-left: 10%"
-              >Registrar producto</v-btn
-            >
+            <v-btn @click.prevent="product" style="margin-left: 10%">
+              Registrar producto
+            </v-btn>
           </v-row>
         </template>
       </v-data-iterator>
@@ -110,9 +110,13 @@
           </v-icon>
         </template>
       </v-tooltip>
-      <v-icon>
-        mdi-delete
-      </v-icon>
+      <v-tooltip text="Eliminar">
+        <template v-slot:activator="{ props }">
+          <v-icon v-bind="props" @click="confirmDelete(pro)">
+            mdi-delete
+          </v-icon>
+        </template>
+      </v-tooltip>
     </div>
   </div>
   <div class="text-center">
@@ -137,9 +141,22 @@
           <ProductUpdate :product="editingProduct" @save="handleSave"/>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="blue darken-1" text @click="showEditDialog = false"
-            >Cancelar</v-btn
-          >
+          <v-btn color="blue darken-1" text @click="showEditDialog = false">
+            Cancelar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="showDeleteDialog" max-width="600px">
+      <v-card>
+
+        <v-card-text>
+          <ProductDelete :product="productToDelete" @deleted="handleDelete"/>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="blue darken-1" text @click="showDeleteDialog = false">
+            Cancelar
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -147,11 +164,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, nextTick } from "vue";
 import { useRouter } from "vue-router";
 import { useAuth } from "~/store/auth";
 import Swal from "sweetalert2";
 import ProductUpdate from "./ProductUpdate.vue";
+import ProductDelete from "./ProductDelete.vue";
 const CONFIG = useRuntimeConfig();
 
 const drawer = ref(true);
@@ -162,6 +180,8 @@ const router = useRouter();
 const userStore = useAuth();
 const showEditDialog = ref(false);
 const editingProduct = ref(null);
+const showDeleteDialog = ref(false);
+const productToDelete = ref(null);
 
 const products = ref([]);
 const filteredProducts = ref({ data: [], totalPages: 1 });
@@ -173,7 +193,7 @@ const getProducts = async () => {
       `${CONFIG.public.API_BASE_URL}products?page=${page.value}&pageSize=${pageSize.value}`,
       {
         method: "GET",
-      },
+      }
     );
     products.value = data.value.data;
     filteredProducts.value = {
@@ -206,7 +226,7 @@ watch(search, async (newSearch) => {
 
   try {
     const response = await fetch(
-      `${CONFIG.public.API_BASE_URL}products/search?query=${encodeURIComponent(newSearch.trim())}`,
+      `${CONFIG.public.API_BASE_URL}products/search?query=${encodeURIComponent(newSearch.trim())}`
     );
     const data = await response.json();
     filteredProducts.value = { data, totalPages: 1 };
@@ -252,13 +272,19 @@ const handleSave = (updatedProduct) => {
   if (updatedProduct) {
     const index = filteredProducts.value.data.findIndex(
       (item) => item.id === updatedProduct.id
-      );
-      if(index !== -1) {
-        filteredProducts.value.data[index] = updatedProduct;
-      }
+    );
+    if (index !== -1) {
+      filteredProducts.value.data[index] = updatedProduct;
+    }
   }
-
   showEditDialog.value = false;
+};
+
+const handleDelete = (productId) => {
+  filteredProducts.value.data = filteredProducts.value.data.findIndex(
+    (item) => item.id === productId
+  );
+  filteredProducts.value.splice(index, 1)
 };
 
 const handleLogout = () => {
@@ -272,5 +298,10 @@ const goHome = () => {
 
 const product = () => {
   router.push("/product/register");
+};
+
+const confirmDelete = (product) => {
+  productToDelete.value = product;
+  showDeleteDialog.value = true;
 };
 </script>

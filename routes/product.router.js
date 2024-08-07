@@ -92,7 +92,6 @@ router.patch(
 
 router.delete(
   '/:id',
-  validatorHandler('params'),
   async (req, res, next) => {
     try {
       const { id } = req.params;

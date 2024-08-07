@@ -40,6 +40,8 @@
   const emit = defineEmits(['save']);
   const localProduct = ref({ ...props.product });
 
+  
+
   watch(() => props.product, (newProduct) => {
     localProduct.value = { ...newProduct };
   });
