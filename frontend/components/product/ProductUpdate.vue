@@ -52,7 +52,6 @@ const updateProduct = async () => {
     formData.append('description', localProduct.value.description);
     formData.append('price', localProduct.value.price);
 
-    // Adjuntar la imagen solo si se ha seleccionado una nueva imagen
     if (image.value) {
       formData.append('image', image.value);
     }
