@@ -79,13 +79,15 @@ router.post(
 
 router.patch(
   '/:id',
+  upload.single('image'),
   validatorHandler(getCategorySchema, 'params'),
   validatorHandler(updateCategorySchema, 'body'),
   async (req, res, next) => {
     try {
       const { id } = req.params;
       const body = req.body;
-      res.json(await service.update(id, body));
+      const file = req.file;
+      res.json(await service.update(id, body,file));
     } catch (error) {
       next(error);
     }

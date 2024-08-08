@@ -172,7 +172,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, nextTick } from "vue";
 import { useAuth } from "~/store/auth";
 import Swal from "sweetalert2";
 import CategoriesProductUpdate from "../categories/CategoriesProductUpdate.vue";
@@ -271,22 +271,10 @@ const editCategory = (cate) => {
   }
 };
 
-const handleDelete = (categoryId) => {
-  filteredCategories.value.data = filteredCategories.value.data.findIndex(
-    (item) => item.id === categoryId,
-  );
-  filteredCategories.value.splice(index, 1);
-};
-
-const confirmDelete = (category) => {
-  categoryToDelete.value = category;
-  showDeleteDialog.value = true;
-};
-
 const handleSave = (updatedCategory) => {
   if (updatedCategory) {
     const index = filteredCategories.value.data.findIndex(
-      (item) => item.id === updatedCategory.id,
+      (item) => item.id === updatedCategory.id
     );
     if (index !== -1) {
       filteredCategories.value.data[index] = updatedCategory;
@@ -294,6 +282,13 @@ const handleSave = (updatedCategory) => {
   }
 
   showEditDialog.value = false;
+};
+
+const handleDelete = (categoryId) => {
+  filteredCategories.value.data = filteredCategories.value.data.findIndex(
+    (item) => item.id === categoryId
+  );
+  filteredCategories.value.splice(index, 1);
 };
 
 const handleLogout = () => {
@@ -312,4 +307,12 @@ const products = () => {
 const category = () => {
   router.push("/categories/register");
 };
+
+const confirmDelete = (category) => {
+  categoryToDelete.value = category;
+  showDeleteDialog.value = true;
+};
+
+
+
 </script>

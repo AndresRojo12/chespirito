@@ -17,8 +17,8 @@
       accept="image/*"
       prepend-icon="mdi-image"
     />
-   
-    <v-btn color="green" @click="save">Guardar</v-btn>
+
+    <v-btn color="green" @click="updateCategory">Guardar</v-btn>
   </v-form>
 </template>
 
@@ -42,7 +42,7 @@ watch(() => props.category, (newCategory) => {
   localCategory.value = { ...newCategory };
 });
 
-const save = async () => {
+const updateCategory = async () => {
   try {
     const formData = new FormData();
     formData.append('name', localCategory.value.name);
@@ -54,14 +54,14 @@ const save = async () => {
     const response = await fetch(`${CONFIG.public.API_BASE_URL}categories/${props.category.id}`, {
       method: 'PATCH',
       body: formData,
+      headers: {
+        'Accept': 'application/json',
+      }
     });
 
     if (!response.ok) {
-      throw new Error('Error al actualizar la categoría');
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-
-    const updatedCategory = await response.json();
-    emit('save', updatedCategory);
 
     Swal.fire({
       title:'Se actualizo',
@@ -69,6 +69,7 @@ const save = async () => {
       icon:'success',
       confirmButtonText:'Aceptar'
     });
+    emit('save', true, localCategory.value.id, localCategory.value.name);
 
   } catch (error) {
     Swal.fire({
@@ -77,7 +78,7 @@ const save = async () => {
       icon:'error',
       confirmButtonText:'Aceptar'
     });
-    console.log('Error', error);
+    emit('save', false, null);
   }
 };
 

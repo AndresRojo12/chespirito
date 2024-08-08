@@ -82,8 +82,23 @@ class CategoryService {
     return category;
   }
 
-  async update(id, changes) {
+  async update(id, changes, file) {
     const category = await this.findOne(id);
+
+    if(file) {
+      if(category.imagePath) {
+        const oldImagePath = path.join(__dirname, '..', 'uploads', path.basename(category.imagePath));
+        if (fs.existsSync(oldImagePath)) {
+          fs.unlinkSync(oldImagePath);
+        }
+      }
+      const imagenOriginal = file.buffer;
+      const imagenOptimizada = await sharp(imagenOriginal).resize(800).toBuffer();
+      const imagePath = path.join(__dirname, '..', 'uploads', file.originalname);
+      fs.writeFileSync(imagePath, imagenOptimizada);
+
+      changes.imagePath = `${config.imagesPath}${file.originalname}`;
+    }
     await category.update(changes);
     return category;
   }
