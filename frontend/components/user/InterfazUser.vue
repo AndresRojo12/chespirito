@@ -1,7 +1,15 @@
 <template>
   <div>
-    <v-card style="max-height:10rem;">
-      <h1 style="display: flex; background-color: #aeb0b3; justify-content: center">Chespirito</h1>
+    <v-card style="max-height: 10rem">
+      <h1
+        style="
+          display: flex;
+          background-color: #aeb0b3;
+          justify-content: center;
+        "
+      >
+        Chespirito
+      </h1>
       <v-data-iterator :items="filteredCategories.data" style="margin-top: 2%">
         <template v-slot:header>
           <v-text-field
@@ -14,26 +22,30 @@
             clearable
             hide-details
           ></v-text-field>
+          <v-row>
+            <v-btn @click.prevent="category" style="margin-left: 10%"
+              >Registrar categoría</v-btn
+            >
+          </v-row>
         </template>
       </v-data-iterator>
       <v-layout>
-      <v-navigation-drawer
-        style="background-color:#aeb0b3;
-        max-width: 155px;"
-        expand-on-hover
-        rail
-      >
-        <v-list>
-          <v-list-item
-            prepend-icon="mdi-account-circle"
-            :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
-          ></v-list-item>
-        </v-list>
+        <v-navigation-drawer
+          style="background-color: #aeb0b3; max-width: 155px"
+          expand-on-hover
+          rail
+        >
+          <v-list>
+            <v-list-item
+              prepend-icon="mdi-account-circle"
+              :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
+            ></v-list-item>
+          </v-list>
 
-        <v-divider></v-divider>
+          <v-divider></v-divider>
 
-        <v-list density="compact" nav>
-          <v-list-item
+          <v-list density="compact" nav>
+            <v-list-item
               prepend-icon="mdi-home-city"
               title="Inicio"
               @click="goHome"
@@ -50,12 +62,11 @@
               prepend-icon="mdi-logout"
               title="Salir"
             ></v-list-item>
+          </v-list>
+        </v-navigation-drawer>
 
-        </v-list>
-      </v-navigation-drawer>
-
-      <v-main style="height: 250px"></v-main>
-    </v-layout>
+        <v-main style="height: 250px"></v-main>
+      </v-layout>
     </v-card>
     <v-select
       v-model="pageSize"
@@ -104,34 +115,56 @@
           </v-icon>
         </template>
       </v-tooltip>
-        <v-icon>
-          mdi-delete
-        </v-icon>
-      </div>
+      <v-tooltip text="Eliminar">
+        <template v-slot:activator="{ props }">
+          <v-icon v-bind="props" @click="confirmDelete(cate)"> mdi-delete </v-icon>
+        </template>
+      </v-tooltip>
     </div>
-    <div class="text-center">
-      <v-container>
-        <v-row justify="center">
-          <v-col cols="8">
-            <v-container class="max-width">
-              <v-pagination
+  </div>
+  <div class="text-center">
+    <v-container>
+      <v-row justify="center">
+        <v-col cols="8">
+          <v-container class="max-width">
+            <v-pagination
               v-model="page"
               :length="filteredCategories.totalPages"
               class="my-4"
               @input="getCategories"
-              ></v-pagination>
-            </v-container>
-          </v-col>
-        </v-row>
-      </v-container>
-      <v-dialog v-model="showEditDialog" max-width="600px">
+            ></v-pagination>
+          </v-container>
+        </v-col>
+      </v-row>
+    </v-container>
+    <v-dialog v-model="showEditDialog" max-width="600px">
       <v-card>
         <v-card-title class="headline">Editar Categoría</v-card-title>
         <v-card-text>
-          <CategoriesProductUpdate :category="editingCategory" @save="handleSave" />
+          <CategoriesProductUpdate
+            :category="editingCategory"
+            @save="handleSave"
+          />
         </v-card-text>
         <v-card-actions>
-          <v-btn color="blue darken-1" text @click="showEditDialog = false">Cancelar</v-btn>
+          <v-btn color="blue darken-1" text @click="showEditDialog = false"
+            >Cancelar</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="showDeleteDialog" max-width="600px">
+      <v-card>
+        <v-card-text>
+          <CategoryDelete
+            :category="categoryToDelete"
+            @deleted="handleDelete"
+          />
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="blue darken-1" text @click="showDeleteDialog = false">
+            Cancelar
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -143,6 +176,7 @@ import { ref, onMounted, watch } from "vue";
 import { useAuth } from "~/store/auth";
 import Swal from "sweetalert2";
 import CategoriesProductUpdate from "../categories/CategoriesProductUpdate.vue";
+import CategoryDelete from "../categories/CategoryDelete.vue";
 const CONFIG = useRuntimeConfig();
 
 const drawer = ref(true);
@@ -153,6 +187,8 @@ const router = useRouter();
 const userStore = useAuth();
 const showEditDialog = ref(false);
 const editingCategory = ref(null);
+const categoryToDelete = ref(null);
+const showDeleteDialog = ref(false);
 
 const categories = ref([]);
 const filteredCategories = ref({ data: [], totalPages: 1 });
@@ -230,18 +266,30 @@ const editCategory = (cate) => {
     editingCategory.value = { ...cate };
     showEditDialog.value = true;
   } else {
-    console.error("El objeto pet no tiene una propiedad id válida.");
+    console.error("La categoría no tiene una propiedad id válida.");
   }
+};
+
+const handleDelete = (categoryId) => {
+  filteredCategories.value.data = filteredCategories.value.data.findIndex(
+    (item) => item.id === categoryId,
+  );
+  filteredCategories.value.splice(index, 1);
+};
+
+const confirmDelete = (category) => {
+  categoryToDelete.value = category;
+  showDeleteDialog.value = true;
 };
 
 const handleSave = (updatedCategory) => {
   if (updatedCategory) {
     const index = filteredCategories.value.data.findIndex(
-      (item) => item.id === updatedCategory.id
-      );
-      if(index !== -1) {
-        filteredCategories.value.data[index] = updatedCategory;
-      }
+      (item) => item.id === updatedCategory.id,
+    );
+    if (index !== -1) {
+      filteredCategories.value.data[index] = updatedCategory;
+    }
   }
 
   showEditDialog.value = false;
@@ -257,8 +305,10 @@ const goHome = () => {
 };
 
 const products = () => {
-  router.push('/product/list')
-}
+  router.push("/product/list");
+};
 
+const category = () => {
+  router.push("/categories/register");
+};
 </script>
-
