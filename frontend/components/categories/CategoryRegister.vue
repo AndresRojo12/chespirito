@@ -4,7 +4,35 @@
       style="background-color: #aeb0b3; max-width: 155px"
       expand-on-hover
       rail
-    ></v-navigation-drawer>
+    >
+      <v-list>
+        <v-list-item prepend-icon="mdi-account-circle"
+        :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
+        ></v-list-item>
+      </v-list>
+
+      <v-divider></v-divider>
+
+      <v-list density="compact" nav>
+        <v-list-item
+          prepend-icon="mdi-home-city"
+          title="Inicio"
+          @click="goHome"
+        ></v-list-item>
+
+        <v-list-item
+          prepend-icon="mdi-cash"
+          title="Categorias"
+          @click.prevent="categoriesIn"
+        ></v-list-item>
+
+        <v-list-item
+          @click.prevent="confirmLogout"
+          prepend-icon="mdi-logout"
+          title="Salir"
+        ></v-list-item>
+      </v-list>
+    </v-navigation-drawer>
   </v-layout>
   <v-container style="width: 600px; margin-top: 2%; border-style: groove">
     <h1>Registrar categoría</h1>
@@ -30,7 +58,10 @@
 <script setup>
 import { ref } from "vue";
 import Swal from "sweetalert2";
+import { useAuth } from "~/store/auth";
 const CONFIG = useRuntimeConfig();
+const router = useRouter();
+const userStore = useAuth();
 
 const name = ref("");
 const description = ref("");
@@ -82,10 +113,39 @@ const registerCategory = async () => {
   }
 };
 
+const confirmLogout = () => {
+  Swal.fire({
+    title: "¿Estás seguro?",
+    text: "¿Quieres cerrar sesión?",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: "Sí, cerrar sesión",
+    cancelButtonText: "Cancelar",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      handleLogout();
+    }
+  });
+};
+
 const handleReset = () => {
   name.value = "";
   description.value = "";
   price.value = 0;
   image.value = null;
 };
+
+const handleLogout = () => {
+  userStore.logout();
+  router.push("/");
+};
+
+const goHome = () => {
+  router.push("/user/gestion");
+}
+
+const categoriesIn = () => {
+  router.push('/user/gestion');
+}
+
 </script>

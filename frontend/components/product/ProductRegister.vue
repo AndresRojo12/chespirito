@@ -27,7 +27,7 @@
         ></v-list-item>
 
         <v-list-item
-          @click.prevent=""
+          @click.prevent="confirmLogout"
           prepend-icon="mdi-logout"
           title="Salir"
         ></v-list-item>
@@ -155,6 +155,26 @@ const registerProduct = async () => {
       confirmButtonText: "Aceptar",
     });
   }
+};
+
+const confirmLogout = () => {
+  Swal.fire({
+    title: "¿Estás seguro?",
+    text: "¿Quieres cerrar sesión?",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: "Sí, cerrar sesión",
+    cancelButtonText: "Cancelar",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      handleLogout();
+    }
+  });
+};
+
+const handleLogout = () => {
+  userStore.logout();
+  router.push("/");
 };
 
 const handleReset = () => {

@@ -215,6 +215,7 @@ const getImageUrl = (imagePath) => {
 };
 
 onMounted(async () => {
+  await nextTick();
   await getCategories();
 });
 
