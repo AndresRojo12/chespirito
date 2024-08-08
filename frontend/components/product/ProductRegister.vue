@@ -53,7 +53,7 @@
       <v-autocomplete
         v-model="selectedCategory"
         :items="categories"
-        item-text="name"
+        item-title="name"
         item-value="id"
         label="Seleccionar Categoría"
         required
