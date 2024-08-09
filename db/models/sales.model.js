@@ -1,8 +1,9 @@
-const { allow } = require('joi');
 const { Model, DataTypes, Sequelize } = require('sequelize');
 
 const SALES_TABLE = 'sales';
-const USER_TABLE = require('../models/user.model');
+const { USER_TABLE } = require('../models/user.model');
+const { CATEGORY_TABLE } = require('../models/category.model');
+const { PRODUCT_TABLE } = require('../models/product.model');
 
 const SalesSchema = {
   id: {
@@ -20,6 +21,24 @@ const SalesSchema = {
     allowNull: false,
     type: DataTypes.INTEGER,
     field: 'sale_price',
+  },
+  categoryId: {
+    allowNull: false,
+    type: DataTypes.INTEGER,
+    field: 'category_id',
+    references: {
+      model: CATEGORY_TABLE,
+      key: 'id',
+    },
+  },
+  productId: {
+    allowNull: false,
+    type: DataTypes.INTEGER,
+    field: 'product_id',
+    references: {
+      model: PRODUCT_TABLE,
+      key: 'id',
+    },
   },
   createdAt: {
     allowNull: false,
@@ -70,6 +89,14 @@ class Sales extends Model {
     this.belongsTo(models.User, { as: 'creator', foreignKey: 'created_by' });
     this.belongsTo(models.User, { as: 'updator', foreignKey: 'updated_by' });
     this.belongsTo(models.User, { as: 'deletor', foreignKey: 'deleted_by' });
+    this.belongsTo(models.Category, {
+      as: 'category',
+      foreignKey: 'category_id',
+    });
+    this.belongsTo(models.Product, {
+      as: 'products',
+      foreignKey: 'product_id',
+    });
   }
   static config(sequelize) {
     return {
