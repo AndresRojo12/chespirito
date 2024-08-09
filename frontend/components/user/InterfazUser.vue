@@ -271,7 +271,7 @@ const editCategory = (cate) => {
   }
 };
 
-const handleSave = (updatedCategory) => {
+const handleSave = async (updatedCategory) => {
   if (updatedCategory) {
     const index = filteredCategories.value.data.findIndex(
       (item) => item.id === updatedCategory.id
@@ -280,6 +280,8 @@ const handleSave = (updatedCategory) => {
       filteredCategories.value.data[index] = updatedCategory;
     }
   }
+
+  await getCategories();
 
   showEditDialog.value = false;
 };
@@ -308,7 +310,7 @@ const category = () => {
   router.push("/categories/register");
 };
 
-const confirmDelete = (category) => {
+const confirmDelete = async (category) => {
   categoryToDelete.value = category;
   showDeleteDialog.value = true;
 };

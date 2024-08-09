@@ -268,7 +268,7 @@ const editProduct = (pro) => {
   }
 };
 
-const handleSave = (updatedProduct) => {
+const handleSave = async (updatedProduct) => {
   if (updatedProduct) {
     const index = filteredProducts.value.data.findIndex(
       (item) => item.id === updatedProduct.id
@@ -277,14 +277,16 @@ const handleSave = (updatedProduct) => {
       filteredProducts.value.data[index] = updatedProduct;
     }
   }
+  await getProducts();
   showEditDialog.value = false;
 };
 
-const handleDelete = (productId) => {
+const handleDelete =  async (productId) => {
   filteredProducts.value.data = filteredProducts.value.data.findIndex(
     (item) => item.id === productId
   );
   filteredProducts.value.splice(index, 1)
+  await getProducts();
 };
 
 const handleLogout = () => {
@@ -301,7 +303,7 @@ const product = () => {
 };
 
 const confirmDelete = (product) => {
-  productToDelete.value = product;
   showDeleteDialog.value = true;
+  productToDelete.value = product;
 };
 </script>

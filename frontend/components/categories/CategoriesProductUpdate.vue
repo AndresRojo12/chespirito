@@ -12,7 +12,7 @@
       required
     />
     <v-file-input
-      v-model="localCategory.image"
+      v-model="image"
       label="Seleccionar imagen"
       accept="image/*"
       prepend-icon="mdi-image"
