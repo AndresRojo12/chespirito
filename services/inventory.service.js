@@ -9,11 +9,16 @@ class InventoryService {
   }
 
   async find() {
-
+    const inventory = await models.Inventory.findAll();
+    return inventory;
   }
 
-  async findOne() {
-
+  async findOne(id) {
+    const inventory = await models.Inventory.findByPk(id);
+    if(!inventory) {
+      throw boom.notFound('Inventory not found');
+    }
+    return inventory;
   }
 
   async update() {
