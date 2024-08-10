@@ -5,9 +5,9 @@
       <v-autocomplete
         v-model="sales"
         :items="salesId"
-        item-title="id"
+        item-title="products.name"
         item-value="id"
-        label="Venta"
+        label="Seleccionar producto vendido"
         required>
       </v-autocomplete>
       <v-text-field
@@ -40,6 +40,7 @@ const getVentas = async () => {
   if(data.value !=null) {
     salesId.value = data.value.map((e) => ({
       id: e.id,
+      products: e.products,
     }))
   }else {
     throw new Error(error.value.message);

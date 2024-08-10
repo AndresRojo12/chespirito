@@ -8,7 +8,9 @@ class SalesServices {
   }
 
   async find() {
-    const sales = await models.Sales.findAll();
+    const sales = await models.Sales.findAll({
+      include:['products'],
+    });
     return sales;
   }
 
