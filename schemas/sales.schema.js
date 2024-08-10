@@ -1,16 +1,20 @@
 const joi = require('joi');
 
 const id = joi.number().integer();
-const sale_price = joi.number();
-const quantity_sold = joi.number();
+const categoryId = joi.number().integer();
+const productId = joi.number().integer();
+const salePrice = joi.number();
+const quantitySold = joi.number();
 
 const getSaleSchema = joi.object({
   id: id.required(),
 });
 
 const createSaleSchema = joi.object({
-  sale_price: sale_price.required(),
-  quantity_sold: quantity_sold.required(),
+  categoryId:categoryId.required(),
+  productId:productId.required(),
+  salePrice: salePrice.required(),
+  quantitySold: quantitySold.required(),
 });
 
 module.exports = { createSaleSchema, getSaleSchema };
