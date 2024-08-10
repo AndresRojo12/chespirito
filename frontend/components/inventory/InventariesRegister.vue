@@ -1,6 +1,41 @@
 <template>
-  <h1>Hola registro de inventario</h1>
+  <v-layout>
+    <v-navigation-drawer
+      style="background-color: #aeb0b3; max-width: 155px"
+      expand-on-hover
+      rail
+    >
+      <v-list>
+        <v-list-item prepend-icon="mdi-account-circle"
+        :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
+        ></v-list-item>
+      </v-list>
+
+      <v-divider></v-divider>
+
+      <v-list density="compact" nav>
+        <v-list-item
+          prepend-icon="mdi-home-city"
+          title="Inicio"
+          @click="goHome"
+        ></v-list-item>
+
+        <v-list-item
+          prepend-icon="mdi-cash"
+          title="Inventarios"
+          @click.prevent=""
+        ></v-list-item>
+
+        <v-list-item
+          @click.prevent="confirmLogout"
+          prepend-icon="mdi-logout"
+          title="Salir"
+        ></v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+  </v-layout>
   <v-container style="width: 600px; margin-top: 2%; border-style: groove">
+    <h1>Hola registro de inventario</h1>
     <form style="margin-top: 5%" @submit.prevent="registerInventory">
       <v-autocomplete
         v-model="sales"
@@ -31,7 +66,7 @@ const sales = ref("");
 const status = ref("");
 const salesId = ref([]);
 const userStore = useAuth();
-
+const router = useRouter();
 
 const getVentas = async () => {
   const { data, error } = await useFetch(`${CONFIG.public.API_BASE_URL}sales`,
@@ -76,9 +111,33 @@ const registerInventory = async () => {
   }
 };
 
+const handleLogout = () => {
+  userStore.logout();
+  router.push("/");
+};
+
 const handleReset = () => {
   sales.value = "";
   status.value = "";
+};
+
+const goHome = () => {
+  router.push("/user/gestion");
+}
+
+const confirmLogout = () => {
+  Swal.fire({
+    title: "¿Estás seguro?",
+    text: "¿Quieres cerrar sesión?",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: "Sí, cerrar sesión",
+    cancelButtonText: "Cancelar",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      handleLogout();
+    }
+  });
 };
 
 onMounted(async () => {
