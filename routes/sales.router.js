@@ -11,7 +11,8 @@ const service = new SalesServices();
 
 router.get('/', async (req, res, next) => {
   try {
-    res.json(await service.find());
+    const { page, pageSize } = req.query;
+    res.json(await service.find({ page, pageSize }));
   } catch (error) {
     next(error);
   }
@@ -27,17 +28,19 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
-router.post('/',
-passport.authenticate('jwt', { session: false }),
-checkAdmindRole,
-validatorHandler(createSaleSchema, 'body'),
-async (req, res, next) => {
-  try {
-    const body = await service.create(req.body);
-    res.json(body);
-  } catch (error) {
-    next(error);
-  }
-});
+router.post(
+  '/',
+  passport.authenticate('jwt', { session: false }),
+  checkAdmindRole,
+  validatorHandler(createSaleSchema, 'body'),
+  async (req, res, next) => {
+    try {
+      const body = await service.create(req.body);
+      res.json(body);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 module.exports = router;

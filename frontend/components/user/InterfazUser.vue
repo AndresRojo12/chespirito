@@ -58,10 +58,18 @@
             ></v-list-item>
 
             <v-list-item
+              prepend-icon="mdi-elevation-rise"
+              title="Ventas"
+              @click.prevent="sales"
+            >
+            </v-list-item>
+
+            <v-list-item
               @click.prevent="confirmLogout"
               prepend-icon="mdi-logout"
               title="Salir"
             ></v-list-item>
+            
           </v-list>
         </v-navigation-drawer>
 
@@ -117,7 +125,9 @@
       </v-tooltip>
       <v-tooltip text="Eliminar">
         <template v-slot:activator="{ props }">
-          <v-icon v-bind="props" @click="confirmDelete(cate)"> mdi-delete </v-icon>
+          <v-icon v-bind="props" @click="confirmDelete(cate)">
+            mdi-delete
+          </v-icon>
         </template>
       </v-tooltip>
     </div>
@@ -274,7 +284,7 @@ const editCategory = (cate) => {
 const handleSave = async (updatedCategory) => {
   if (updatedCategory) {
     const index = filteredCategories.value.data.findIndex(
-      (item) => item.id === updatedCategory.id
+      (item) => item.id === updatedCategory.id,
     );
     if (index !== -1) {
       filteredCategories.value.data[index] = updatedCategory;
@@ -288,7 +298,7 @@ const handleSave = async (updatedCategory) => {
 
 const handleDelete = (categoryId) => {
   filteredCategories.value.data = filteredCategories.value.data.findIndex(
-    (item) => item.id === categoryId
+    (item) => item.id === categoryId,
   );
   filteredCategories.value.splice(index, 1);
 };
@@ -310,11 +320,12 @@ const category = () => {
   router.push("/categories/register");
 };
 
+const sales = () => {
+  router.push("/sales/list");
+};
+
 const confirmDelete = async (category) => {
   categoryToDelete.value = category;
   showDeleteDialog.value = true;
 };
-
-
-
 </script>
