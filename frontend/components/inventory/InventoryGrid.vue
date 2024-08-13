@@ -45,7 +45,7 @@
         <td>{{ inve.salesId }}</td>
         <td>{{ inve.productName }}</td>
         <td>{{ inve.status }}</td>
-        <td>{{ inve.createdAt }}</td>
+        <td>{{ moment(inve.createdAt).tz('America/Bogota').format('DD/MM/YYYY') }}</td>
       </tr>
     </tbody>
   </v-table>
@@ -55,6 +55,7 @@
 import { ref, onMounted, nextTick } from "vue";
 import { useAuth } from "~/store/auth";
 import Swal from "sweetalert2";
+import moment from 'moment-timezone';
 
 const inventories = ref([]);
 const sales = ref([]);
