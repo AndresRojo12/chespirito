@@ -58,6 +58,12 @@
             ></v-list-item>
 
             <v-list-item
+              prepend-icon="mdi-cash"
+              title="Inventarios"
+              @click.prevent=""
+            ></v-list-item>
+
+            <v-list-item
               @click.prevent="confirmLogout"
               prepend-icon="mdi-logout"
               title="Salir"
@@ -305,6 +311,10 @@ const goHome = () => {
 const products = () => {
   router.push("/product/list");
 };
+
+// const inventories = () => {
+//   router.push("/product/list");
+// };
 
 const category = () => {
   router.push("/categories/register");
