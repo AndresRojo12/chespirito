@@ -60,7 +60,7 @@
             <v-list-item
               prepend-icon="mdi-cash"
               title="Inventarios"
-              @click.prevent=""
+              @click.prevent="inventories"
             ></v-list-item>
             <v-list-item
               prepend-icon="mdi-elevation-rise"
@@ -320,9 +320,9 @@ const products = () => {
   router.push("/product/list");
 };
 
-// const inventories = () => {
-//   router.push("/product/list");
-// };
+const inventories = () => {
+  router.push("/inventory/list");
+};
 
 const category = () => {
   router.push("/categories/register");
