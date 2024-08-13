@@ -44,7 +44,7 @@ const getSales = async () => {
     const { data, error } = await useFetch(`${CONFIG.public.API_BASE_URL}sales`, {
       method: 'GET',
     });
-    sales.value = data.value;
+    sales.value = data.value.data;
     combineData();
   } catch (error) {
     console.log(error);
