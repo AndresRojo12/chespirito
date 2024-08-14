@@ -73,7 +73,7 @@ const getVentas = async () => {
   );
 
   if(data.value !=null) {
-    salesId.value = data.value.map((e) => ({
+    salesId.value = data.value.data.map((e) => ({
       id: e.id,
       products: e.products,
     }))
