@@ -8,10 +8,29 @@ class InventoryService {
     return inventory
   }
 
-  async find() {
+  async find({page = 1, pageSize = 10} = {}) {
+
+    const limit = parseInt(pageSize) || 10;
+    const offset = ((parseInt(page) || 1) - 1) * limit;
+
+    const { count, rows } = await models.Inventory.findAndCountAll({
+      limit,
+      offset
+    });
+
+    return {
+      totalItems: count,
+      totalPages: Math.ceil(count / limit),
+      currentPage: parseInt(page) || 1,
+      data: rows
+    }
+  }
+
+  async findAll () {
     const inventory = await models.Inventory.findAll();
     return inventory;
   }
+
 
   async findOne(id) {
     const inventory = await models.Inventory.findByPk(id);
