@@ -15,7 +15,9 @@ const service = new InventoryService();
 
 router.get('/', async (req, res, next) => {
   try {
-    res.json(await service.find());
+    const { page, pageSize } = req.query
+    const inventory = await service.find({ page, pageSize })
+    res.json(inventory);
   } catch (error) {
     next(error);
   }
