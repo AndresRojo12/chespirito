@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container style="margin-top:0px ;">
     <v-layout>
       <v-navigation-drawer
         style="background-color: #aeb0b3; max-width: 155px"
@@ -40,25 +40,26 @@
       @change="getInventories">
 
     </v-select>
-    <v-table style="justify-content: center;
-      margin-left: 10%;">
-      <thead>
-        <tr>
-          <th class="text-left">Ventas</th>
-          <th class="text-left">Producto vendido</th>
-          <th class="text-left">Estado de producto</th>
-          <th class="text-left">Fecha de registro</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="inve in combinedData" :key="inve.id">
-          <td>{{ inve.salesId }}</td>
-          <td>{{ inve.productName }}</td>
-          <td>{{ inve.status }}</td>
-          <td>{{ moment(inve.createdAt).tz('America/Bogota').format('DD/MM/YYYY') }}</td>
-        </tr>
-      </tbody>
-    </v-table>
+    <div class="table-container">
+      <v-table style=" width: 100%;">
+        <thead>
+          <tr>
+            <th class="text-left">Ventas</th>
+            <th class="text-left">Producto vendido</th>
+            <th class="text-left">Estado de producto</th>
+            <th class="text-left">Fecha de registro</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="inve in combinedData" :key="inve.id">
+            <td>{{ inve.salesId }}</td>
+            <td>{{ inve.productName }}</td>
+            <td>{{ inve.status }}</td>
+            <td>{{ moment(inve.createdAt).tz('America/Bogota').format('DD/MM/YYYY') }}</td>
+          </tr>
+        </tbody>
+      </v-table>
+    </div>
     <v-pagination
       v-model="page"
         :length="totalPages"
@@ -163,3 +164,11 @@ const goHome = () => {
   router.push('/user/gestion')
 }
 </script>
+
+<style scoped>
+.table-container {
+  max-height: 400px;
+  overflow-y: auto; 
+  margin-left: 10%;
+}
+</style>
