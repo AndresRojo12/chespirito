@@ -74,15 +74,63 @@
     <v-table style="width: 100%">
       <thead>
         <tr>
-          <th class="text-left">ID Categoría</th>
-          <th class="text-left">ID Producto</th>
-          <th class="text-left">Cantidad</th>
-          <th class="text-left">Total</th>
-          <th class="text-left">Fecha</th>
+          <th class="text-left">
+            ID Categoría
+            <v-text-field
+              v-model="filters.categoryId"
+              label="Buscar"
+              single-line
+              hide-details
+              class="filter-input"
+            ></v-text-field>
+          </th>
+          <th class="text-left">
+            ID Producto
+            <v-text-field
+              v-model="filters.productId"
+              label="Buscar"
+              single-line
+              hide-details
+              class="filter-input"
+            ></v-text-field>
+          </th>
+          <th class="text-left">
+            Cantidad
+            <v-text-field
+              v-model="filters.quantitySold"
+              label="Buscar"
+              single-line
+              hide-details
+              class="filter-input"
+            ></v-text-field>
+          </th>
+          <th class="text-left">
+            Total
+            <v-text-field
+              v-model="filters.salePrice"
+              label="Buscar"
+              single-line
+              hide-details
+              class="filter-input"
+            ></v-text-field>
+          </th>
+          <th class="text-left">
+            Fecha
+            <v-text-field
+              v-model="filters.date"
+              label="Buscar"
+              single-line
+              hide-details
+              class="filter-input"
+            ></v-text-field>
+          </th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="sal in combinedData" :key="sal.id">
+        <tr v-if="filteredData.length === 0">
+          <td colspan="5" class="text-center">No se encontraron resultados</td>
+        </tr>
+        <tr v-for="sal in filteredData" :key="sal.id">
           <td>{{ sal.categoryId }}</td>
           <td>{{ sal.productId }}</td>
           <td>{{ sal.quantitySold }}</td>
@@ -130,6 +178,46 @@ const sales = ref([]);
 const categories = ref([]);
 const products = ref([]);
 const combinedData = ref([]);
+
+const filters = ref({
+  categoryId: "",
+  productId: "",
+  quantitySold: "",
+  salePrice: "",
+  date: "",
+});
+
+const filteredData = computed(() => {
+  return combinedData.value.filter((sal) => {
+    const matchesCategoryId = sal.categoryId
+      .toString()
+      .includes(filters.value.categoryId);
+    const matchesProductId = sal.productId
+      .toString()
+      .includes(filters.value.productId);
+    const matchesQuantitySold = sal.quantitySold
+      .toString()
+      .includes(filters.value.quantitySold);
+    const matchesSalePrice = sal.salePrice
+      .toString()
+      .includes(filters.value.salePrice);
+
+    let matchesDate = true;
+    if (filters.value.date) {
+      const filterDate = moment(filters.value.date, "DD/MM/YYYY");
+      const saleDate = moment(sal.createdAt).tz("America/Bogota");
+      matchesDate = saleDate.isSame(filterDate, "day");
+    }
+
+    return (
+      matchesCategoryId &&
+      matchesProductId &&
+      matchesQuantitySold &&
+      matchesSalePrice &&
+      matchesDate
+    );
+  });
+});
 
 const getSales = async () => {
   try {
