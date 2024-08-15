@@ -92,17 +92,19 @@ const registerSale = async () => {
     });
     return;
   }
-  const formData = new FormData();
-  formData.append("quantitySold", quantitySold.value);
-  formData.append("salePrice", salePrice.value);
-  formData.append("selectedCategory", selectedCategory.value);
-  formData.append("selectedProduct", selectedProduct.value);
+  const data = {
+    quantitySold: quantitySold.value,
+    salePrice: salePrice.value,
+    categoryId: selectedCategory.value,
+    productId: selectedProduct.value,
+  };
 
   try {
     const response = await fetch(`${CONFIG.public.API_BASE_URL}sales`, {
       method: "POST",
-      body: formData,
+      body: JSON.stringify(data),
       headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     });

@@ -1,7 +1,7 @@
 <template>
-  <SalesList></SalesList>
+  <SalesGrid></SalesGrid>
 </template>
 
 <script setup>
-import SalesList from "~/components/sales/SalesList.vue";
+import SalesGrid from "~/components/sales/SalesGrid.vue";
 </script>

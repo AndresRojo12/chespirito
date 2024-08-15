@@ -11,8 +11,8 @@ const getSaleSchema = joi.object({
 });
 
 const createSaleSchema = joi.object({
-  categoryId:categoryId.required(),
-  productId:productId.required(),
+  categoryId: categoryId.required(),
+  productId: productId.required(),
   salePrice: salePrice.required(),
   quantitySold: quantitySold.required(),
 });
