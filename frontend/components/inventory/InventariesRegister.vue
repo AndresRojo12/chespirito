@@ -1,4 +1,12 @@
 <template>
+   <v-card style="max-height: 10rem">
+    <h1
+      style="display: flex; background-color: #aeb0b3; justify-content: center"
+    >
+      Chespirito
+    </h1>
+  </v-card>
+
   <v-layout>
     <v-navigation-drawer
       style="background-color: #aeb0b3; max-width: 155px"
@@ -23,7 +31,7 @@
         <v-list-item
           prepend-icon="mdi-cash"
           title="Inventarios"
-          @click.prevent=""
+          @click.prevent="homeInventory"
         ></v-list-item>
 
         <v-list-item
@@ -123,6 +131,10 @@ const handleReset = () => {
 
 const goHome = () => {
   router.push("/user/gestion");
+}
+
+const homeInventory = () => {
+  router.push("/inventory/list")
 }
 
 const confirmLogout = () => {

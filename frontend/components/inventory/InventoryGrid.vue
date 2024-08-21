@@ -1,5 +1,17 @@
 <template>
-  <v-container style="margin-top:0px ;">
+  <v-card style="max-height: 10rem">
+    <h1
+      style="display: flex; background-color: #aeb0b3; justify-content: center"
+    >
+      Chespirito
+    </h1>
+  </v-card>
+
+    <v-btn @click.prevent="registerInve"
+      style="margin-left: 10%;
+      margin-top: 2%;"> Registrar Inventario
+    </v-btn>
+  <v-container style="margin-top: 0px">
     <v-layout>
       <v-navigation-drawer
         style="background-color: #aeb0b3; max-width: 155px"
@@ -7,8 +19,9 @@
         rail
       >
         <v-list>
-          <v-list-item prepend-icon="mdi-account-circle"
-          :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
+          <v-list-item
+            prepend-icon="mdi-account-circle"
+            :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
           ></v-list-item>
         </v-list>
 
@@ -33,21 +46,60 @@
     </v-layout>
     <v-select
       v-model="pageSize"
-      style="max-width:300px;
-      margin-left: 12%;"
-      :items="[5,10,20,30,40,50,100]"
-      label="Seleccionar categorias por Página"
-      @change="getInventories">
-
+      style="max-width: 300px; margin-left: 12%"
+      :items="[5, 10, 20, 30, 40, 50, 100]"
+      label="Seleccionar datos por Página"
+      @change="getInventories"
+    >
     </v-select>
     <div class="table-container">
-      <v-table style=" width: 100%;">
+      <v-table style="width: 100%">
         <thead>
           <tr>
-            <th class="text-left">Ventas</th>
-            <th class="text-left">Producto vendido</th>
-            <th class="text-left">Estado de producto</th>
-            <th class="text-left">Fecha de registro</th>
+            <th class="text-left">
+              Ventas
+              <v-col>
+                <v-text-field
+                  v-model="filters.salesId"
+                  clearable
+                  @input="updatePage(1)"
+                  label="ventas"
+                >
+                </v-text-field>
+              </v-col>
+            </th>
+            <th class="text-left">
+              Producto vendido
+              <v-col>
+                <v-text-field
+                  v-model="filters.productName"
+                  clearable
+                  @input="updatePage(1)"
+                ></v-text-field>
+              </v-col>
+            </th>
+            <th class="text-left">
+              Estado de producto
+              <v-col>
+                <v-text-field
+                  v-model="filters.status"
+                  clearable
+                  single-line
+                  hide-details
+                  @input="updatePage(1)"
+                ></v-text-field>
+              </v-col>
+            </th>
+            <th class="text-left">
+              Fecha de registro
+              <v-col>
+                <v-text-field
+                  v-model="filters.created_at"
+                  clearable
+                  @input="updatePage(1)"
+                ></v-text-field>
+              </v-col>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -55,16 +107,20 @@
             <td>{{ inve.salesId }}</td>
             <td>{{ inve.productName }}</td>
             <td>{{ inve.status }}</td>
-            <td>{{ moment(inve.createdAt).tz('America/Bogota').format('DD/MM/YYYY') }}</td>
+            <td>
+              {{
+                moment(inve.createdAt).tz("America/Bogota").format("DD/MM/YYYY")
+              }}
+            </td>
           </tr>
         </tbody>
       </v-table>
     </div>
     <v-pagination
       v-model="page"
-        :length="totalPages"
-        @input="getInventories"
-        class="my-4"
+      :length="totalPages"
+      @input="getInventories"
+      class="my-4"
     ></v-pagination>
   </v-container>
 </template>
@@ -73,7 +129,7 @@
 import { ref, onMounted, nextTick } from "vue";
 import { useAuth } from "~/store/auth";
 import Swal from "sweetalert2";
-import moment from 'moment-timezone';
+import moment from "moment-timezone";
 
 const inventories = ref([]);
 const sales = ref([]);
@@ -84,13 +140,19 @@ const userStore = useAuth();
 const page = ref(1);
 const pageSize = ref(10);
 const totalPages = ref(1);
+const filters = ref({
+  salesId: "",
+  productName: "",
+  status: "",
+  created_at: "",
+});
 
-
+const noRecordsFound = ref(false);
 
 const getInventories = async () => {
   try {
     const { data, error } = await useFetch(
-      `${CONFIG.public.API_BASE_URL}inventories?page=${page.value}&pageSize=${pageSize.value}`,
+      `${CONFIG.public.API_BASE_URL}inventories?page=${page.value}&pageSize=${pageSize.value}&status=${filters.value.status}&salesId=${filters.value.salesId}&productName=${filters.value.productName}&createdAt=${filters.value.created_at}`,
       {
         method: "GET",
       },
@@ -130,6 +192,11 @@ const combineData = () => {
   }
 };
 
+const updatePage = (newPage) => {
+  page.value = newPage;
+  getInventories();
+};
+
 onMounted(async () => {
   await nextTick();
   await getInventories();
@@ -151,7 +218,7 @@ const confirmLogout = () => {
   });
 };
 
-watch([page, pageSize], () => {
+watch([page, pageSize, filters], () => {
   getInventories();
 });
 
@@ -161,14 +228,18 @@ const handleLogout = () => {
 };
 
 const goHome = () => {
-  router.push('/user/gestion')
+  router.push("/user/gestion");
+};
+
+const registerInve = () => {
+  router.push("/inventory/register")
 }
 </script>
 
 <style scoped>
 .table-container {
   max-height: 400px;
-  overflow-y: auto; 
+  overflow-y: auto;
   margin-left: 10%;
 }
 </style>
