@@ -57,9 +57,9 @@
         <thead>
           <tr>
             <th class="text-left">
-              Ventas
               <v-col>
                 <v-text-field
+                  style="width:200px ;"
                   v-model="filters.salesId"
                   clearable
                   @input="updatePage(1)"
@@ -69,34 +69,46 @@
               </v-col>
             </th>
             <th class="text-left">
-              Producto vendido
               <v-col>
                 <v-text-field
+                  style="width:200px ;"
                   v-model="filters.productName"
                   clearable
                   @input="updatePage(1)"
+                  label="Producto vendido"
                 ></v-text-field>
               </v-col>
             </th>
             <th class="text-left">
-              Estado de producto
               <v-col>
                 <v-text-field
+                  style="width:200px ;"
                   v-model="filters.status"
                   clearable
-                  single-line
-                  hide-details
                   @input="updatePage(1)"
+                  label="Estado de producto"
                 ></v-text-field>
               </v-col>
             </th>
             <th class="text-left">
-              Fecha de registro
               <v-col>
                 <v-text-field
+                style="width:200px ;"
                 v-model="filters.created_at"
                 clearable
                 @input="updatePage(1)"
+                label="Fecha de registro"
+                ></v-text-field>
+              </v-col>
+            </th>
+            <th class="text-left">
+              <v-col>
+                <v-text-field
+                style="width:200px ;"
+                v-model="filters.updated_at"
+                clearable
+                @input="updatePage(1)"
+                label="Fecha actualización"
                 ></v-text-field>
               </v-col>
             </th>
@@ -111,12 +123,21 @@
             </td>
             <td>
               {{
-                moment(inve.createdAt).tz("America/Bogota").format("DD/MM/YYYY")
+                moment(inve.createdAt).tz("America/Bogota").format("DD/MM/YYYY/ hh:mm A")
               }}
             </td>
-              <v-icon>
-                mdi-pencil
-              </v-icon>
+            <td>
+              {{
+                moment(inve.updatedAt).tz("America/Bogota").format("DD/MM/YYYY/ hh:mm A")
+              }}
+            </td>
+            <v-tooltip text="Editar">
+              <template v-slot:activator="{ props }">
+                <v-icon v-bind="props" @click="editInventory(inve)">
+                  mdi-pencil
+                </v-icon>
+              </template>
+            </v-tooltip>
               <v-icon>
                 mdi-delete
               </v-icon>
@@ -131,6 +152,19 @@
       class="my-4"
     ></v-pagination>
   </v-container>
+  <v-dialog v-model="showEditDialog" max-width="600px">
+      <v-card>
+        <v-card-title class="headline">Editar el estado de Inventario</v-card-title>
+        <v-card-text>
+          <InventoryUpdate :inventory="editingInventory" @save="handleSave"/>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="blue darken-1" text @click="showEditDialog = false">
+            Cancelar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 </template>
 
 <script setup>
@@ -138,6 +172,8 @@ import { ref, onMounted, nextTick } from "vue";
 import { useAuth } from "~/store/auth";
 import Swal from "sweetalert2";
 import moment from "moment-timezone";
+import InventoryUpdate from "./InventoryUpdate.vue";
+
 
 const inventories = ref([]);
 const sales = ref([]);
@@ -145,6 +181,8 @@ const combinedData = ref([]);
 const CONFIG = useRuntimeConfig();
 const router = useRouter();
 const userStore = useAuth();
+const showEditDialog = ref(false);
+const editingInventory = ref(null);
 const page = ref(1);
 const pageSize = ref(10);
 const totalPages = ref(1);
@@ -229,6 +267,29 @@ const confirmLogout = () => {
 watch([page, pageSize, filters], () => {
   getInventories();
 });
+
+const editInventory = (inve) => {
+  if(inve && inve.id) {
+    editingInventory.value = { ...inve };
+    showEditDialog.value = true;
+  } else {
+    console.error("No se puede editar");
+  }
+}
+
+const handleSave = async (updatedInventory) => {
+  if (updatedInventory) {
+    const index = inventories.value.findIndex(
+      (item) => item.id === updatedInventory.id
+    );
+    if (index !== -1) {
+      inventories.value[index] = updatedInventory;
+    }
+  }
+  await getInventories();
+  showEditDialog.value = false;
+};
+
 
 const handleLogout = () => {
   userStore.logout();
