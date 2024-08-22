@@ -8,6 +8,7 @@ const { checkAdmindRole } = require('../middlewares/auth.handler');
 const {
   getInventorySchema,
   createInventorySchema,
+  updateInventorySchema
 } = require('../schemas/inventory.schema');
 
 const router = express.Router();
@@ -59,4 +60,31 @@ router.post(
   },
 );
 
+router.patch('/:id',
+  passport.authenticate('jwt', { session: false }),
+  validatorHandler(getInventorySchema, 'params'),
+  validatorHandler(updateInventorySchema, 'body'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const body = req.body;
+      const userId = req.user.id;
+      res.json(await service.update(id, body,userId))
+    } catch (error) {
+      next(error);
+    }
+  }
+)
+
+router.delete(
+  '/:id',
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      res.json(await service.delete(id));
+    } catch (error) {
+      next(error);
+    }
+  }
+)
 module.exports = router;

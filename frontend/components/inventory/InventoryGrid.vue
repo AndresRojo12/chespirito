@@ -94,24 +94,32 @@
               Fecha de registro
               <v-col>
                 <v-text-field
-                  v-model="filters.created_at"
-                  clearable
-                  @input="updatePage(1)"
+                v-model="filters.created_at"
+                clearable
+                @input="updatePage(1)"
                 ></v-text-field>
               </v-col>
             </th>
+            <th class="text-left">Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="inve in combinedData" :key="inve.id">
             <td>{{ inve.salesId }}</td>
             <td>{{ inve.productName }}</td>
-            <td>{{ inve.status }}</td>
+            <td>{{ inve.status }}
+            </td>
             <td>
               {{
                 moment(inve.createdAt).tz("America/Bogota").format("DD/MM/YYYY")
               }}
             </td>
+              <v-icon>
+                mdi-pencil
+              </v-icon>
+              <v-icon>
+                mdi-delete
+              </v-icon>
           </tr>
         </tbody>
       </v-table>

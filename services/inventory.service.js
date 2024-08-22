@@ -92,12 +92,19 @@ class InventoryService {
     return inventory;
   }
 
-  async update() {
+  async update(id, changes, userId) {
+    const inventory = await this.findOne(id);
+    changes.updatedBy = userId;
+    changes.updatedAt = new Date();
 
+    await inventory.update(changes);
+    return inventory;
   }
 
-  async delete() {
-
+  async delete(id) {
+    const inventory = await this.findOne(id);
+    await inventory.destroy();
+    return { id };
   }
 }
 

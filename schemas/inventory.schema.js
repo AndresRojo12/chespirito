@@ -13,8 +13,14 @@ const getInventorySchema = Joi.object({
   id: id.required(),
 });
 
+const updateInventorySchema = Joi.object({
+  salesId: salesId,
+  status: status
+});
+
 
 module.exports = {
   createInventorySchema,
   getInventorySchema,
+  updateInventorySchema
 }
