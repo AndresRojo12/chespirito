@@ -1,28 +1,33 @@
 <template>
-  <v-form>
+  <v-form
+    style="background-color:#009c8c  ;">
     <v-text-field
+      style="color:aliceblue ;"
       v-model="localProduct.name"
       label="Nombre"
       required
     />
     <v-textarea
+      style="color:aliceblue ;"
       v-model="localProduct.description"
       label="Descripción"
       rows="3"
       required
     />
     <v-text-field
+      style="color:aliceblue ;"
       v-model="localProduct.price"
       label="Precio"
       required
     />
     <v-file-input
+      style="color:aliceblue ;"
       v-model="image"
       label="Seleccionar imagen"
       accept="image/*"
       prepend-icon="mdi-image"
     />
-    <v-btn color="green" @click="updateProduct">Guardar</v-btn>
+    <v-btn color="#009c8c " @click="updateProduct">Guardar</v-btn>
   </v-form>
 </template>
 

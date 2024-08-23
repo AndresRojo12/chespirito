@@ -1,67 +1,116 @@
 <template>
-  <v-layout>
-    <v-navigation-drawer
-      style="background-color: #aeb0b3; max-width: 155px"
-      expand-on-hover
-      rail
+  <div class="fond">
+    <h1
+      style="display: flex;
+      margin-top:0%;
+      background-color: #009c8c; justify-content: center"
     >
-      <v-list>
-        <v-list-item prepend-icon="mdi-account-circle"
-        :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
-        ></v-list-item>
-      </v-list>
+      Antigüedades Chespirito
+    </h1>
+    <v-layout>
+      <v-navigation-drawer
+        style="background-color: #009c8c; max-width: 155px"
+        expand-on-hover
+        rail
+      >
+        <v-list>
+          <v-list-item
+            prepend-icon="mdi-account-circle"
+            :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
+          ></v-list-item>
+        </v-list>
 
-      <v-divider></v-divider>
+        <v-divider></v-divider>
 
-      <v-list density="compact" nav>
-        <v-list-item
-          prepend-icon="mdi-home-city"
-          title="Inicio"
-          @click="goHome"
-        ></v-list-item>
+        <v-list density="compact" nav>
+          <v-list-item
+            prepend-icon="mdi-home-city"
+            title="Inicio"
+            @click="goHome"
+          ></v-list-item>
 
-        <v-list-item
-          prepend-icon="mdi-cash"
-          title="Productos"
-          @click.prevent="products"
-        ></v-list-item>
+          <v-list-item
+            prepend-icon="mdi-cash"
+            title="Productos"
+            @click.prevent="products"
+          ></v-list-item>
 
-        <v-list-item
-          @click.prevent="confirmLogout"
-          prepend-icon="mdi-logout"
-          title="Salir"
-        ></v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-  </v-layout>
-  <v-container style="width: 600px; margin-top: 2%; border-style: groove">
-    <h1>Registro de productos</h1>
-    <form style="margin-top: 5%" @submit.prevent="registerProduct">
-      <v-text-field v-model="name" label="Nombre" required></v-text-field>
-      <v-textarea
-        v-model="description"
-        label="Descripción"
-        required
-      ></v-textarea>
-      <v-text-field v-model="price" label="Precio" required></v-text-field>
-      <v-file-input
-        v-model="image"
-        label="Seleccionar Imagen"
-        accept="image/*"
-        required
-      ></v-file-input>
-      <v-autocomplete
-        v-model="selectedCategory"
-        :items="categories"
-        item-title="name"
-        item-value="id"
-        label="Seleccionar Categoría"
-        required
-      ></v-autocomplete>
-      <v-btn type="submit">Enviar</v-btn>
-      <v-btn @click="handleReset">Limpiar</v-btn>
-    </form>
-  </v-container>
+          <v-list-item
+            @click.prevent="confirmLogout"
+            prepend-icon="mdi-logout"
+            title="Salir"
+          ></v-list-item>
+        </v-list>
+      </v-navigation-drawer>
+    </v-layout>
+    <v-container
+      style="
+        width: 340px;
+        margin-top: 4%;
+        border-style: groove;
+        border-radius: 6%;
+        background-color: #009c8c;
+      "
+    >
+      <h1
+        style="text-align: center; font-size: larger; color: rgb(217, 217, 236)"
+      >
+        Registro de productos
+      </h1>
+      <v-sheet class="mx-auto" width="300" style="border-style: groove">
+        <form
+          style="margin-top: 5%; background-color: #009c8c"
+          @submit.prevent="registerProduct"
+        >
+          <v-text-field
+            v-model="name"
+            style="background-color: #009c8c; color: rgb(217, 217, 236)"
+            label="Nombre"
+            required
+          >
+          </v-text-field>
+          <v-textarea
+            style="background-color: #009c8c; color: rgb(217, 217, 236)"
+            v-model="description"
+            label="Descripción"
+            required
+          ></v-textarea>
+          <v-text-field
+            v-model="price"
+            label="Precio"
+            required
+            style="background-color: #009c8c; color: rgb(217, 217, 236)"
+          ></v-text-field>
+          <v-file-input
+            v-model="image"
+            style="background-color: #009c8c; color: rgb(217, 217, 236)"
+            label="Seleccionar Imagen"
+            accept="image/*"
+            required
+          ></v-file-input>
+          <v-autocomplete
+            style="background-color: #009c8c; color: rgb(217, 217, 236)"
+            v-model="selectedCategory"
+            :items="categories"
+            item-title="name"
+            item-value="id"
+            label="Seleccionar Categoría"
+            required
+          ></v-autocomplete>
+          <v-btn
+            style="background-color: #009c8c; color: aliceblue"
+            type="submit"
+            >Enviar</v-btn
+          >
+          <v-btn
+            style="background-color: #009c8c; color: aliceblue"
+            @click="handleReset"
+            >Limpiar</v-btn
+          >
+        </form>
+      </v-sheet>
+    </v-container>
+  </div>
 </template>
 
 <script setup>
@@ -78,7 +127,6 @@ const categories = ref([]);
 const selectedCategory = ref("");
 const router = useRouter();
 const userStore = useAuth();
-
 
 const fetchCategories = async () => {
   try {
@@ -192,9 +240,15 @@ onMounted(async () => {
 
 const goHome = () => {
   router.push("/user/gestion");
-}
+};
 
 const products = () => {
-  router.push('/product/list')
-}
+  router.push("/product/list");
+};
 </script>
+
+<style scoped>
+.fond {
+  background-color:#009c8c ;
+}
+</style>

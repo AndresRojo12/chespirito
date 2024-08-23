@@ -1,8 +1,9 @@
 <template>
-  <v-card-title class="headline">Eliminar Producto</v-card-title>
-  <v-card-text> ¿Estás seguro de que deseas eliminar el producto </v-card-text>
+  <v-card-title style="color:aliceblue ;" class="headline">Eliminar Producto</v-card-title>
+  <v-card-text style="color:aliceblue ;"> ¿Estás seguro de que deseas eliminar el producto </v-card-text>
   <v-card-actions>
-    <v-btn color="green darken-1" text @click.prevent="deleteProduct"
+    <v-btn style="background-color:#009c8c ;
+      color: aliceblue;" text @click.prevent="deleteProduct"
       >Sí, eliminar</v-btn
     >
   </v-card-actions>

@@ -1,7 +1,7 @@
-<template>
-   <v-card style="max-height: 10rem">
+<template style="color:blue">
+  <v-card>
     <h1
-      style="display: flex; background-color: #aeb0b3; justify-content: center"
+      style="display: flex; background-color: #009c8c; justify-content: center"
     >
       Chespirito
     </h1>
@@ -9,13 +9,14 @@
 
   <v-layout>
     <v-navigation-drawer
-      style="background-color: #aeb0b3; max-width: 155px"
+      style="background-color: #009c8c; max-width: 155px"
       expand-on-hover
       rail
     >
       <v-list>
-        <v-list-item prepend-icon="mdi-account-circle"
-        :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
+        <v-list-item
+          prepend-icon="mdi-account-circle"
+          :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
         ></v-list-item>
       </v-list>
 
@@ -42,25 +43,53 @@
       </v-list>
     </v-navigation-drawer>
   </v-layout>
-  <v-container style="width: 600px; margin-top: 2%; border-style: groove">
-    <h1>Hola registro de inventario</h1>
-    <form style="margin-top: 5%" @submit.prevent="registerInventory">
-      <v-autocomplete
-        v-model="sales"
-        :items="salesId"
-        item-title="products.name"
-        item-value="id"
-        label="Seleccionar producto vendido"
-        required>
-      </v-autocomplete>
-      <v-text-field
-        v-model="status"
-        label="Estado"
-        required>
-      </v-text-field>
-      <v-btn type="submit">Enviar</v-btn>
-      <v-btn @click="handleReset">Limpiar</v-btn>
-    </form>
+  <v-container
+    style="
+      width: 340px;
+      margin-top: 4%;
+      border-style: groove;
+      border-radius: 6%;
+      background-color: #009c8c;
+      height: 100%;
+    "
+  >
+    <h1
+      style="text-align: center; font-size: larger; color: rgb(217, 217, 236)"
+    >
+      Registro de inventario
+    </h1>
+    <v-sheet class="mx-auto" width="300" style="border-style: groove">
+      <form
+        style="margin-top: 5%; background-color: #009c8c"
+        @submit.prevent="registerInventory"
+      >
+        <v-autocomplete
+          style="color: aliceblue"
+          v-model="sales"
+          :items="salesId"
+          item-title="products.name"
+          item-value="id"
+          label="Seleccionar producto vendido"
+          required
+        >
+        </v-autocomplete>
+        <v-text-field
+          style="color: aliceblue"
+          v-model="status"
+          label="Estado"
+          required
+        >
+        </v-text-field>
+        <v-btn style="background-color: #009c8c; color: aliceblue" type="submit"
+          >Enviar</v-btn
+        >
+        <v-btn
+          style="background-color: #009c8c; color: aliceblue"
+          @click="handleReset"
+          >Limpiar</v-btn
+        >
+      </form>
+    </v-sheet>
   </v-container>
 </template>
 
@@ -77,18 +106,17 @@ const userStore = useAuth();
 const router = useRouter();
 
 const getVentas = async () => {
-  const { data, error } = await useFetch(`${CONFIG.public.API_BASE_URL}sales`,
-  );
+  const { data, error } = await useFetch(`${CONFIG.public.API_BASE_URL}sales`);
 
-  if(data.value !=null) {
+  if (data.value != null) {
     salesId.value = data.value.data.map((e) => ({
       id: e.id,
       products: e.products,
-    }))
-  }else {
+    }));
+  } else {
     throw new Error(error.value.message);
   }
-}
+};
 
 const registerInventory = async () => {
   const { data, error } = await useFetch(
@@ -104,7 +132,7 @@ const registerInventory = async () => {
       },
     },
   );
-  if (data.value = !null) {
+  if ((data.value = !null)) {
     Swal.fire({
       title: "Inventario registrado con éxito!",
       icon: "success",
@@ -131,11 +159,11 @@ const handleReset = () => {
 
 const goHome = () => {
   router.push("/user/gestion");
-}
+};
 
 const homeInventory = () => {
-  router.push("/inventory/list")
-}
+  router.push("/inventory/list");
+};
 
 const confirmLogout = () => {
   Swal.fire({
@@ -155,5 +183,7 @@ const confirmLogout = () => {
 onMounted(async () => {
   await nextTick();
   await getVentas();
-})
+});
 </script>
+
+<style scoped></style>
