@@ -7,10 +7,9 @@
     </h1>
   </v-card>
 
-    <v-btn @click.prevent="registerInve"
-      style="margin-left: 10%;
-      margin-top: 2%;"> Registrar Inventario
-    </v-btn>
+  <v-btn @click.prevent="registerInve" style="margin-left: 10%; margin-top: 2%">
+    Registrar Inventario
+  </v-btn>
   <v-container style="margin-top: 0px">
     <v-layout>
       <v-navigation-drawer
@@ -42,7 +41,7 @@
         </v-list>
       </v-navigation-drawer>
 
-      <v-main style="height: 250px"></v-main>
+      <v-main style="height: 100px"></v-main>
     </v-layout>
     <v-select
       v-model="pageSize"
@@ -59,7 +58,7 @@
             <th class="text-left">
               <v-col>
                 <v-text-field
-                  style="width:200px ;"
+                  style="width: 200px"
                   v-model="filters.salesId"
                   clearable
                   @input="updatePage(1)"
@@ -71,7 +70,7 @@
             <th class="text-left">
               <v-col>
                 <v-text-field
-                  style="width:200px ;"
+                  style="width: 200px"
                   v-model="filters.productName"
                   clearable
                   @input="updatePage(1)"
@@ -82,7 +81,7 @@
             <th class="text-left">
               <v-col>
                 <v-text-field
-                  style="width:200px ;"
+                  style="width: 200px"
                   v-model="filters.status"
                   clearable
                   @input="updatePage(1)"
@@ -93,22 +92,22 @@
             <th class="text-left">
               <v-col>
                 <v-text-field
-                style="width:200px ;"
-                v-model="filters.created_at"
-                clearable
-                @input="updatePage(1)"
-                label="Fecha de registro"
+                  style="width: 200px"
+                  v-model="filters.created_at"
+                  clearable
+                  @input="updatePage(1)"
+                  label="Fecha de registro"
                 ></v-text-field>
               </v-col>
             </th>
             <th class="text-left">
               <v-col>
                 <v-text-field
-                style="width:200px ;"
-                v-model="filters.updated_at"
-                clearable
-                @input="updatePage(1)"
-                label="Fecha actualización"
+                  style="width: 200px"
+                  v-model="filters.updated_at"
+                  clearable
+                  @input="updatePage(1)"
+                  label="Fecha actualización"
                 ></v-text-field>
               </v-col>
             </th>
@@ -119,16 +118,19 @@
           <tr v-for="inve in combinedData" :key="inve.id">
             <td>{{ inve.salesId }}</td>
             <td>{{ inve.productName }}</td>
-            <td>{{ inve.status }}
-            </td>
+            <td>{{ inve.status }}</td>
             <td>
               {{
-                moment(inve.createdAt).tz("America/Bogota").format("DD/MM/YYYY/ hh:mm A")
+                moment(inve.createdAt)
+                  .tz("America/Bogota")
+                  .format("DD/MM/YYYY/ hh:mm A")
               }}
             </td>
             <td>
               {{
-                moment(inve.updatedAt).tz("America/Bogota").format("DD/MM/YYYY/ hh:mm A")
+                moment(inve.updatedAt)
+                  .tz("America/Bogota")
+                  .format("DD/MM/YYYY/ hh:mm A")
               }}
             </td>
             <v-tooltip text="Editar">
@@ -138,12 +140,15 @@
                 </v-icon>
               </template>
             </v-tooltip>
-              <v-icon>
-                mdi-delete
-              </v-icon>
+            <v-icon> mdi-delete </v-icon>
           </tr>
         </tbody>
       </v-table>
+      <div v-if="noRecordsFound" style="text-align: center; margin-top: 20px">
+        <v-alert color="blue" type="warning"
+          >No se encontraron registros.</v-alert
+        >
+      </div>
     </div>
     <v-pagination
       v-model="page"
@@ -153,18 +158,20 @@
     ></v-pagination>
   </v-container>
   <v-dialog v-model="showEditDialog" max-width="600px">
-      <v-card>
-        <v-card-title class="headline">Editar el estado de Inventario</v-card-title>
-        <v-card-text>
-          <InventoryUpdate :inventory="editingInventory" @save="handleSave"/>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn color="blue darken-1" text @click="showEditDialog = false">
-            Cancelar
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <v-card>
+      <v-card-title class="headline"
+        >Editar el estado de Inventario</v-card-title
+      >
+      <v-card-text>
+        <InventoryUpdate :inventory="editingInventory" @save="handleSave" />
+      </v-card-text>
+      <v-card-actions>
+        <v-btn color="blue darken-1" text @click="showEditDialog = false">
+          Cancelar
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
@@ -173,7 +180,6 @@ import { useAuth } from "~/store/auth";
 import Swal from "sweetalert2";
 import moment from "moment-timezone";
 import InventoryUpdate from "./InventoryUpdate.vue";
-
 
 const inventories = ref([]);
 const sales = ref([]);
@@ -191,23 +197,41 @@ const filters = ref({
   productName: "",
   status: "",
   created_at: "",
+  updated_at: "",
 });
 
 const noRecordsFound = ref(false);
 
 const getInventories = async () => {
+  noRecordsFound.value = false;
   try {
     const { data, error } = await useFetch(
-      `${CONFIG.public.API_BASE_URL}inventories?page=${page.value}&pageSize=${pageSize.value}&status=${filters.value.status}&salesId=${filters.value.salesId}&productName=${filters.value.productName}&createdAt=${filters.value.created_at}`,
+      `${CONFIG.public.API_BASE_URL}inventories?page=${page.value}
+      &pageSize=${pageSize.value}&status=${filters.value.status}&salesId=${filters.value.salesId}&productName=${filters.value.productName}&createdAt=${filters.value.created_at}&updatedAt=${filters.value.updated_at}`,
       {
         method: "GET",
       },
     );
+
+    // if(error.value){
+    //   if(error.value.status === 404) {
+    //     noRecordsFound.value = true;
+    //     combinedData.value = [];
+    //   }
+    //   return;
+    // }
+
     inventories.value = data.value.data;
     totalPages.value = data.value.totalPages;
     combineData();
+
+    if (combinedData.value === null) {
+      noRecordsFound.value = true;
+      combinedData.value = [];
+    }
   } catch (error) {
     console.log(error);
+    noRecordsFound.value = true;
   }
 };
 
@@ -269,18 +293,18 @@ watch([page, pageSize, filters], () => {
 });
 
 const editInventory = (inve) => {
-  if(inve && inve.id) {
+  if (inve && inve.id) {
     editingInventory.value = { ...inve };
     showEditDialog.value = true;
   } else {
     console.error("No se puede editar");
   }
-}
+};
 
 const handleSave = async (updatedInventory) => {
   if (updatedInventory) {
     const index = inventories.value.findIndex(
-      (item) => item.id === updatedInventory.id
+      (item) => item.id === updatedInventory.id,
     );
     if (index !== -1) {
       inventories.value[index] = updatedInventory;
@@ -289,7 +313,6 @@ const handleSave = async (updatedInventory) => {
   await getInventories();
   showEditDialog.value = false;
 };
-
 
 const handleLogout = () => {
   userStore.logout();
@@ -301,8 +324,8 @@ const goHome = () => {
 };
 
 const registerInve = () => {
-  router.push("/inventory/register")
-}
+  router.push("/inventory/register");
+};
 </script>
 
 <style scoped>

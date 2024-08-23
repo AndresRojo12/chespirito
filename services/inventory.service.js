@@ -58,6 +58,16 @@ class InventoryService {
       ];
     }
 
+    if (filters.updatedAt) {
+      where[Op.and] = [
+        Sequelize.where(
+          fn('TO_CHAR', col('Inventory.updated_at'), 'YYYY-MM-DD'),
+          { [Op.iLike]: `%${filters.updatedAt}%` }
+        )
+      ];
+    }
+
+
     const { count, rows } = await models.Inventory.findAndCountAll({
       where,
       include,

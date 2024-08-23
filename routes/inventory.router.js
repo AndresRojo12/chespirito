@@ -16,13 +16,14 @@ const service = new InventoryService();
 
 router.get('/', async (req, res, next) => {
   try {
-    const { page = 1, pageSize = 10, status, createdAt,salesId,productName  } = req.query
+    const { page = 1, pageSize = 10, status, createdAt,salesId,productName,updatedAt  } = req.query
     const inventory = await service.find({
       page: parseInt(page, 10),
       pageSize: parseInt(pageSize, 10),
       filters: {
         status: status || undefined,
         createdAt: createdAt || undefined,
+        updatedAt: updatedAt || undefined,
         productName: productName || undefined,
         salesId: salesId || undefined,
 
