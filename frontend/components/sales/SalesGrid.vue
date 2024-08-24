@@ -27,7 +27,7 @@
         >
           <v-list>
             <v-list-item
-              :title="`${userStore ? userStore.user.role : 'Usuario'}`"
+              :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
               prepend-icon="mdi-account-circle"
             ></v-list-item>
           </v-list>
@@ -75,23 +75,19 @@
       <thead>
         <tr>
           <th class="text-left">
-            ID Categoría
+            Categoría
             <v-text-field
-              v-model="filters.categoryId"
+              v-model="filters.categoryName"
               label="Buscar"
-              single-line
-              hide-details
-              class="filter-input"
+              clearable
             ></v-text-field>
           </th>
           <th class="text-left">
-            ID Producto
+            Producto
             <v-text-field
-              v-model="filters.productId"
+              v-model="filters.productName"
               label="Buscar"
-              single-line
-              hide-details
-              class="filter-input"
+              clearable
             ></v-text-field>
           </th>
           <th class="text-left">
@@ -99,9 +95,7 @@
             <v-text-field
               v-model="filters.quantitySold"
               label="Buscar"
-              single-line
-              hide-details
-              class="filter-input"
+              clearable
             ></v-text-field>
           </th>
           <th class="text-left">
@@ -109,9 +103,7 @@
             <v-text-field
               v-model="filters.salePrice"
               label="Buscar"
-              single-line
-              hide-details
-              class="filter-input"
+              clearable
             ></v-text-field>
           </th>
           <th class="text-left">
@@ -119,20 +111,15 @@
             <v-text-field
               v-model="filters.date"
               label="Buscar"
-              single-line
-              hide-details
-              class="filter-input"
+              clearable
             ></v-text-field>
           </th>
         </tr>
       </thead>
       <tbody>
-        <tr v-if="filteredData.length === 0">
-          <td colspan="5" class="text-center">No se encontraron resultados</td>
-        </tr>
         <tr v-for="sal in filteredData" :key="sal.id">
-          <td>{{ sal.categoryId }}</td>
-          <td>{{ sal.productId }}</td>
+          <td>{{ sal.categoryName }}</td>
+          <td>{{ sal.productName }}</td>
           <td>{{ sal.quantitySold }}</td>
           <td>{{ sal.salePrice }}</td>
           <td>
@@ -143,6 +130,11 @@
         </tr>
       </tbody>
     </v-table>
+    <div v-if="filteredData.length === 0" style="text-align: center">
+      <v-alert color="blue" type="warning"
+        >No se encontraron registros.</v-alert
+      >
+    </div>
   </div>
   <div class="text-center">
     <v-container>
@@ -180,8 +172,8 @@ const products = ref([]);
 const combinedData = ref([]);
 
 const filters = ref({
-  categoryId: "",
-  productId: "",
+  categoryName: "",
+  productName: "",
   quantitySold: "",
   salePrice: "",
   date: "",
@@ -189,26 +181,32 @@ const filters = ref({
 
 const filteredData = computed(() => {
   return combinedData.value.filter((sal) => {
-    const matchesCategoryId = sal.categoryId
-      .toString()
-      .includes(filters.value.categoryId);
-    const matchesProductId = sal.productId
-      .toString()
-      .includes(filters.value.productId);
-    const matchesQuantitySold = sal.quantitySold
-      .toString()
-      .includes(filters.value.quantitySold);
-    const matchesSalePrice = sal.salePrice
-      .toString()
-      .includes(filters.value.salePrice);
-
+    const matchesCategoryId = filters.value.categoryName
+      ? sal.categoryName
+          .toString()
+          .toLowerCase()
+          .includes(filters.value.categoryName.toLowerCase())
+      : true;
+    const matchesProductId = filters.value.productName
+      ? sal.productName
+          .toString()
+          .toLowerCase()
+          .includes(filters.value.productName.toLowerCase())
+      : true;
+    const matchesQuantitySold = filters.value.quantitySold
+      ? sal.quantitySold
+          .toString()
+          .includes(filters.value.quantitySold.toString())
+      : true;
+    const matchesSalePrice = filters.value.salePrice
+      ? sal.salePrice.toString().includes(filters.value.salePrice.toString())
+      : true;
     let matchesDate = true;
     if (filters.value.date) {
       const filterDate = moment(filters.value.date, "DD/MM/YYYY");
       const saleDate = moment(sal.createdAt).tz("America/Bogota");
       matchesDate = saleDate.isSame(filterDate, "day");
     }
-
     return (
       matchesCategoryId &&
       matchesProductId &&
@@ -292,12 +290,8 @@ onMounted(async () => {
   await getProducts();
 });
 
-watch(page, async () => {
-  await getSales();
-});
-
-watch(pageSize, async () => {
-  await getSales();
+watch([page, pageSize, filters], () => {
+  getSales();
 });
 
 const salesRegister = () => {
