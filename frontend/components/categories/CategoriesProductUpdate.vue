@@ -1,10 +1,6 @@
 <template>
   <v-form>
-    <v-text-field
-      v-model="localCategory.name"
-      label="Nombre"
-      required
-    />
+    <v-text-field v-model="localCategory.name" label="Nombre" required />
     <v-textarea
       v-model="localCategory.description"
       label="Descripción"
@@ -22,65 +18,67 @@
   </v-form>
 </template>
 
-
 <script setup>
-import { ref, watch } from 'vue';
-import { defineProps, defineEmits } from 'vue';
+import { ref, watch } from "vue";
+import { defineProps, defineEmits } from "vue";
 import Swal from "sweetalert2";
 const CONFIG = useRuntimeConfig();
 const image = ref(null);
 
 const props = defineProps({
-  category: Object
+  category: Object,
 });
 
-const emit = defineEmits(['save']);
+const emit = defineEmits(["save"]);
 
 const localCategory = ref({ ...props.category });
 
-watch(() => props.category, (newCategory) => {
-  localCategory.value = { ...newCategory };
-});
+watch(
+  () => props.category,
+  (newCategory) => {
+    localCategory.value = { ...newCategory };
+  },
+);
 
 const updateCategory = async () => {
   try {
     const formData = new FormData();
-    formData.append('name', localCategory.value.name);
-    formData.append('description', localCategory.value.description);
+    formData.append("name", localCategory.value.name);
+    formData.append("description", localCategory.value.description);
     if (image.value) {
-      formData.append('image', image.value);
+      formData.append("image", image.value);
     }
 
-    const response = await fetch(`${CONFIG.public.API_BASE_URL}categories/${props.category.id}`, {
-      method: 'PATCH',
-      body: formData,
-      headers: {
-        'Accept': 'application/json',
-      }
-    });
+    const response = await fetch(
+      `${CONFIG.public.API_BASE_URL}categories/${props.category.id}`,
+      {
+        method: "PATCH",
+        body: formData,
+        headers: {
+          Accept: "application/json",
+        },
+      },
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     Swal.fire({
-      title:'Se actualizo',
-      text:'Actualizada correctamente',
-      icon:'success',
-      confirmButtonText:'Aceptar'
+      title: "Se actualizo",
+      text: "Actualizada correctamente",
+      icon: "success",
+      confirmButtonText: "Aceptar",
     });
-    emit('save', true, localCategory.value.id, localCategory.value.name);
-
+    emit("save", true, localCategory.value.id, localCategory.value.name);
   } catch (error) {
     Swal.fire({
-      title:'error',
-      text:'No se pudo Actualizar',
-      icon:'error',
-      confirmButtonText:'Aceptar'
+      title: "error",
+      text: "No se pudo Actualizar",
+      icon: "error",
+      confirmButtonText: "Aceptar",
     });
-    emit('save', false, null);
+    emit("save", false, null);
   }
 };
-
-
 </script>

@@ -37,7 +37,7 @@ const deleteCategory = async () => {
         icon: "success",
         confirmButtonText: "Aceptar",
       });
-      emit("deleted", true, localCategory.value.id);
+      emit("deleted", localCategory.value.id);
     } else {
       Swal.fire({
         title: "Error",
@@ -45,7 +45,7 @@ const deleteCategory = async () => {
         icon: "error",
         confirmButtonText: "Aceptar",
       });
-      //emit("deleted", false, null);
+      emit("deleted", false, null);
     }
   } catch (error) {
     console.log("Error", error);
