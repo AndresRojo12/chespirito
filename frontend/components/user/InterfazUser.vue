@@ -137,14 +137,14 @@
         </nuxt-link>
         <v-tooltip text="">
           <template v-slot:activator="{ props }">
-            <v-icon v-bind="props" @click="editCategory(cate)">
+            <v-icon style="color:rgba(228, 192, 11, 0.663);" v-bind="props" @click="editCategory(cate)">
               mdi-pencil
             </v-icon>
           </template>
         </v-tooltip>
         <v-tooltip text="Eliminar">
           <template v-slot:activator="{ props }">
-            <v-icon v-bind="props" @click="confirmDelete(cate)">
+            <v-icon style="color:darkslategrey" v-bind="props" @click="confirmDelete(cate)">
               mdi-delete
             </v-icon>
           </template>

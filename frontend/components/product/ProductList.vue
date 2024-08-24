@@ -114,14 +114,14 @@
         </button>
         <v-tooltip text="Editar">
           <template v-slot:activator="{ props }">
-            <v-icon v-bind="props" @click="editProduct(pro)">
+            <v-icon style="color:rgba(228, 192, 11, 0.663);" v-bind="props" @click="editProduct(pro)">
               mdi-pencil
             </v-icon>
           </template>
         </v-tooltip>
         <v-tooltip text="Eliminar">
           <template v-slot:activator="{ props }">
-            <v-icon v-bind="props" @click="confirmDelete(pro)">
+            <v-icon style="color:darkslategrey" v-bind="props" @click="confirmDelete(pro)">
               mdi-delete
             </v-icon>
           </template>
