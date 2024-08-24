@@ -1,12 +1,12 @@
 <template>
   <v-form>
     <v-text-field
-    style="color:white ;"
+    style="color:#009c8c ;"
      v-model="localInventory.status"
      label="Estado de producto">
     </v-text-field>
-    <v-btn style="background-color:#009c8c;
-    color: white; " @click.prevent="updateInventory">Guardar</v-btn>
+    <v-btn style="background-color:white;
+    color:#009c8c; " @click.prevent="updateInventory">Guardar</v-btn>
   </v-form>
 </template>
 

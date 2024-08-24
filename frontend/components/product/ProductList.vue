@@ -145,14 +145,16 @@
       </v-container>
       <v-dialog v-model="showEditDialog" max-width="300px">
         <v-card
-          style="background-color:#009c8c;
-          border-radius: 6%;">
-          <v-card-title style="color:aliceblue;" class="headline">Editar Producto</v-card-title>
+          style="background-color:white;
+          border-style:groove;
+          border-radius: 6%;
+          border-color:#009c8c;">
+          <v-card-title style="color:#009c8c;" class="headline">Editar Producto</v-card-title>
           <v-card-text>
             <ProductUpdate :product="editingProduct" @save="handleSave" />
           </v-card-text>
           <v-card-actions>
-            <v-btn style="color:aliceblue;" text @click="showEditDialog = false">
+            <v-btn style="color:#009c8c;" text @click="showEditDialog = false">
               Cancelar
             </v-btn>
           </v-card-actions>

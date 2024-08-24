@@ -53,28 +53,29 @@
         margin-top: 4%;
         border-style: groove;
         border-radius: 6%;
-        background-color: #009c8c;
+        border-color: #009c8c;
+        background-color:white;
       "
     >
       <h1
-        style="text-align: center; font-size: larger; color: rgb(217, 217, 236)"
+        style="text-align: center; font-size: larger; color:#009c8c"
       >
         Registro de productos
       </h1>
       <v-sheet class="mx-auto" width="300" style="border-style: groove">
         <form
-          style="margin-top:2%; background-color: #009c8c"
+          style="margin-top:2%; "
           @submit.prevent="registerProduct"
         >
           <v-text-field
             v-model="name"
-            style="background-color: #009c8c; color: rgb(217, 217, 236)"
+            style="background-color:white; color:#009c8c"
             label="Nombre"
             required
           >
           </v-text-field>
           <v-textarea
-            style="background-color: #009c8c; color: rgb(217, 217, 236)"
+            style="background-color:white; color:#009c8c"
             v-model="description"
             label="Descripción"
             required
@@ -83,17 +84,17 @@
             v-model="price"
             label="Precio"
             required
-            style="background-color: #009c8c; color: rgb(217, 217, 236)"
+            style="background-color: white; color:#009c8c"
           ></v-text-field>
           <v-file-input
             v-model="image"
-            style="background-color: #009c8c; color: rgb(217, 217, 236)"
+            style="background-color:white; color:#009c8c"
             label="Seleccionar Imagen"
             accept="image/*"
             required
           ></v-file-input>
           <v-autocomplete
-            style="background-color: #009c8c; color: rgb(217, 217, 236)"
+            style="background-color:white; color:#009c8c"
             v-model="selectedCategory"
             :items="categories"
             item-title="name"
@@ -102,12 +103,12 @@
             required
           ></v-autocomplete>
           <v-btn
-            style="background-color: #009c8c; color: aliceblue"
+            style="background-color:white; color:#009c8c"
             type="submit"
             >Enviar</v-btn
           >
           <v-btn
-            style="background-color: #009c8c; color: aliceblue"
+            style="background-color:white; color:#009c8c"
             @click="handleReset"
             >Limpiar</v-btn
           >

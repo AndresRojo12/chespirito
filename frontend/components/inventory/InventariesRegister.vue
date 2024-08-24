@@ -58,22 +58,24 @@
         margin-top: 4%;
         border-style: groove;
         border-radius: 6%;
-        background-color: #009c8c;
+        border-color: #009c8c;
+        background-color: white;
         height: 100%;
       "
     >
       <h1
-        style="text-align: center; font-size: larger; color: rgb(217, 217, 236)"
+        style="text-align: center; font-size: larger; color:#009c8c"
       >
         Registro de inventario
       </h1>
       <v-sheet class="mx-auto" width="300" style="border-style: groove;">
         <form
-          style="margin-top: 10%; background-color: #009c8c"
+          style="margin-top: 10%; background-color:white;
+          "
           @submit.prevent="registerInventory"
         >
           <v-autocomplete
-            style="color: aliceblue"
+            style="color:#009c8c"
             v-model="sales"
             :items="salesId"
             item-title="products.name"
@@ -83,19 +85,19 @@
           >
           </v-autocomplete>
           <v-text-field
-            style="color: aliceblue"
+            style="color:#009c8c"
             v-model="status"
             label="Estado"
             required
           >
           </v-text-field>
           <v-btn
-            style="background-color: #009c8c; color: aliceblue"
+            style="background-color:white; color:#009c8c"
             type="submit"
             >Enviar</v-btn
           >
           <v-btn
-            style="background-color: #009c8c; color: aliceblue"
+            style="background-color:white; color:#009c8c"
             @click="handleReset"
             >Limpiar</v-btn
           >

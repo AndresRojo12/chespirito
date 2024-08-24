@@ -67,7 +67,6 @@
       </v-select>
       <div class="table-container">
         <v-table style="width: 100%;
-        border-radius: 2%;
         color: #009c8c;">
           <thead>
             <tr>
@@ -176,15 +175,15 @@
     </v-container>
     <v-dialog v-model="showEditDialog" max-width="300px">
       <v-card style="border-radius:6%;
-      background-color: #009c8c;">
-        <v-card-title style="color:white;" class="headline"
+      background-color:white">
+        <v-card-title style="color:#009c8c;" class="headline"
           >Editar el estado de Inventario</v-card-title
         >
         <v-card-text>
           <InventoryUpdate :inventory="editingInventory" @save="handleSave" />
         </v-card-text>
         <v-card-actions>
-          <v-btn style="background-color:#009c8c;" color="white" text @click="showEditDialog = false">
+          <v-btn style="background-color:white; color: #009c8c;" text @click="showEditDialog = false">
             Cancelar
           </v-btn>
         </v-card-actions>
