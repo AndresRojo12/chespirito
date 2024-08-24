@@ -1,96 +1,105 @@
-<template style="color:blue">
-  <v-card>
-    <h1
-      style="display: flex; background-color: #009c8c; justify-content: center"
-    >
-      Chespirito
-    </h1>
-  </v-card>
-
-  <v-layout>
-    <v-navigation-drawer
-      style="background-color: #009c8c; max-width: 155px"
-      expand-on-hover
-      rail
-    >
-      <v-list>
-        <v-list-item
-          prepend-icon="mdi-account-circle"
-          :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
-        ></v-list-item>
-      </v-list>
-
-      <v-divider></v-divider>
-
-      <v-list density="compact" nav>
-        <v-list-item
-          prepend-icon="mdi-home-city"
-          title="Inicio"
-          @click="goHome"
-        ></v-list-item>
-
-        <v-list-item
-          prepend-icon="mdi-cash"
-          title="Inventarios"
-          @click.prevent="homeInventory"
-        ></v-list-item>
-
-        <v-list-item
-          @click.prevent="confirmLogout"
-          prepend-icon="mdi-logout"
-          title="Salir"
-        ></v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-  </v-layout>
-  <v-container
-    style="
-      width: 340px;
-      margin-top: 4%;
-      border-style: groove;
-      border-radius: 6%;
-      background-color: #009c8c;
-      height: 100%;
-    "
-  >
-    <h1
-      style="text-align: center; font-size: larger; color: rgb(217, 217, 236)"
-    >
-      Registro de inventario
-    </h1>
-    <v-sheet class="mx-auto" width="300" style="border-style: groove">
-      <form
-        style="margin-top: 5%; background-color: #009c8c"
-        @submit.prevent="registerInventory"
+<template>
+  <div class="custom-background">
+    <v-card>
+      <h1
+        style="
+          display: flex;
+          background-color: #009c8c;
+          justify-content: center;
+          color:aliceblue
+        "
       >
-        <v-autocomplete
-          style="color: aliceblue"
-          v-model="sales"
-          :items="salesId"
-          item-title="products.name"
-          item-value="id"
-          label="Seleccionar producto vendido"
-          required
+        Antigüedades Chespirito
+      </h1>
+    </v-card>
+
+    <v-layout>
+      <v-navigation-drawer
+        style="background-color: #009c8c; max-width: 155px"
+        expand-on-hover
+        rail
+      >
+        <v-list>
+          <v-list-item
+            prepend-icon="mdi-account-circle"
+            :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
+          ></v-list-item>
+        </v-list>
+
+        <v-divider></v-divider>
+
+        <v-list density="compact" nav>
+          <v-list-item
+            prepend-icon="mdi-home-city"
+            title="Inicio"
+            @click="goHome"
+          ></v-list-item>
+
+          <v-list-item
+            prepend-icon="mdi-cash"
+            title="Inventarios"
+            @click.prevent="homeInventory"
+          ></v-list-item>
+
+          <v-list-item
+            @click.prevent="confirmLogout"
+            prepend-icon="mdi-logout"
+            title="Salir"
+          ></v-list-item>
+        </v-list>
+      </v-navigation-drawer>
+    </v-layout>
+    <v-container
+      style="
+        width: 340px;
+        margin-top: 4%;
+        border-style: groove;
+        border-radius: 6%;
+        background-color: #009c8c;
+        height: 100%;
+      "
+    >
+      <h1
+        style="text-align: center; font-size: larger; color: rgb(217, 217, 236)"
+      >
+        Registro de inventario
+      </h1>
+      <v-sheet class="mx-auto" width="300" style="border-style: groove">
+        <form
+          style="margin-top: 10%; background-color: #009c8c"
+          @submit.prevent="registerInventory"
         >
-        </v-autocomplete>
-        <v-text-field
-          style="color: aliceblue"
-          v-model="status"
-          label="Estado"
-          required
-        >
-        </v-text-field>
-        <v-btn style="background-color: #009c8c; color: aliceblue" type="submit"
-          >Enviar</v-btn
-        >
-        <v-btn
-          style="background-color: #009c8c; color: aliceblue"
-          @click="handleReset"
-          >Limpiar</v-btn
-        >
-      </form>
-    </v-sheet>
-  </v-container>
+          <v-autocomplete
+            style="color: aliceblue"
+            v-model="sales"
+            :items="salesId"
+            item-title="products.name"
+            item-value="id"
+            label="Seleccionar producto vendido"
+            required
+          >
+          </v-autocomplete>
+          <v-text-field
+            style="color: aliceblue"
+            v-model="status"
+            label="Estado"
+            required
+          >
+          </v-text-field>
+          <v-btn
+            style="background-color: #009c8c; color: aliceblue"
+            type="submit"
+            >Enviar</v-btn
+          >
+          <v-btn
+            style="background-color: #009c8c; color: aliceblue"
+            @click="handleReset"
+            >Limpiar</v-btn
+          >
+        </form>
+      </v-sheet>
+    </v-container>
+  </div>
 </template>
 
 <script setup>
@@ -186,4 +195,12 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped></style>
+<style>
+.custom-background {
+  background-color: #009c8c;
+  height: 100%;
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+}
+</style>

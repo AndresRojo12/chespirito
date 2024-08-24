@@ -247,8 +247,12 @@ const products = () => {
 };
 </script>
 
-<style scoped>
+<style>
 .fond {
-  background-color:#009c8c ;
+  background-color: #009c8c;
+  height: 100%;
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
 }
 </style>

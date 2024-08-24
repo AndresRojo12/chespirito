@@ -1,177 +1,193 @@
 <template>
-  <v-card style="max-height: 10rem">
-    <h1
-      style="display: flex; background-color: #aeb0b3; justify-content: center"
-    >
-      Chespirito
-    </h1>
-  </v-card>
-
-  <v-btn @click.prevent="registerInve" style="margin-left: 10%; margin-top: 2%">
-    Registrar Inventario
-  </v-btn>
-  <v-container style="margin-top: 0px">
-    <v-layout>
-      <v-navigation-drawer
-        style="background-color: #aeb0b3; max-width: 155px"
-        expand-on-hover
-        rail
+  <div class="custom-background">
+    <v-card style="max-height: 10rem">
+      <h1
+        style="
+          display: flex;
+          background-color: #009c8c;
+          justify-content: center;
+          color: aliceblue;
+        "
       >
-        <v-list>
-          <v-list-item
-            prepend-icon="mdi-account-circle"
-            :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
-          ></v-list-item>
-        </v-list>
-
-        <v-divider></v-divider>
-
-        <v-list density="compact" nav>
-          <v-list-item
-            prepend-icon="mdi-home-city"
-            title="Inicio"
-            @click="goHome"
-          ></v-list-item>
-
-          <v-list-item
-            @click.prevent="confirmLogout"
-            prepend-icon="mdi-logout"
-            title="Salir"
-          ></v-list-item>
-        </v-list>
-      </v-navigation-drawer>
-
-      <v-main style="height: 100px"></v-main>
-    </v-layout>
-    <v-select
-      v-model="pageSize"
-      style="max-width: 300px; margin-left: 12%"
-      :items="[5, 10, 20, 30, 40, 50, 100]"
-      label="Seleccionar datos por Página"
-      @change="getInventories"
-    >
-    </v-select>
-    <div class="table-container">
-      <v-table style="width: 100%">
-        <thead>
-          <tr>
-            <th class="text-left">
-              <v-col>
-                <v-text-field
-                  style="width: 200px"
-                  v-model="filters.salesId"
-                  clearable
-                  @input="updatePage(1)"
-                  label="ventas"
-                >
-                </v-text-field>
-              </v-col>
-            </th>
-            <th class="text-left">
-              <v-col>
-                <v-text-field
-                  style="width: 200px"
-                  v-model="filters.productName"
-                  clearable
-                  @input="updatePage(1)"
-                  label="Producto vendido"
-                ></v-text-field>
-              </v-col>
-            </th>
-            <th class="text-left">
-              <v-col>
-                <v-text-field
-                  style="width: 200px"
-                  v-model="filters.status"
-                  clearable
-                  @input="updatePage(1)"
-                  label="Estado de producto"
-                ></v-text-field>
-              </v-col>
-            </th>
-            <th class="text-left">
-              <v-col>
-                <v-text-field
-                  style="width: 200px"
-                  v-model="filters.created_at"
-                  clearable
-                  @input="updatePage(1)"
-                  label="Fecha de registro"
-                ></v-text-field>
-              </v-col>
-            </th>
-            <th class="text-left">
-              <v-col>
-                <v-text-field
-                  style="width: 200px"
-                  v-model="filters.updated_at"
-                  clearable
-                  @input="updatePage(1)"
-                  label="Fecha actualización"
-                ></v-text-field>
-              </v-col>
-            </th>
-            <th class="text-left">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="inve in combinedData" :key="inve.id">
-            <td>{{ inve.salesId }}</td>
-            <td>{{ inve.productName }}</td>
-            <td>{{ inve.status }}</td>
-            <td>
-              {{
-                moment(inve.createdAt)
-                  .tz("America/Bogota")
-                  .format("DD/MM/YYYY/ hh:mm A")
-              }}
-            </td>
-            <td>
-              {{
-                moment(inve.updatedAt)
-                  .tz("America/Bogota")
-                  .format("DD/MM/YYYY/ hh:mm A")
-              }}
-            </td>
-            <v-tooltip text="Editar">
-              <template v-slot:activator="{ props }">
-                <v-icon v-bind="props" @click="editInventory(inve)">
-                  mdi-pencil
-                </v-icon>
-              </template>
-            </v-tooltip>
-            <v-icon> mdi-delete </v-icon>
-          </tr>
-        </tbody>
-      </v-table>
-      <div v-if="noRecordsFound" style="text-align: center; margin-top: 20px">
-        <v-alert color="blue" type="warning"
-          >No se encontraron registros.</v-alert
-        >
-      </div>
-    </div>
-    <v-pagination
-      v-model="page"
-      :length="totalPages"
-      @input="getInventories"
-      class="my-4"
-    ></v-pagination>
-  </v-container>
-  <v-dialog v-model="showEditDialog" max-width="600px">
-    <v-card>
-      <v-card-title class="headline"
-        >Editar el estado de Inventario</v-card-title
-      >
-      <v-card-text>
-        <InventoryUpdate :inventory="editingInventory" @save="handleSave" />
-      </v-card-text>
-      <v-card-actions>
-        <v-btn color="blue darken-1" text @click="showEditDialog = false">
-          Cancelar
-        </v-btn>
-      </v-card-actions>
+        Antigüedades Chespirito
+      </h1>
     </v-card>
-  </v-dialog>
+
+    <v-btn
+      @click.prevent="registerInve"
+      style="margin-left: 10%;
+      background-color: #009c8c; color:aliceblue; margin-top: 2%"
+    >
+      Registrar Inventario
+    </v-btn>
+    <v-container style="margin-top: 0px">
+      <v-layout>
+        <v-navigation-drawer
+          style="background-color: #009c8c; max-width: 155px"
+          expand-on-hover
+          rail
+        >
+          <v-list>
+            <v-list-item
+              prepend-icon="mdi-account-circle"
+              :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
+            ></v-list-item>
+          </v-list>
+
+          <v-divider></v-divider>
+
+          <v-list density="compact" nav>
+            <v-list-item
+              prepend-icon="mdi-home-city"
+              title="Inicio"
+              @click="goHome"
+            ></v-list-item>
+
+            <v-list-item
+              @click.prevent="confirmLogout"
+              prepend-icon="mdi-logout"
+              title="Salir"
+            ></v-list-item>
+          </v-list>
+        </v-navigation-drawer>
+
+        <v-main style="height: 100px"></v-main>
+      </v-layout>
+      <v-select
+        v-model="pageSize"
+        style="max-width: 300px;
+        color: aliceblue; margin-left: 12%"
+        :items="[5, 10, 20, 30, 40, 50, 100]"
+        label="Seleccionar datos por Página"
+        @change="getInventories"
+      >
+      </v-select>
+      <div class="table-container">
+        <v-table style="width: 100%;
+        background-color: #009c8c;
+        color: aliceblue;
+        border-radius: 2%;">
+          <thead>
+            <tr>
+              <th class="text-left">
+                <v-col>
+                  <v-text-field
+                    style="width: 200px"
+                    v-model="filters.salesId"
+                    clearable
+                    @input="updatePage(1)"
+                    label="ventas"
+                  >
+                  </v-text-field>
+                </v-col>
+              </th>
+              <th class="text-left">
+                <v-col>
+                  <v-text-field
+                    style="width: 200px"
+                    v-model="filters.productName"
+                    clearable
+                    @input="updatePage(1)"
+                    label="Producto vendido"
+                  ></v-text-field>
+                </v-col>
+              </th>
+              <th class="text-left">
+                <v-col>
+                  <v-text-field
+                    style="width: 200px"
+                    v-model="filters.status"
+                    clearable
+                    @input="updatePage(1)"
+                    label="Estado de producto"
+                  ></v-text-field>
+                </v-col>
+              </th>
+              <th class="text-left">
+                <v-col>
+                  <v-text-field
+                    style="width: 200px"
+                    v-model="filters.created_at"
+                    clearable
+                    @input="updatePage(1)"
+                    label="Fecha de registro"
+                  ></v-text-field>
+                </v-col>
+              </th>
+              <th class="text-left">
+                <v-col>
+                  <v-text-field
+                    style="width: 200px"
+                    v-model="filters.updated_at"
+                    clearable
+                    @input="updatePage(1)"
+                    label="Fecha actualización"
+                  ></v-text-field>
+                </v-col>
+              </th>
+              <th class="text-left">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="inve in combinedData" :key="inve.id">
+              <td>{{ inve.salesId }}</td>
+              <td>{{ inve.productName }}</td>
+              <td>{{ inve.status }}</td>
+              <td>
+                {{
+                  moment(inve.createdAt)
+                    .tz("America/Bogota")
+                    .format("DD/MM/YYYY/ hh:mm A")
+                }}
+              </td>
+              <td>
+                {{
+                  moment(inve.updatedAt)
+                    .tz("America/Bogota")
+                    .format("DD/MM/YYYY/ hh:mm A")
+                }}
+              </td>
+              <v-tooltip text="Editar">
+                <template v-slot:activator="{ props }">
+                  <v-icon style="color: rgba(228, 192, 11, 0.663);" v-bind="props" @click="editInventory(inve)">
+                    mdi-pencil
+                  </v-icon>
+                </template>
+              </v-tooltip>
+              <v-icon style="color:darkslategrey"> mdi-delete </v-icon>
+            </tr>
+          </tbody>
+        </v-table>
+        <div v-if="noRecordsFound" style="text-align: center; margin-top: 20px">
+          <v-alert color="blue" type="warning"
+            >No se encontraron registros.</v-alert
+          >
+        </div>
+      </div>
+      <v-pagination
+        style="color:aliceblue ;"
+        v-model="page"
+        :length="totalPages"
+        @input="getInventories"
+        class="my-4"
+      ></v-pagination>
+    </v-container>
+    <v-dialog v-model="showEditDialog" max-width="600px">
+      <v-card>
+        <v-card-title class="headline"
+          >Editar el estado de Inventario</v-card-title
+        >
+        <v-card-text>
+          <InventoryUpdate :inventory="editingInventory" @save="handleSave" />
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="blue darken-1" text @click="showEditDialog = false">
+            Cancelar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <script setup>
@@ -333,5 +349,13 @@ const registerInve = () => {
   max-height: 400px;
   overflow-y: auto;
   margin-left: 10%;
+}
+
+.custom-background {
+  background-color: #009c8c;
+  height: 100%;
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
 }
 </style>
