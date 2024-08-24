@@ -1,26 +1,26 @@
 <template>
-  <div class="custom-background">
     <v-card>
       <h1
         style="
           display: flex;
-          background-color: #009c8c;
+          background-color: white;
           justify-content: center;
-          color:aliceblue
+          color:#009c8c
         "
       >
-        Antigüedades Chespirito
+        ANTIGÜEDADES CHESPIRITO
       </h1>
     </v-card>
 
     <v-layout>
       <v-navigation-drawer
-        style="background-color: #009c8c; max-width: 155px"
+        style="background-color: white; max-width: 155px"
         expand-on-hover
         rail
       >
         <v-list>
           <v-list-item
+            style="color:#009c8c;"
             prepend-icon="mdi-account-circle"
             :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
           ></v-list-item>
@@ -30,18 +30,21 @@
 
         <v-list density="compact" nav>
           <v-list-item
+          style="color:#009c8c;"
             prepend-icon="mdi-home-city"
             title="Inicio"
             @click="goHome"
           ></v-list-item>
 
           <v-list-item
+          style="color:#009c8c;"
             prepend-icon="mdi-cash"
             title="Inventarios"
             @click.prevent="homeInventory"
           ></v-list-item>
 
           <v-list-item
+          style="color:#009c8c;"
             @click.prevent="confirmLogout"
             prepend-icon="mdi-logout"
             title="Salir"
@@ -64,7 +67,7 @@
       >
         Registro de inventario
       </h1>
-      <v-sheet class="mx-auto" width="300" style="border-style: groove">
+      <v-sheet class="mx-auto" width="300" style="border-style: groove;">
         <form
           style="margin-top: 10%; background-color: #009c8c"
           @submit.prevent="registerInventory"
@@ -99,7 +102,13 @@
         </form>
       </v-sheet>
     </v-container>
-  </div>
+    <footer class="footer">
+      <div>
+        <div class="footer-bottom">
+        {{ new Date().getFullYear() }} — <strong>Antigüedades Chespirito</strong>
+      </div>
+      </div>
+    </footer>
 </template>
 
 <script setup>
@@ -196,11 +205,15 @@ onMounted(async () => {
 </script>
 
 <style>
-.custom-background {
-  background-color: #009c8c;
-  height: 100%;
-  min-height: 100vh;
-  width: 100%;
-  box-sizing: border-box;
+  .footer-bottom {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 2%;
+  color:#009c8c
 }
 </style>

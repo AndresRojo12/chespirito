@@ -1,188 +1,210 @@
 <template>
-  <div>
-    <v-card style="max-height: 10rem">
-      <h1
-        style="
-          display: flex;
-          background-color: #aeb0b3;
-          justify-content: center;
-        "
-      >
-        Chespirito
-      </h1>
-      <v-data-iterator :items="filteredCategories.data" style="margin-top: 2%">
-        <template v-slot:header>
-          <v-text-field
-            v-model="search"
-            density="comfortable"
-            placeholder="Buscar categorías"
-            prepend-inner-icon="mdi-magnify"
-            style="max-width: 300px; margin-left: 75%"
-            variant="solo"
-            clearable
-            hide-details
-          ></v-text-field>
-          <v-row>
-            <v-btn @click.prevent="category" style="margin-left: 10%"
-              >Registrar categoría</v-btn
-            >
-          </v-row>
-        </template>
-      </v-data-iterator>
-      <v-layout>
-        <v-navigation-drawer
-          style="background-color: #aeb0b3; max-width: 155px"
-          expand-on-hover
-          rail
-        >
-          <v-list>
-            <v-list-item
-              prepend-icon="mdi-account-circle"
-              :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
-            ></v-list-item>
-          </v-list>
-
-          <v-divider></v-divider>
-
-          <v-list density="compact" nav>
-            <v-list-item
-              prepend-icon="mdi-home-city"
-              title="Inicio"
-              @click="goHome"
-            ></v-list-item>
-
-            <v-list-item
-              prepend-icon="mdi-cash"
-              title="Productos"
-              @click.prevent="products"
-            ></v-list-item>
-
-            <v-list-item
-              prepend-icon="mdi-cash"
-              title="Inventarios"
-              @click.prevent="inventories"
-            ></v-list-item>
-            <v-list-item
-              prepend-icon="mdi-elevation-rise"
-              title="Ventas"
-              @click.prevent="sales"
-            >
-            </v-list-item>
-
-            <v-list-item
-              @click.prevent="confirmLogout"
-              prepend-icon="mdi-logout"
-              title="Salir"
-            ></v-list-item>
-          </v-list>
-        </v-navigation-drawer>
-
-        <v-main style="height: 250px"></v-main>
-      </v-layout>
-    </v-card>
-    <v-select
-      v-model="pageSize"
-      style="max-width: 300px; margin-left: 12%; margin-top: 2%"
-      :items="[10, 20, 30, 40, 50]"
-      label="Seleccionar categorías por página"
-      @change="getCategories"
-    ></v-select>
-  </div>
-  <div style="margin-left: 10%; margin-top: 2%; display: flex; flex-wrap: wrap">
-    <div
-      v-for="cate in filteredCategories.data"
-      :key="cate.id"
-      style="
-        flex: 1 1 22%;
-        max-width: 22%;
-        margin: 1%;
-        box-sizing: border-box;
-        text-align: center;
-      "
-    >
-      <div>
-        <img style="width: 100%" :src="getImageUrl(cate.imagePath)" />
-      </div>
-      <nuxt-link :to="`/categories/${cate.id}`">
-        <button
+    <div>
+      <v-card style="max-height: 10rem">
+        <h1
           style="
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+            display: flex;
+            background-color:white;
+            justify-content: center;
+            color: #009c8c;
           "
         >
-          <h3 style="margin: 0">{{ cate.name }}</h3>
-          <p style="margin: 0">{{ cate.description }}</p>
-        </button>
-      </nuxt-link>
-      <v-tooltip text="">
-        <template v-slot:activator="{ props }">
-          <v-icon v-bind="props" @click="editCategory(cate)">
-            mdi-pencil
-          </v-icon>
-        </template>
-      </v-tooltip>
-      <v-tooltip text="Eliminar">
-        <template v-slot:activator="{ props }">
-          <v-icon v-bind="props" @click="confirmDelete(cate)">
-            mdi-delete
-          </v-icon>
-        </template>
-      </v-tooltip>
-    </div>
-  </div>
-  <div class="text-center">
-    <v-container>
-      <v-row justify="center">
-        <v-col cols="8">
-          <v-container class="max-width">
-            <v-pagination
-              v-model="page"
-              :length="filteredCategories.totalPages"
-              class="my-4"
-              @input="getCategories"
-            ></v-pagination>
-          </v-container>
-        </v-col>
-      </v-row>
-    </v-container>
-    <v-dialog v-model="showEditDialog" max-width="600px">
-      <v-card>
-        <v-card-title class="headline">Editar Categoría</v-card-title>
-        <v-card-text>
-          <CategoriesProductUpdate
-            :category="editingCategory"
-            @save="handleSave"
-          />
-        </v-card-text>
-        <v-card-actions>
-          <v-btn color="blue darken-1" text @click="showEditDialog = false"
-            >Cancelar</v-btn
+          ANTIGÜEDADES CHESPIRITO
+        </h1>
+        <v-data-iterator
+          :items="filteredCategories.data"
+          style="margin-top: 2%;
+          color: #009c8c;"
+        >
+          <template v-slot:header>
+            <v-text-field
+              v-model="search"
+              density="comfortable"
+              placeholder="Buscar categorías"
+              prepend-inner-icon="mdi-magnify"
+              style="max-width: 300px; color: #009c8c; margin-left: 75%"
+              variant="solo"
+              clearable
+              hide-details
+            ></v-text-field>
+            <v-row>
+              <v-btn @click.prevent="category" style="margin-left: 10%;
+              color: #009c8c;"
+                >Registrar categoría</v-btn
+              >
+            </v-row>
+          </template>
+        </v-data-iterator>
+        <v-layout>
+          <v-navigation-drawer
+            style="background-color: white; max-width: 155px"
+            expand-on-hover
+            rail
           >
-        </v-card-actions>
+            <v-list>
+              <v-list-item
+              style="color:#009c8c ;"
+                prepend-icon="mdi-account-circle"
+                :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
+              ></v-list-item>
+            </v-list>
+
+            <v-divider></v-divider>
+
+            <v-list density="compact" nav>
+              <v-list-item
+              style="color:#009c8c ;"
+                prepend-icon="mdi-home-city"
+                title="Inicio"
+                @click="goHome"
+              ></v-list-item>
+
+              <v-list-item
+              style="color:#009c8c ;"
+                prepend-icon="mdi-cash"
+                title="Productos"
+                @click.prevent="products"
+              ></v-list-item>
+
+              <v-list-item
+              style="color:#009c8c ;"
+                prepend-icon="mdi-cash"
+                title="Inventarios"
+                @click.prevent="inventories"
+              ></v-list-item>
+              <v-list-item
+              style="color:#009c8c ;"
+                prepend-icon="mdi-elevation-rise"
+                title="Ventas"
+                @click.prevent="sales"
+              >
+              </v-list-item>
+
+              <v-list-item
+              style="color:#009c8c ;"
+                @click.prevent="confirmLogout"
+                prepend-icon="mdi-logout"
+                title="Salir"
+              ></v-list-item>
+            </v-list>
+          </v-navigation-drawer>
+
+          <v-main style="height: 250px"></v-main>
+        </v-layout>
       </v-card>
-    </v-dialog>
-    <v-dialog v-model="showDeleteDialog" max-width="600px">
-      <v-card>
-        <v-card-text>
-          <CategoryDelete
-            :category="categoryToDelete"
-            @deleted="handleDelete"
-          />
-        </v-card-text>
-        <v-card-actions>
-          <v-btn color="blue darken-1" text @click="showDeleteDialog = false">
-            Cancelar
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
+      <v-select
+        v-model="pageSize"
+        style="max-width: 300px; margin-left: 12%;
+        color:#009c8c; margin-top: 2%"
+        :items="[10, 20, 30, 40, 50]"
+        label="Seleccionar categorías por página"
+        @change="getCategories"
+      ></v-select>
+    </div>
+    <div
+      style="margin-left: 10%; margin-top: 2%; display: flex; flex-wrap: wrap"
+    >
+      <div
+        v-for="cate in filteredCategories.data"
+        :key="cate.id"
+        style="
+          flex: 1 1 22%;
+          max-width: 22%;
+          margin: 1%;
+          box-sizing: border-box;
+          text-align: center;
+        "
+      >
+        <div>
+          <img style="width: 100%" :src="getImageUrl(cate.imagePath)" />
+        </div>
+        <nuxt-link :to="`/categories/${cate.id}`">
+          <button
+            style="
+              width: 100%;
+              padding: 10px;
+              margin-top: 10px;
+              background-color: #009c8c;
+              color: white;
+              border: none;
+              border-radius: 5px;
+              cursor: pointer;
+            "
+          >
+            <h3 style="margin: 0">{{ cate.name }}</h3>
+            <p style="margin: 0">{{ cate.description }}</p>
+          </button>
+        </nuxt-link>
+        <v-tooltip text="">
+          <template v-slot:activator="{ props }">
+            <v-icon v-bind="props" @click="editCategory(cate)">
+              mdi-pencil
+            </v-icon>
+          </template>
+        </v-tooltip>
+        <v-tooltip text="Eliminar">
+          <template v-slot:activator="{ props }">
+            <v-icon v-bind="props" @click="confirmDelete(cate)">
+              mdi-delete
+            </v-icon>
+          </template>
+        </v-tooltip>
+      </div>
+    </div>
+    <div class="text-center">
+      <v-container>
+        <v-row justify="center">
+          <v-col cols="8">
+            <v-container class="max-width">
+              <v-pagination
+                v-model="page"
+                :length="filteredCategories.totalPages"
+                class="my-4"
+                @input="getCategories"
+              ></v-pagination>
+            </v-container>
+          </v-col>
+        </v-row>
+      </v-container>
+      <v-dialog v-model="showEditDialog" max-width="600px">
+        <v-card>
+          <v-card-title class="headline">Editar Categoría</v-card-title>
+          <v-card-text>
+            <CategoriesProductUpdate
+              :category="editingCategory"
+              @save="handleSave"
+            />
+          </v-card-text>
+          <v-card-actions>
+            <v-btn color="blue darken-1" text @click="showEditDialog = false"
+              >Cancelar</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-dialog v-model="showDeleteDialog" max-width="600px">
+        <v-card>
+          <v-card-text>
+            <CategoryDelete
+              :category="categoryToDelete"
+              @deleted="handleDelete"
+            />
+          </v-card-text>
+          <v-card-actions>
+            <v-btn color="blue darken-1" text @click="showDeleteDialog = false">
+              Cancelar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </div>
+    <footer class="footer">
+      <div>
+        <div class="footer-bottom">
+        {{ new Date().getFullYear() }} — <strong>Antigüedades Chespirito</strong>
+      </div>
+      </div>
+    </footer>
 </template>
 
 <script setup>
@@ -337,3 +359,17 @@ const confirmDelete = async (category) => {
   showDeleteDialog.value = true;
 };
 </script>
+
+<style>
+  .footer-bottom {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 2%;
+  color:#009c8c
+}
+</style>

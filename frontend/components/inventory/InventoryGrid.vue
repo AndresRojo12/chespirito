@@ -1,34 +1,35 @@
 <template>
-  <div class="custom-background">
+  <div>
     <v-card style="max-height: 10rem">
       <h1
         style="
           display: flex;
-          background-color: #009c8c;
+          background-color: white;
           justify-content: center;
-          color: aliceblue;
+          color:#009c8c;
         "
       >
-        Antigüedades Chespirito
+        ANTIGÜEDADES CHESPIRITO
       </h1>
     </v-card>
 
     <v-btn
       @click.prevent="registerInve"
       style="margin-left: 10%;
-      background-color: #009c8c; color:aliceblue; margin-top: 2%"
+      background-color: white; color:#009c8c; margin-top: 2%"
     >
       Registrar Inventario
     </v-btn>
     <v-container style="margin-top: 0px">
       <v-layout>
         <v-navigation-drawer
-          style="background-color: #009c8c; max-width: 155px"
+          style="background-color: white; max-width: 155px"
           expand-on-hover
           rail
         >
           <v-list>
             <v-list-item
+              style="color:#009c8c"
               prepend-icon="mdi-account-circle"
               :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
             ></v-list-item>
@@ -38,12 +39,14 @@
 
           <v-list density="compact" nav>
             <v-list-item
+              style="color:#009c8c"
               prepend-icon="mdi-home-city"
               title="Inicio"
               @click="goHome"
             ></v-list-item>
 
             <v-list-item
+              style="color:#009c8c"
               @click.prevent="confirmLogout"
               prepend-icon="mdi-logout"
               title="Salir"
@@ -56,7 +59,7 @@
       <v-select
         v-model="pageSize"
         style="max-width: 300px;
-        color: aliceblue; margin-left: 12%"
+        color:#009c8c; margin-left: 12%"
         :items="[5, 10, 20, 30, 40, 50, 100]"
         label="Seleccionar datos por Página"
         @change="getInventories"
@@ -64,9 +67,8 @@
       </v-select>
       <div class="table-container">
         <v-table style="width: 100%;
-        background-color: #009c8c;
-        color: aliceblue;
-        border-radius: 2%;">
+        border-radius: 2%;
+        color: #009c8c;">
           <thead>
             <tr>
               <th class="text-left">
@@ -165,7 +167,7 @@
         </div>
       </div>
       <v-pagination
-        style="color:aliceblue ;"
+        style="color:#009c8c;"
         v-model="page"
         :length="totalPages"
         @input="getInventories"
@@ -188,6 +190,13 @@
       </v-card>
     </v-dialog>
   </div>
+  <footer class="footer">
+      <div>
+        <div class="footer-bottom">
+        {{ new Date().getFullYear() }} — <strong>Antigüedades Chespirito</strong>
+      </div>
+      </div>
+    </footer>
 </template>
 
 <script setup>
@@ -351,11 +360,15 @@ const registerInve = () => {
   margin-left: 10%;
 }
 
-.custom-background {
-  background-color: #009c8c;
-  height: 100%;
-  min-height: 100vh;
-  width: 100%;
-  box-sizing: border-box;
+.footer-bottom {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 2%;
+  color:#009c8c
 }
 </style>
