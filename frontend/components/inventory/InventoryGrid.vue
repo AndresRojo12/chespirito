@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="isAuthenticated">
     <v-card style="max-height: 10rem">
       <h1
         style="
@@ -226,6 +226,7 @@ const filters = ref({
 });
 
 const noRecordsFound = ref(false);
+const isAuthenticated = ref(false);
 
 const getInventories = async () => {
   noRecordsFound.value = false;
@@ -293,10 +294,23 @@ const updatePage = (newPage) => {
 };
 
 onMounted(async () => {
-  await nextTick();
-  await getInventories();
-  await getSales();
+  if (!userStore.user) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Acceso denegado',
+      text: 'Debe iniciar sesión primero',
+      confirmButtonText: 'Aceptar'
+    }).then(()=>{
+      router.push('/')
+    });
+  } else {
+    isAuthenticated.value = true;
+    await nextTick();
+    await getInventories();
+    await getSales();
+  }
 });
+
 
 const confirmLogout = () => {
   Swal.fire({

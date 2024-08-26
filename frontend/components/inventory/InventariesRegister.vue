@@ -1,4 +1,5 @@
 <template>
+  <div v-if="isAuthenticated">
     <v-card>
       <h1
         style="
@@ -104,6 +105,7 @@
         </form>
       </v-sheet>
     </v-container>
+  </div>
     <footer class="footer">
       <div>
         <div class="footer-bottom">
@@ -125,6 +127,7 @@ const salesId = ref([]);
 const userStore = useAuth();
 const router = useRouter();
 
+const isAuthenticated = ref(false);
 const getVentas = async () => {
   const { data, error } = await useFetch(`${CONFIG.public.API_BASE_URL}sales`);
 
@@ -201,8 +204,21 @@ const confirmLogout = () => {
 };
 
 onMounted(async () => {
-  await nextTick();
-  await getVentas();
+  if(!userStore.user) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Acceso denegado',
+      text: 'Debe iniciar sesión primero',
+      confirmButtonText: 'Aceptar'
+    }).then(()=>{
+      router.push('/')
+    });
+  }else {
+    isAuthenticated.value = true;
+    await nextTick();
+    await getVentas();
+  }
+
 });
 </script>
 
