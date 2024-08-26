@@ -1,19 +1,21 @@
 <template>
   <div>
-    <h1 style="display: flex; justify-content: center; margin-top: 2%">
+    <h1 style="display: flex; justify-content: center;
+      color:#009c8c; margin-top: 2%">
       Iniciar sesión
     </h1>
   </div>
-  <div style="margin-top:2%">
+  <div style="margin-top:2%;">
     <v-card
       class="mx-auto pa-12 pb-8"
       elevation="8"
       max-width="350"
       rounded="lg"
     >
-      <div class="text-subtitle-1 text-medium-emphasis">Correo electronico</div>
+      <div class="text-subtitle-1 text-medium-emphasis color-#009c8c">Correo electronico</div>
 
       <v-text-field
+        style="color:#009c8c"
         v-model="email"
         density="compact"
         placeholder="Dirección de correo"
@@ -30,7 +32,8 @@
         Contraseña
 
         <a
-          class="text-caption text-decoration-none text-blue"
+          style="color:#009c8c ;"
+          class="text-caption text-decoration-none"
           href="#"
           rel="noopener noreferrer"
           target="_blank" @click.prevent="changePassword"
@@ -40,6 +43,7 @@
       </div>
 
       <v-text-field
+        style="color:#009c8c ;"
         v-model="password"
         :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
         :type="visible ? 'text' : 'password'"
@@ -53,7 +57,7 @@
         id="password"
       ></v-text-field>
 
-      <v-btn class="mb-8" color="blue" size="large" variant="tonal" block @click.prevent="login">
+      <v-btn style="color:#009c8c ;" class="mb-8" size="large" variant="tonal" block @click.prevent="login">
         Iniciar
       </v-btn>
     </v-card>
