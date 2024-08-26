@@ -1,19 +1,13 @@
 <template>
+  <div v-if="isAuthenticated">
     <div>
-      <v-card style="max-height: 10rem;
-        background-color: white;">
-        <h1
-          style="
-            display: flex;
-            color: #009c8c;
-            justify-content: center;
-          "
-        >
+      <v-card style="max-height: 10rem; background-color: white">
+        <h1 style="display: flex; color: #009c8c; justify-content: center">
           ANTIGÜEDADES CHESPIRITO
         </h1>
         <v-data-iterator
           :items="filteredProducts.data || []"
-          style="margin-top: 2%;"
+          style="margin-top: 2%"
         >
           <template v-slot:header>
             <v-text-field
@@ -21,15 +15,16 @@
               density="comfortable"
               placeholder="Buscar Productos"
               prepend-inner-icon="mdi-magnify"
-              style="max-width: 300px; margin-left: 75%;"
+              style="max-width: 300px; margin-left: 75%"
               variant="solo"
               clearable
               hide-details
             ></v-text-field>
             <v-row>
-              <v-btn @click.prevent="product"
-              style="margin-left: 10%;
-              color: #009c8c;">
+              <v-btn
+                @click.prevent="product"
+                style="margin-left: 10%; color: #009c8c"
+              >
                 Registrar producto
               </v-btn>
             </v-row>
@@ -43,7 +38,7 @@
           >
             <v-list>
               <v-list-item
-                style="color:#009c8c;"
+                style="color: #009c8c"
                 prepend-icon="mdi-account-circle"
                 :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
               ></v-list-item>
@@ -53,13 +48,13 @@
 
             <v-list density="compact" nav>
               <v-list-item
-                style="color:#009c8c;"
+                style="color: #009c8c"
                 prepend-icon="mdi-home-city"
                 title="Inicio"
                 @click="goHome"
               ></v-list-item>
               <v-list-item
-                style="color:#009c8c;"
+                style="color: #009c8c"
                 @click.prevent="confirmLogout"
                 prepend-icon="mdi-logout"
                 title="Salir"
@@ -72,8 +67,12 @@
       </v-card>
       <v-select
         v-model="pageSize"
-        style="max-width: 300px; margin-left: 12%; margin-top: 2%;
-        color: aliceblue;"
+        style="
+          max-width: 300px;
+          margin-left: 12%;
+          margin-top: 2%;
+          color: aliceblue;
+        "
         :items="[10, 20, 30, 40, 50]"
         label="Seleccionar categorías por página"
         @change="getProducts"
@@ -114,14 +113,22 @@
         </button>
         <v-tooltip text="Editar">
           <template v-slot:activator="{ props }">
-            <v-icon style="color:rgba(228, 192, 11, 0.663);" v-bind="props" @click="editProduct(pro)">
+            <v-icon
+              style="color: rgba(228, 192, 11, 0.663)"
+              v-bind="props"
+              @click="editProduct(pro)"
+            >
               mdi-pencil
             </v-icon>
           </template>
         </v-tooltip>
         <v-tooltip text="Eliminar">
           <template v-slot:activator="{ props }">
-            <v-icon style="color:darkslategrey" v-bind="props" @click="confirmDelete(pro)">
+            <v-icon
+              style="color: darkslategrey"
+              v-bind="props"
+              @click="confirmDelete(pro)"
+            >
               mdi-delete
             </v-icon>
           </template>
@@ -145,42 +152,52 @@
       </v-container>
       <v-dialog v-model="showEditDialog" max-width="300px">
         <v-card
-          style="background-color:white;
-          border-style:groove;
-          border-radius: 6%;
-          border-color:#009c8c;">
-          <v-card-title style="color:#009c8c;" class="headline">Editar Producto</v-card-title>
+          style="
+            background-color: white;
+            border-style: groove;
+            border-radius: 6%;
+            border-color: #009c8c;
+          "
+        >
+          <v-card-title style="color: #009c8c" class="headline"
+            >Editar Producto</v-card-title
+          >
           <v-card-text>
             <ProductUpdate :product="editingProduct" @save="handleSave" />
           </v-card-text>
           <v-card-actions>
-            <v-btn style="color:#009c8c;" text @click="showEditDialog = false">
+            <v-btn style="color: #009c8c" text @click="showEditDialog = false">
               Cancelar
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
       <v-dialog v-model="showDeleteDialog" max-width="300px">
-        <v-card style="background-color:#009c8c;
-        border-radius: 6%;">
+        <v-card style="background-color: #009c8c; border-radius: 6%">
           <v-card-text>
             <ProductDelete :product="productToDelete" @deleted="handleDelete" />
           </v-card-text>
           <v-card-actions>
-            <v-btn style="color:aliceblue ;" text @click="showDeleteDialog = false">
+            <v-btn
+              style="color: aliceblue"
+              text
+              @click="showDeleteDialog = false"
+            >
               Cancelar
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
     </div>
-    <footer class="footer">
-      <div>
-        <div class="footer-bottom">
-        {{ new Date().getFullYear() }} — <strong>Antigüedades Chespirito</strong>
+  </div>
+  <footer class="footer">
+    <div>
+      <div class="footer-bottom">
+        {{ new Date().getFullYear() }} —
+        <strong>Antigüedades Chespirito</strong>
       </div>
-      </div>
-    </footer>
+    </div>
+  </footer>
 </template>
 
 <script setup>
@@ -202,6 +219,7 @@ const showEditDialog = ref(false);
 const editingProduct = ref(null);
 const showDeleteDialog = ref(false);
 const productToDelete = ref(null);
+const isAuthenticated = ref(false);
 
 const products = ref([]);
 const filteredProducts = ref({ data: [], totalPages: 1 });
@@ -231,8 +249,20 @@ const getImageUrl = (imagePath) => {
 };
 
 onMounted(async () => {
-  await nextTick();
-  await getProducts();
+  if(!userStore.user){
+    Swal.fire({
+      icon:'error',
+      title:'Acceso Denegado',
+      text:'Debe iniciar sesión primero',
+      confirmButtonText: 'Aceptar'
+    }).then(()=> {
+      router.push('/');
+    });
+  }else{
+    isAuthenticated.value = true;
+    await nextTick();
+    await getProducts();
+  }
 });
 
 watch(search, async (newSearch) => {
@@ -329,7 +359,7 @@ const confirmDelete = (product) => {
 </script>
 
 <style>
-  .footer-bottom {
+.footer-bottom {
   margin-top: 10px;
   font-size: 14px;
 }
@@ -338,6 +368,6 @@ const confirmDelete = (product) => {
   display: flex;
   justify-content: center;
   margin-top: 2%;
-  color:#009c8c
+  color: #009c8c;
 }
 </style>

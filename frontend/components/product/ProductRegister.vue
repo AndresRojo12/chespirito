@@ -1,9 +1,13 @@
 <template>
+  <div v-if="isAuthenticated">
     <h1
-      style="display: flex;
-      margin-top:0%;
-      background-color:white;
-      color:#009c8c; justify-content: center"
+      style="
+        display: flex;
+        margin-top: 0%;
+        background-color: white;
+        color: #009c8c;
+        justify-content: center;
+      "
     >
       ANTIGÜEDADES CHESPIRITO
     </h1>
@@ -15,7 +19,7 @@
       >
         <v-list>
           <v-list-item
-            style="color:#009c8c ;"
+            style="color: #009c8c"
             prepend-icon="mdi-account-circle"
             :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
           ></v-list-item>
@@ -25,21 +29,21 @@
 
         <v-list density="compact" nav>
           <v-list-item
-          style="color:#009c8c ;"
+            style="color: #009c8c"
             prepend-icon="mdi-home-city"
             title="Inicio"
             @click="goHome"
           ></v-list-item>
 
           <v-list-item
-          style="color:#009c8c ;"
+            style="color: #009c8c"
             prepend-icon="mdi-cash"
             title="Productos"
             @click.prevent="products"
           ></v-list-item>
 
           <v-list-item
-          style="color:#009c8c ;"
+            style="color: #009c8c"
             @click.prevent="confirmLogout"
             prepend-icon="mdi-logout"
             title="Salir"
@@ -54,28 +58,23 @@
         border-style: groove;
         border-radius: 6%;
         border-color: #009c8c;
-        background-color:white;
+        background-color: white;
       "
     >
-      <h1
-        style="text-align: center; font-size: larger; color:#009c8c"
-      >
+      <h1 style="text-align: center; font-size: larger; color: #009c8c">
         Registro de productos
       </h1>
       <v-sheet class="mx-auto" width="300" style="border-style: groove">
-        <form
-          style="margin-top:2%; "
-          @submit.prevent="registerProduct"
-        >
+        <form style="margin-top: 2%" @submit.prevent="registerProduct">
           <v-text-field
             v-model="name"
-            style="background-color:white; color:#009c8c"
+            style="background-color: white; color: #009c8c"
             label="Nombre"
             required
           >
           </v-text-field>
           <v-textarea
-            style="background-color:white; color:#009c8c"
+            style="background-color: white; color: #009c8c"
             v-model="description"
             label="Descripción"
             required
@@ -84,17 +83,17 @@
             v-model="price"
             label="Precio"
             required
-            style="background-color: white; color:#009c8c"
+            style="background-color: white; color: #009c8c"
           ></v-text-field>
           <v-file-input
             v-model="image"
-            style="background-color:white; color:#009c8c"
+            style="background-color: white; color: #009c8c"
             label="Seleccionar Imagen"
             accept="image/*"
             required
           ></v-file-input>
           <v-autocomplete
-            style="background-color:white; color:#009c8c"
+            style="background-color: white; color: #009c8c"
             v-model="selectedCategory"
             :items="categories"
             item-title="name"
@@ -102,26 +101,26 @@
             label="Seleccionar Categoría"
             required
           ></v-autocomplete>
-          <v-btn
-            style="background-color:white; color:#009c8c"
-            type="submit"
+          <v-btn style="background-color: white; color: #009c8c" type="submit"
             >Enviar</v-btn
           >
           <v-btn
-            style="background-color:white; color:#009c8c"
+            style="background-color: white; color: #009c8c"
             @click="handleReset"
             >Limpiar</v-btn
           >
         </form>
       </v-sheet>
     </v-container>
-    <footer class="footer">
-      <div>
-        <div class="footer-bottom">
-        {{ new Date().getFullYear() }} — <strong>Antigüedades Chespirito</strong>
+  </div>
+  <footer class="footer">
+    <div>
+      <div class="footer-bottom">
+        {{ new Date().getFullYear() }} —
+        <strong>Antigüedades Chespirito</strong>
       </div>
-      </div>
-    </footer>
+    </div>
+  </footer>
 </template>
 
 <script setup>
@@ -138,6 +137,7 @@ const categories = ref([]);
 const selectedCategory = ref("");
 const router = useRouter();
 const userStore = useAuth();
+const isAuthenticated = ref(false);
 
 const fetchCategories = async () => {
   try {
@@ -245,8 +245,20 @@ const handleReset = () => {
 };
 
 onMounted(async () => {
-  await nextTick();
-  await fetchCategories();
+  if(!userStore.user){
+    Swal.fire({
+      icon:'error',
+      title:'Acceso Denegado',
+      text:'Debe iniciar sesión primero',
+      confirmButtonText:'Aceptar'
+    }).then(()=>{
+      router.push('/')
+    });
+  }else{
+    isAuthenticated.value = true;
+    await nextTick();
+    await fetchCategories();
+  }
 });
 
 const goHome = () => {
@@ -259,7 +271,7 @@ const products = () => {
 </script>
 
 <style>
-  .footer-bottom {
+.footer-bottom {
   margin-top: 10px;
   font-size: 14px;
 }
@@ -268,6 +280,6 @@ const products = () => {
   display: flex;
   justify-content: center;
   margin-top: 2%;
-  color:#009c8c
+  color: #009c8c;
 }
 </style>
