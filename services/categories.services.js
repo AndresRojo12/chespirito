@@ -43,6 +43,9 @@ class CategoryService {
     const offset = ((parseInt(page) || 1) - 1) * limit;
 
     const { count, rows } = await models.Category.findAndCountAll({
+      where: {
+        deleted:false
+      },
       limit,
       offset,
     });
@@ -105,7 +108,10 @@ class CategoryService {
 
   async delete(id) {
     const category = await this.findOne(id);
-    await category.destroy();
+    if(!category) {
+      throw boom.notFound('Product not found');
+    }
+    await category.update({ deleted: true, deletedAt: new Date() });
     return { id };
   }
 }
