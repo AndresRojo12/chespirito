@@ -276,7 +276,7 @@ const combineData = () => {
 
       return {
         ...sale,
-        productName: product ? product.name : "Desconocido",
+        productName: product ? product.name : sale.products.name,
         categoryName: category ? category.name : "Desconocido",
       };
     });
