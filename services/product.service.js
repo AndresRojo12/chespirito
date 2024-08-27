@@ -36,6 +36,9 @@ class ProductService {
     const offset = ((parseInt(page) || 1) - 1) * limit;
 
     const { count, rows } = await models.Product.findAndCountAll({
+      where: {
+        deleted:false
+      },
       include:['category'],
       limit,
       offset
@@ -99,7 +102,10 @@ class ProductService {
 
   async delete(id) {
     const product = await this.findOne(id);
-    await product.destroy();
+    if(!product) {
+      throw boom.notFound('Product not found');
+    }
+    await product.update({ deleted: true, deletedAt: new Date() });
     return { id };
   }
 }
