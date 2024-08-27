@@ -364,11 +364,15 @@ const handleSave = async (updatedCategory) => {
 };
 
 const handleDelete = async (categoryId) => {
-  filteredCategories.value.data = filteredCategories.value.data.findIndex(
+  const index = filteredCategories.value.data.findIndex(
     (item) => item.id === categoryId,
   );
-  filteredCategories.value.splice(index, 1);
+
+  if(index !== -1){
+    filteredCategories.value.data.splice(index, 1);
+  }
   await getCategories();
+  showDeleteDialog.value = false;
 };
 
 const handleLogout = () => {
