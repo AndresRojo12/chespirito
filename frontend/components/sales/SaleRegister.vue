@@ -1,75 +1,60 @@
 <template>
-  <v-layout>
-    <v-navigation-drawer
-      style="background-color: #aeb0b3; max-width: 155px"
-      expand-on-hover
-      rail
-    >
-      <v-list>
-        <v-list-item
-          prepend-icon="mdi-account-circle"
-          :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
-        ></v-list-item>
-      </v-list>
-      <v-divider></v-divider>
-      <v-list density="compact" nav>
-        <v-list-item
-          prepend-icon="mdi-home-city"
-          title="Inicio"
-          @click="goHome"
-        >
-        </v-list-item>
-        <v-list-item
-          prepend-icon="mdi-cash"
-          title="Productos"
-          @click.prevent="productsPage"
-        ></v-list-item>
-        <v-list-item
-          prepend-icon="mdi-logout"
-          title="Salir"
-          @click.prevent="confirmLogout"
-        ></v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-  </v-layout>
-  <v-container style="width: 600px; margin-top: 2px; border-style: groove">
-    <h1>Registro de ventas</h1>
-    <form style="margin-top: 5%" @submit.prevent="registerSale">
-      <v-text-field
-        v-model="quantitySold"
-        label="Cantidad"
-        required
-      ></v-text-field>
-      <v-text-field v-model="salePrice" label="Total" required></v-text-field>
-      <v-autocomplete
-        v-model="selectedCategory"
-        :items="categories"
-        item-title="name"
-        item-value="id"
-        label="Seleccionar Categoría"
-        required
-      ></v-autocomplete>
-      <v-autocomplete
-        v-model="selectedProduct"
-        :items="products"
-        item-title="name"
-        item-value="id"
-        label="Seleccionar Producto"
-        required
-      ></v-autocomplete>
-      <v-btn type="submit">Enviar</v-btn>
-      <v-btn @click="handleReset">Limpiar</v-btn>
-    </form>
-  </v-container>
+  <div class="main-container">
+    <div class="header-container">
+      <v-list-item
+        prepend-icon="mdi-arrow-left"
+        class="exit-icon"
+        @click="back"
+      ></v-list-item>
+    </div>
+    <v-container class="form-container">
+      <h1 class="title">Registro de ventas</h1>
+      <form style="margin-top: 5%" @submit.prevent="registerSale">
+        <v-text-field
+          class="input"
+          v-model="quantitySold"
+          label="Cantidad"
+          required
+        ></v-text-field>
+        <v-text-field
+          class="input"
+          v-model="salePrice"
+          label="Total"
+          required
+        ></v-text-field>
+        <v-autocomplete
+          class="select"
+          v-model="selectedCategory"
+          :items="categories"
+          item-title="name"
+          item-value="id"
+          label="Seleccionar Categoría"
+          required
+        ></v-autocomplete>
+        <v-autocomplete
+          class="select"
+          v-model="selectedProduct"
+          :items="products"
+          item-title="name"
+          item-value="id"
+          label="Seleccionar Producto"
+          required
+        ></v-autocomplete>
+        <div class="submit-buttons">
+          <v-btn class="submit" type="submit">Enviar</v-btn>
+          <v-btn class="clean" @click="handleReset">Limpiar</v-btn>
+        </div>
+      </form>
+    </v-container>
+  </div>
 </template>
 
 <script setup>
 import { onMounted, nextTick, ref } from "vue";
-import { useAuth } from "~/store/auth";
 import Swal from "sweetalert2";
+import { useRouter } from "vue-router";
 
 const CONFIG = useRuntimeConfig();
-const userStore = useAuth();
 const router = useRouter();
 const quantitySold = ref(0);
 const salePrice = ref(0);
@@ -183,37 +168,72 @@ onMounted(async () => {
   await fetchProducts();
 });
 
-const goHome = () => {
-  router.push("/user/gestion");
-};
-
-const productsPage = () => {
-  router.push("/product/list");
-};
-
-const confirmLogout = () => {
-  Swal.fire({
-    text: "¿Está seguro que quiere cerrar sesión?",
-    icon: "question",
-    showCancelButton: true,
-    confirmButtonText: "Si",
-    cancelButtonText: "Cancelar",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      handleLogout();
-    }
-  });
-};
-
-const handleLogout = () => {
-  userStore.logout();
-  router.push("/");
-};
-
 const handleReset = () => {
   quantitySold.value = 0;
   salePrice.value = 0;
   selectedCategory.value = "";
   selectedProduct.value = "";
 };
+const back = () => {
+  router.back();
+};
 </script>
+
+<style scoped>
+.exit-icon {
+  display: none;
+}
+.form-container {
+  width: 340px;
+  margin-top: 4%;
+  border-style: groove;
+  border-radius: 6%;
+  border-color: black;
+  background-color: white;
+}
+.title {
+  text-align: center;
+  font-size: larger;
+  color: #009c8c;
+  margin-bottom: 5%;
+}
+.input,
+.select {
+  color: #009c8c;
+}
+.submit-buttons {
+  display: flex;
+  justify-content: space-around;
+}
+.submit {
+  background-color: #009c8c;
+  color: white;
+  width: 40%;
+}
+.clean {
+  background-color: white;
+  color: #009c8c;
+  width: 40%;
+}
+@media (max-width: 430px) {
+  .main-container {
+    max-width: 100%;
+    padding: 3%;
+  }
+  .header-container {
+    display: flex;
+  }
+  .exit-icon {
+    display: flex;
+    font-size: 5vw;
+  }
+  .form-container {
+    max-width: 100%;
+  }
+  @media (max-width: 430px) {
+    .title {
+      font-size: 5vw;
+    }
+  }
+}
+</style>

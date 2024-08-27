@@ -6,90 +6,44 @@
         class="exit-icon"
         @click="back"
       ></v-list-item>
-      <h1 class="card-title">ANTIGÜEDADES CHESPIRITO</h1>
     </div>
 
-    <v-layout>
-      <v-navigation-drawer style="max-width: 155px" expand-on-hover rail>
-        <v-list>
-          <v-list-item
-            class="buttons"
-            prepend-icon="mdi-account-circle"
-            :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
-          ></v-list-item>
-        </v-list>
-
-        <v-divider></v-divider>
-
-        <v-list density="compact" nav>
-          <v-list-item
-            class="buttons"
-            prepend-icon="mdi-home-city"
-            title="Inicio"
-            @click="goHome"
-          ></v-list-item>
-
-          <v-list-item
-            class="buttons"
-            prepend-icon="mdi-cash"
-            title="Categorias"
-            @click.prevent="categoriesIn"
-          ></v-list-item>
-
-          <v-list-item
-            class="buttons"
-            @click.prevent="confirmLogout"
-            prepend-icon="mdi-logout"
-            title="Salir"
-          ></v-list-item>
-        </v-list>
-      </v-navigation-drawer>
-    </v-layout>
-    <v-container class="container">
+    <v-container class="form-container">
       <h1 class="title">Registrar categoría</h1>
-
       <form @submit.prevent="registerCategory">
         <v-text-field
+          class="input"
           v-model="name"
           label="Nombre"
           required
-          class="input"
         ></v-text-field>
         <v-textarea
+          class="text-area"
           v-model="description"
           label="Descripción"
           required
-          class="text-area"
         ></v-textarea>
         <v-file-input
+          class="file-input"
           v-model="image"
           label="Seleccionar imagen"
           accept="image/*"
           required
-          class="file-input"
         ></v-file-input>
-        <v-btn type="submit" class="submit-button">Enviar</v-btn>
-        <v-btn @click="handleReset" class="clean-button">Limpiar</v-btn>
+        <div class="submit-buttons">
+          <v-btn class="submit" type="submit">Enviar</v-btn>
+          <v-btn @click="handleReset" class="clean">Limpiar</v-btn>
+        </div>
       </form>
     </v-container>
-    <footer class="footer">
-      <div>
-        <div class="footer-bottom">
-          {{ new Date().getFullYear() }} —
-          <strong>Antigüedades Chespirito</strong>
-        </div>
-      </div>
-    </footer>
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import Swal from "sweetalert2";
-import { useAuth } from "~/store/auth";
 const CONFIG = useRuntimeConfig();
 const router = useRouter();
-const userStore = useAuth();
 
 const name = ref("");
 const description = ref("");
@@ -141,39 +95,11 @@ const registerCategory = async () => {
   }
 };
 
-const confirmLogout = () => {
-  Swal.fire({
-    title: "¿Estás seguro?",
-    text: "¿Quieres cerrar sesión?",
-    icon: "question",
-    showCancelButton: true,
-    confirmButtonText: "Sí, cerrar sesión",
-    cancelButtonText: "Cancelar",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      handleLogout();
-    }
-  });
-};
-
 const handleReset = () => {
   name.value = "";
   description.value = "";
   price.value = 0;
   image.value = null;
-};
-
-const handleLogout = () => {
-  userStore.logout();
-  router.push("/");
-};
-
-const goHome = () => {
-  router.push("/user/gestion");
-};
-
-const categoriesIn = () => {
-  router.push("/user/gestion");
 };
 
 const back = () => {
@@ -182,20 +108,10 @@ const back = () => {
 </script>
 
 <style scoped>
-.card-title {
-  display: flex;
-  justify-content: center;
-  font-size: 2rem;
-  color: #009c8c;
-  margin-top: 1%;
-}
 .exit-icon {
   display: none;
 }
-.buttons {
-  color: #009c8c;
-}
-.container {
+.form-container {
   width: 340px;
   margin-top: 4%;
   border-style: groove;
@@ -209,25 +125,23 @@ const back = () => {
   color: #009c8c;
   margin-bottom: 5%;
 }
-.input {
-  color: #009c8c;
-}
-.text-area {
-  color: #009c8c;
-}
+.input,
+.text-area,
 .file-input {
   color: #009c8c;
 }
-.submit-button {
+.submit-buttons {
+  display: flex;
+  justify-content: space-around;
+}
+.submit {
   background-color: #009c8c;
   color: white;
-  margin-left: 5%;
   width: 40%;
 }
-.clean-button {
+.clean {
   background-color: white;
   color: #009c8c;
-  margin-left: 10%;
   width: 40%;
 }
 .footer-bottom {
@@ -246,37 +160,27 @@ const back = () => {
     max-width: 100%;
     padding: 3%;
   }
-  .container {
-    max-width: 100%;
-  }
   .header-container {
-    display: flexbox;
+    display: flex;
   }
   .exit-icon {
     display: flex;
     font-size: 5vw;
   }
-  .card-title {
-    font-size: 5vw;
+  .form-container {
+    max-width: 100%;
   }
   .title {
     font-size: 5vw;
     margin-bottom: 5%;
   }
-  .input {
-    max-width: 100%;
-  }
-  .text-area {
-    max-width: 100%;
-  }
-  .file-input {
-    max-width: 100%;
+  .submit-buttons {
+    display: flex;
+    justify-content: space-around;
   }
   .submit-button {
     width: 100%;
     font-size: 4vw;
-    margin-bottom: 3%;
-    margin-left: 0%;
   }
   .clean-button {
     width: 100%;

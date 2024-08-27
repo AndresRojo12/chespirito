@@ -1,70 +1,11 @@
 <template>
-  <div>
-    <v-card style="max-height: 10rem">
-      <h1
-        style="
-          display: flex;
-          background-color: #aeb0b3;
-          justify-content: center;
-        "
+  <div class="header-container">
+      <v-btn class="register-button" @click.prevent="salesRegister"
+        >Registrar ventas</v-btn
       >
-        Chespirito
-      </h1>
-      <v-data-iterator :items="filteredSales.data || []" style="margin-top: 2%">
-        <template v-slot:header>
-          <v-row>
-            <v-btn @click.prevent="salesRegister" style="margin-left: 10%"
-              >Registrar ventas</v-btn
-            >
-          </v-row>
-        </template>
-      </v-data-iterator>
-      <v-layout>
-        <v-navigation-drawer
-          style="background-color: #aeb0b3; max-width: 155px"
-          expand-on-hover
-          rail
-        >
-          <v-list>
-            <v-list-item
-              :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
-              prepend-icon="mdi-account-circle"
-            ></v-list-item>
-          </v-list>
-          <v-divider></v-divider>
-          <v-list density="compact" nav>
-            <v-list-item
-              title="Inicio"
-              prepend-icon="mdi-home-city"
-              @click.prevent="goHome"
-            >
-            </v-list-item>
-            <v-list-item
-              title="Productos"
-              prepend-icon="mdi-cash"
-              @click.prevent="productsPage"
-            >
-            </v-list-item>
-            <v-list-item
-              title="Categorías"
-              prepend-icon="mdi-shopping"
-              @click.prevent="categoriesPage"
-            >
-            </v-list-item>
-            <v-list-item
-              title="Salir"
-              prepend-icon="mdi-logout"
-              @click.prevent="confirmLogout"
-            >
-            </v-list-item>
-          </v-list>
-        </v-navigation-drawer>
-        <v-main style="height: 250px"></v-main>
-      </v-layout>
-    </v-card>
     <v-select
+      class="select"
       label="Seleccionar número de items por página"
-      style="max-width: 300px; margin-left: 12%; margin-top: 2%"
       v-model="pageSize"
       :items="[10, 20, 30, 40, 50, 100]"
       @change="getSales"
@@ -156,12 +97,9 @@
 
 <script setup>
 import { onMounted, watch, nextTick } from "vue";
-import { useAuth } from "~/store/auth";
-import Swal from "sweetalert2";
 import moment from "moment-timezone";
 
 const CONFIG = useRuntimeConfig();
-const userStore = useAuth();
 const router = useRouter();
 const page = ref(1);
 const pageSize = ref(10);
@@ -297,43 +235,53 @@ watch([page, pageSize, filters], () => {
 const salesRegister = () => {
   router.push("/sales/register");
 };
-
-const goHome = () => {
-  router.push("/user/gestion");
-};
-
-const productsPage = () => {
-  router.push("/product/list");
-};
-
-const categoriesPage = () => {
-  router.push("/user/gestion");
-};
-
-const confirmLogout = () => {
-  Swal.fire({
-    text: "¿Está seguro que quiere cerrar sesión?",
-    icon: "question",
-    showCancelButton: true,
-    confirmButtonText: "Si",
-    cancelButtonText: "Cancelar",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      handleLogout();
-    }
-  });
-};
-
-const handleLogout = () => {
-  userStore.logout();
-  router.push("/");
-};
 </script>
 
 <style scoped>
+.header-container {
+  display: flex;
+}
+.register-button {
+  margin-left: 13%;
+  margin-top: 3%;
+  color: white;
+  background-color: #009c8c;
+}
+.select {
+  max-width: 300px;
+  margin-top: 3%;
+  margin-left: 49%;
+}
 .table-container {
   max-height: 400px;
   overflow-y: auto;
-  margin-left: 10%;
+  margin-top: 2%;
+  margin-left: 12%;
+}
+
+@media (max-width: 430px) {
+  .header-container {
+    display: inline;
+    padding: 1.5%;
+  }
+  .container-register {
+    padding: 2%;
+  }
+  .register-button {
+    width: 97%;
+    font-size: 5vw;
+    margin-top: 20%;
+    margin-left: 0%;
+  }
+  .select {
+    max-width: 100%;
+    margin-left: 0%;
+    padding: 2%;
+  }
+  .table-container {
+    display: flex;
+    margin-left: 0%;
+    padding: 2%;
+  }
 }
 </style>

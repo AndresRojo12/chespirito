@@ -1,101 +1,28 @@
 <template>
-  <div class="card-container">
-    <h1 class="card-title">ANTIGÜEDADES CHESPIRITO</h1>
-
-    <div class="header-container">
-      <v-btn @click.prevent="category" class="register-button"
-        >Registrar categoría</v-btn
-      >
-      <v-text-field
-        v-model="search"
-        density="comfortable"
-        placeholder="Buscar categorías"
-        prepend-inner-icon="mdi-magnify"
-        class="search-field"
-        variant="solo"
-        clearable
-        hide-details
-      ></v-text-field>
-    </div>
-
-    <v-layout class="layout">
-      <v-navigation-drawer
-        class="nav-drawer"
-        v-model="drawer"
-        app
-        fixed
-        :rail="isLargeScreen"
-        :expand-on-hover="isLargeScreen"
-        :temporary="!isLargeScreen"
-      >
-        <v-list>
-          <v-list-item
-            prepend-icon="mdi-account-circle"
-            :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
-            class="buttons"
-          ></v-list-item>
-        </v-list>
-
-        <v-divider></v-divider>
-
-        <v-list density="compact" nav>
-          <v-list-item
-            prepend-icon="mdi-home-city"
-            title="Inicio"
-            class="buttons"
-            @click="goHome"
-          ></v-list-item>
-
-          <v-list-item
-            prepend-icon="mdi-cash"
-            title="Productos"
-            class="buttons"
-            @click.prevent="products"
-          ></v-list-item>
-
-          <v-list-item
-            prepend-icon="mdi-cash"
-            title="Inventarios"
-            class="buttons"
-            @click.prevent="inventories"
-          ></v-list-item>
-          <v-list-item
-            prepend-icon="mdi-elevation-rise"
-            title="Ventas"
-            class="buttons"
-            @click.prevent="sales"
-          >
-          </v-list-item>
-
-          <v-list-item
-            @click.prevent="confirmLogout"
-            prepend-icon="mdi-logout"
-            title="Salir"
-            class="buttons"
-          ></v-list-item>
-        </v-list>
-      </v-navigation-drawer>
-
-      <v-app-bar app class="app-bar">
-        <v-app-bar-nav-icon @click="toggleDrawer"></v-app-bar-nav-icon>
-        <v-toolbar-title class="title-toolbar"
-          >Antigüedades Chespirito</v-toolbar-title
-        >
-      </v-app-bar>
-
-      <v-main class="main-content"></v-main>
-    </v-layout>
+  <div class="header-container">
+    <v-btn @click.prevent="category" class="register-button"
+      >Registrar categoría</v-btn
+    >
+    <v-text-field
+      v-model="search"
+      density="comfortable"
+      placeholder="Buscar categorías"
+      prepend-inner-icon="mdi-magnify"
+      class="search-field"
+      variant="solo"
+      clearable
+      hide-details
+    ></v-text-field>
   </div>
 
-  <div class="select-container">
-    <v-select
-      v-model="pageSize"
-      class="page-select"
-      :items="[10, 20, 30, 40, 50]"
-      label="Seleccionar categorías por página"
-      @change="getCategories"
-    ></v-select>
-  </div>
+  <v-select
+    v-model="pageSize"
+    class="page-select"
+    :items="[10, 20, 30, 40, 50]"
+    label="Seleccionar categorías por página"
+    @change="getCategories"
+  ></v-select>
+
   <div class="category-container">
     <div
       v-for="cate in filteredCategories.data"
@@ -111,61 +38,29 @@
           <p class="category-description">{{ cate.description }}</p>
         </button>
       </nuxt-link>
-      <v-tooltip text="">
-        <template v-slot:activator="{ props }">
-          <v-icon
-            v-bind="props"
-            @click="editCategory(cate)"
-            style="color: rgba(228, 192, 11, 0.663)"
-          >
-            mdi-pencil
-          </v-icon>
-        </template>
-      </v-tooltip>
-      <v-tooltip text="Eliminar">
-        <template v-slot:activator="{ props }">
-          <v-icon
-            v-bind="props"
-            @click="confirmDelete(cate)"
-            style="color: darkslategrey"
-          >
-            mdi-delete
-          </v-icon>
-        </template>
-      </v-tooltip>
     </div>
-  </div>
-  <div class="text-center">
-    <v-container>
-      <v-row justify="center">
-        <v-col cols="8">
-          <v-container class="max-width">
-            <v-pagination
-              v-model="page"
-              :length="filteredCategories.totalPages"
-              class="my-4"
-              @input="getCategories"
-            ></v-pagination>
-          </v-container>
-        </v-col>
-      </v-row>
-    </v-container>
-    <v-dialog v-model="showEditDialog" max-width="600px">
-      <v-card>
-        <v-card-title class="headline">Editar Categoría</v-card-title>
-        <v-card-text>
-          <CategoriesProductUpdate
-            :category="editingCategory"
-            @save="handleSave"
-          />
-        </v-card-text>
-        <v-card-actions>
-          <v-btn color="blue darken-1" text @click="showEditDialog = false">
-            Cancelar
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <v-tooltip text="Editar">
+      <template v-slot:activator="{ props }">
+        <v-icon
+          v-bind="props"
+          @click="editCategory(cate)"
+          style="color: rgba(228, 192, 11, 0.663)"
+        >
+          mdi-pencil
+        </v-icon>
+      </template>
+    </v-tooltip>
+    <v-tooltip text="Eliminar">
+      <template v-slot:activator="{ props }">
+        <v-icon
+          v-bind="props"
+          @click="confirmDelete(cate)"
+          style="color: darkslategrey"
+        >
+          mdi-delete
+        </v-icon>
+      </template>
+    </v-tooltip>
   </div>
 
   <div class="text-center">
@@ -201,30 +96,17 @@
       </v-card>
     </v-dialog>
   </div>
-  <footer class="footer">
-    <div>
-      <div class="footer-bottom">
-        {{ new Date().getFullYear() }} —
-        <strong>Antigüedades Chespirito</strong>
-      </div>
-    </div>
-  </footer>
 </template>
 
 <script setup>
-import { ref, onMounted, watch, nextTick, onBeforeMount } from "vue";
-import { useAuth } from "~/store/auth";
-import Swal from "sweetalert2";
+import { ref, onMounted, watch, nextTick } from "vue";
 import CategoriesProductUpdate from "../categories/CategoriesProductUpdate.vue";
 import CategoryDelete from "../categories/CategoryDelete.vue";
 const CONFIG = useRuntimeConfig();
 
-const drawer = ref(true);
-const rail = ref(true);
 const page = ref(1);
 const pageSize = ref(10);
 const router = useRouter();
-const userStore = useAuth();
 const showEditDialog = ref(false);
 const editingCategory = ref(null);
 const categoryToDelete = ref(null);
@@ -233,43 +115,6 @@ const showDeleteDialog = ref(false);
 const categories = ref([]);
 const filteredCategories = ref({ data: [], totalPages: 1 });
 const search = ref("");
-
-const isLargeScreen = ref(true);
-
-const checkScreenSize = () => {
-  if (typeof window !== "undefined") {
-    isLargeScreen.value = window.innerWidth > 430;
-    drawer.value = !isLargeScreen.value;
-  }
-};
-
-const updateDrawerState = () => {
-  if (window.innerWidth <= 430) {
-    drawer.value = false;
-  } else {
-    drawer.value = true;
-  }
-};
-
-onMounted(() => {
-  checkScreenSize();
-  window.addEventListener("resize", checkScreenSize);
-});
-
-onMounted(() => {
-  updateDrawerState();
-  window.addEventListener("resize", updateDrawerState);
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener("resize", checkScreenSize);
-});
-
-const toggleDrawer = () => {
-  if (!isLargeScreen.value) {
-    drawer.value = !drawer.value;
-  }
-};
 
 const getCategories = async () => {
   try {
@@ -325,20 +170,6 @@ watch(pageSize, async () => {
   await getCategories();
 });
 
-const confirmLogout = () => {
-  Swal.fire({
-    title: "¿Estás seguro?",
-    text: "¿Quieres cerrar sesión?",
-    icon: "question",
-    showCancelButton: true,
-    confirmButtonText: "Sí, cerrar sesión",
-    cancelButtonText: "Cancelar",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      handleLogout();
-    }
-  });
-};
 const editCategory = (cate) => {
   if (cate && cate.id) {
     editingCategory.value = { ...cate };
@@ -375,29 +206,8 @@ const handleDelete = async (categoryId) => {
   showDeleteDialog.value = false;
 };
 
-const handleLogout = () => {
-  userStore.logout();
-  router.push("/");
-};
-
-const goHome = () => {
-  router.push("/user/gestion");
-};
-
-const products = () => {
-  router.push("/product/list");
-};
-
-const inventories = () => {
-  router.push("/inventory/list");
-};
-
 const category = () => {
   router.push("/categories/register");
-};
-
-const sales = () => {
-  router.push("/sales/list");
 };
 
 const confirmDelete = async (category) => {
@@ -407,43 +217,28 @@ const confirmDelete = async (category) => {
 </script>
 
 <style scoped>
-.card-container {
-  height: 11rem;
-  border-bottom: 1px solid #aeb8b8;
-}
-.card-title {
-  display: flex;
-  justify-content: center;
-  font-size: 2rem;
-  color: #009c8c;
-}
 .header-container {
-  flex-direction: row;
-}
-.search-field {
-  max-width: 300px;
-  margin-left: 75%;
+  display: flex;
+  justify-content: space-between;
 }
 .register-button {
-  margin-left: 10%;
-  margin-top: 2%;
+  margin-top: 5%;
+  margin-left: 13%;
   color: white;
   background-color: #009c8c;
 }
-.layout {
-  height: 250px;
-}
-.nav-drawer {
-  max-width: 155px;
+.search-field {
+  max-width: 300px;
+  margin-top: 3%;
+  margin-right: 5%;
 }
 .page-select {
   max-width: 300px;
   margin-left: 12%;
-  margin-top: 2%;
+  margin-top: 5%;
 }
 .category-container {
   margin-left: 10%;
-  margin-top: 2%;
   display: flex;
   flex-wrap: wrap;
   padding: 2%;
@@ -472,44 +267,37 @@ const confirmDelete = async (category) => {
 .category-description {
   margin: 0;
 }
-.main-content {
-  height: 250px;
-}
-.buttons {
-  color: #009c8c;
-}
-.footer-bottom {
-  margin-bottom: 10px;
-  font-size: 14px;
-}
-.footer {
-  display: flex;
-  justify-content: center;
-  margin-top: 2%;
-  color: #009c8c;
-}
 
 @media (max-width: 430px) {
-  .card-title {
-    font-size: 10vw;
-    display: none;
-  }
-  .card-container {
-    height: 8rem;
-  }
   .header-container {
-    padding: 10px;
-    margin-top: 18%;
+    display: inline;
   }
   .register-button {
-    width: 100%;
+    width: 97%;
     font-size: 5vw;
-    margin-left: 0%;
-    margin-bottom: 5%;
+    margin-left: 1.5%;
+    margin-top: 20%;
   }
   .search-field {
     max-width: 100%;
+    margin-right: 0%;
+    padding: 2%;
+  }
+  .page-select {
+    max-width: 100%;
+    margin-left: 0;
+    padding: 2%;
+  }
+  .category-container {
     margin-left: 0%;
+  }
+  .category-item {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+  .category-title,
+  .category-description {
+    font-size: 5vw;
   }
   .app-bar {
     display: flex;
@@ -517,21 +305,6 @@ const confirmDelete = async (category) => {
   .title-toolbar {
     font-size: 5vw;
     margin-left: 12%;
-  }
-  .page-select {
-    max-width: 100%;
-    margin-left: 0;
-    padding: 2%;
-  }
-  .category-item {
-    flex: 1 1 100%;
-    max-width: 100%;
-  }
-  .layout {
-    height: auto;
-  }
-  .category-container {
-    margin-left: 0%;
   }
   .footer-bottom {
     font-size: 5vw;
