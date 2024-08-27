@@ -332,11 +332,15 @@ const handleSave = async (updatedProduct) => {
 };
 
 const handleDelete = async (productId) => {
-  filteredProducts.value.data = filteredProducts.value.data.findIndex(
+  const index = filteredProducts.value.data.findIndex(
     (item) => item.id === productId,
   );
-  filteredProducts.value.splice(index, 1);
+
+  if (index !== -1) {
+    filteredProducts.value.data.splice(index, 1);
+  }
   await getProducts();
+  showDeleteDialog.value = false;
 };
 
 const handleLogout = () => {
