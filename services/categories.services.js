@@ -109,7 +109,7 @@ class CategoryService {
   async delete(id) {
     const category = await this.findOne(id);
     if(!category) {
-      throw boom.notFound('Product not found');
+      throw boom.notFound('Category not found');
     }
     await category.update({ deleted: true, deletedAt: new Date() });
     return { id };
