@@ -1,91 +1,92 @@
 <template>
-  <div class="container">
-    <div class="card-container">
-      <h1 class="card-title">ANTIGÜEDADES CHESPIRITO</h1>
+  <div class="card-container">
+    <h1 class="card-title">ANTIGÜEDADES CHESPIRITO</h1>
 
-      <div class="header-container">
-        <v-btn @click.prevent="category" class="register-button"
-          >Registrar categoría</v-btn
-        >
-        <v-text-field
-          v-model="search"
-          density="comfortable"
-          placeholder="Buscar categorías"
-          prepend-inner-icon="mdi-magnify"
-          class="search-field"
-          variant="solo"
-          clearable
-          hide-details
-        ></v-text-field>
-      </div>
-
-      <v-layout class="layout">
-        <v-navigation-drawer
-          class="nav-drawer"
-          v-model="drawer"
-          app
-          fixed
-          :rail="isLargeScreen"
-          :expand-on-hover="isLargeScreen"
-          :temporary="!isLargeScreen"
-        >
-          <v-list>
-            <v-list-item
-              prepend-icon="mdi-account-circle"
-              :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
-              class="buttons"
-            ></v-list-item>
-          </v-list>
-
-          <v-divider></v-divider>
-
-          <v-list density="compact" nav>
-            <v-list-item
-              prepend-icon="mdi-home-city"
-              title="Inicio"
-              class="buttons"
-              @click="goHome"
-            ></v-list-item>
-
-            <v-list-item
-              prepend-icon="mdi-cash"
-              title="Productos"
-              class="buttons"
-              @click.prevent="products"
-            ></v-list-item>
-
-            <v-list-item
-              prepend-icon="mdi-cash"
-              title="Inventarios"
-              class="buttons"
-              @click.prevent="inventories"
-            ></v-list-item>
-            <v-list-item
-              prepend-icon="mdi-elevation-rise"
-              title="Ventas"
-              class="buttons"
-              @click.prevent="sales"
-            >
-            </v-list-item>
-
-            <v-list-item
-              @click.prevent="confirmLogout"
-              prepend-icon="mdi-logout"
-              title="Salir"
-              class="buttons"
-            ></v-list-item>
-          </v-list>
-        </v-navigation-drawer>
-
-        <v-app-bar app class="app-bar">
-          <v-app-bar-nav-icon @click="toggleDrawer"></v-app-bar-nav-icon>
-          <v-toolbar-title>Antigüedades Chespirito</v-toolbar-title>
-        </v-app-bar>
-
-        <v-main class="main-content"></v-main>
-      </v-layout>
+    <div class="header-container">
+      <v-btn @click.prevent="category" class="register-button"
+        >Registrar categoría</v-btn
+      >
+      <v-text-field
+        v-model="search"
+        density="comfortable"
+        placeholder="Buscar categorías"
+        prepend-inner-icon="mdi-magnify"
+        class="search-field"
+        variant="solo"
+        clearable
+        hide-details
+      ></v-text-field>
     </div>
+
+    <v-layout class="layout">
+      <v-navigation-drawer
+        class="nav-drawer"
+        v-model="drawer"
+        app
+        fixed
+        :rail="isLargeScreen"
+        :expand-on-hover="isLargeScreen"
+        :temporary="!isLargeScreen"
+      >
+        <v-list>
+          <v-list-item
+            prepend-icon="mdi-account-circle"
+            :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
+            class="buttons"
+          ></v-list-item>
+        </v-list>
+
+        <v-divider></v-divider>
+
+        <v-list density="compact" nav>
+          <v-list-item
+            prepend-icon="mdi-home-city"
+            title="Inicio"
+            class="buttons"
+            @click="goHome"
+          ></v-list-item>
+
+          <v-list-item
+            prepend-icon="mdi-cash"
+            title="Productos"
+            class="buttons"
+            @click.prevent="products"
+          ></v-list-item>
+
+          <v-list-item
+            prepend-icon="mdi-cash"
+            title="Inventarios"
+            class="buttons"
+            @click.prevent="inventories"
+          ></v-list-item>
+          <v-list-item
+            prepend-icon="mdi-elevation-rise"
+            title="Ventas"
+            class="buttons"
+            @click.prevent="sales"
+          >
+          </v-list-item>
+
+          <v-list-item
+            @click.prevent="confirmLogout"
+            prepend-icon="mdi-logout"
+            title="Salir"
+            class="buttons"
+          ></v-list-item>
+        </v-list>
+      </v-navigation-drawer>
+
+      <v-app-bar app class="app-bar">
+        <v-app-bar-nav-icon @click="toggleDrawer"></v-app-bar-nav-icon>
+        <v-toolbar-title class="title-toolbar"
+          >Antigüedades Chespirito</v-toolbar-title
+        >
+      </v-app-bar>
+
+      <v-main class="main-content"></v-main>
+    </v-layout>
   </div>
+
   <div class="select-container">
     <v-select
       v-model="pageSize"
@@ -243,28 +244,32 @@ const checkScreenSize = () => {
 };
 
 const updateDrawerState = () => {
-  if (window.innerWidth < 430) {
+  if (window.innerWidth <= 430) {
     drawer.value = false;
   } else {
     drawer.value = true;
   }
 };
 
-const toggleDrawer = () => {
-  if (!isLargeScreen.value) {
-    drawer.value = !drawer.value;
-  }
-};
-
 onMounted(() => {
   checkScreenSize();
-  updateDrawerState();
   window.addEventListener("resize", checkScreenSize);
+});
+
+onMounted(() => {
+  updateDrawerState();
+  window.addEventListener("resize", updateDrawerState);
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener("resize", checkScreenSize);
 });
+
+const toggleDrawer = () => {
+  if (!isLargeScreen.value) {
+    drawer.value = !drawer.value;
+  }
+};
 
 const getCategories = async () => {
   try {
@@ -418,7 +423,8 @@ const confirmDelete = async (category) => {
 .register-button {
   margin-left: 10%;
   margin-top: 2%;
-  color: #009c8c;
+  color: white;
+  background-color: #009c8c;
 }
 .layout {
   height: 250px;
@@ -430,7 +436,6 @@ const confirmDelete = async (category) => {
   max-width: 300px;
   margin-left: 12%;
   margin-top: 2%;
-  color: #009c8c;
 }
 .category-container {
   margin-left: 10%;
@@ -470,7 +475,7 @@ const confirmDelete = async (category) => {
   color: #009c8c;
 }
 .footer-bottom {
-  margin-top: 10px;
+  margin-bottom: 10px;
   font-size: 14px;
 }
 .footer {
@@ -505,6 +510,10 @@ const confirmDelete = async (category) => {
   .app-bar {
     display: flex;
   }
+  .title-toolbar {
+    font-size: 5vw;
+    margin-left: 12%;
+  }
   .page-select {
     max-width: 100%;
     margin-left: 0;
@@ -519,6 +528,9 @@ const confirmDelete = async (category) => {
   }
   .category-container {
     margin-left: 0%;
+  }
+  .footer-bottom {
+    font-size: 5vw;
   }
 }
 @media (min-width: 431px) {
