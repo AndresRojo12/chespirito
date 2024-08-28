@@ -1,115 +1,40 @@
 <template>
-  <div v-if="isAuthenticated">
-    <div>
-      <v-card style="max-height: 10rem; background-color: white">
-        <h1 style="display: flex; color: #009c8c; justify-content: center">
-          ANTIGÜEDADES CHESPIRITO
-        </h1>
-        <v-data-iterator
-          :items="filteredProducts.data || []"
-          style="margin-top: 2%"
-        >
-          <template v-slot:header>
-            <v-text-field
-              v-model="search"
-              density="comfortable"
-              placeholder="Buscar Productos"
-              prepend-inner-icon="mdi-magnify"
-              style="max-width: 300px; margin-left: 75%"
-              variant="solo"
-              clearable
-              hide-details
-            ></v-text-field>
-            <v-row>
-              <v-btn
-                @click.prevent="product"
-                style="margin-left: 10%; color: #009c8c"
-              >
-                Registrar producto
-              </v-btn>
-            </v-row>
-          </template>
-        </v-data-iterator>
-        <v-layout>
-          <v-navigation-drawer
-            style="background-color: white; max-width: 155px"
-            expand-on-hover
-            rail
-          >
-            <v-list>
-              <v-list-item
-                style="color: #009c8c"
-                prepend-icon="mdi-account-circle"
-                :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
-              ></v-list-item>
-            </v-list>
-
-            <v-divider></v-divider>
-
-            <v-list density="compact" nav>
-              <v-list-item
-                style="color: #009c8c"
-                prepend-icon="mdi-home-city"
-                title="Inicio"
-                @click="goHome"
-              ></v-list-item>
-              <v-list-item
-                style="color: #009c8c"
-                @click.prevent="confirmLogout"
-                prepend-icon="mdi-logout"
-                title="Salir"
-              ></v-list-item>
-            </v-list>
-          </v-navigation-drawer>
-
-          <v-main style="height: 250px"></v-main>
-        </v-layout>
-      </v-card>
-      <v-select
-        v-model="pageSize"
-        style="
-          max-width: 300px;
-          margin-left: 12%;
-          margin-top: 2%;
-          color: aliceblue;
-        "
-        :items="[10, 20, 30, 40, 50]"
-        label="Seleccionar categorías por página"
-        @change="getProducts"
-      ></v-select>
+  <div class="main-container" v-if="isAuthenticated">
+    <div class="header-container">
+      <v-btn class="register-button" @click.prevent="product">
+        Registrar producto
+      </v-btn>
+      <v-text-field
+        class="search-field"
+        v-model="search"
+        density="comfortable"
+        placeholder="Buscar Productos"
+        prepend-inner-icon="mdi-magnify"
+        variant="solo"
+        clearable
+        hide-details
+      ></v-text-field>
     </div>
-    <div
-      style="margin-left: 10%; margin-top: 2%; display: flex; flex-wrap: wrap"
-    >
+    <v-select
+      v-model="pageSize"
+      class="page-select"
+      :items="[10, 20, 30, 40, 50]"
+      label="Seleccionar categorías por página"
+      @change="getProducts"
+    ></v-select>
+    <div class="product-container">
       <div
+        class="product-item"
         v-for="pro in filteredProducts.data || []"
         :key="pro.id"
-        style="
-          flex: 1 1 22%;
-          max-width: 22%;
-          margin: 1%;
-          box-sizing: border-box;
-          text-align: center;
-        "
       >
         <div>
-          <img style="width: 100%" :src="getImageUrl(pro.imagePath)" />
+          <img class="product-image" :src="getImageUrl(pro.imagePath)" />
         </div>
-        <button
-          style="
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            background-color: #009c8c;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-          "
-        >
-          <h3 style="margin: 0">Nombre: {{ pro.name }}</h3>
-          <p style="margin: 0">Descripción: {{ pro.description }}</p>
-          <p style="margin: 0">Precio: {{ pro.price }}</p>
+        <button class="product-button">
+          <h3 class="button-text">Nombre: {{ pro.name }}</h3>
+          <p class="button-text">Descripción: {{ pro.description }}</p>
+          <p class="button-text">Precio: {{ pro.price }}</p>
         </button>
         <v-tooltip text="Editar">
           <template v-slot:activator="{ props }">
@@ -151,53 +76,30 @@
         </v-row>
       </v-container>
       <v-dialog v-model="showEditDialog" max-width="300px">
-        <v-card
-          style="
-            background-color: white;
-            border-style: groove;
-            border-radius: 6%;
-            border-color: #009c8c;
-          "
-        >
-          <v-card-title style="color: #009c8c" class="headline"
-            >Editar Producto</v-card-title
-          >
+        <v-card class="edit-dialog">
+          <v-card-title class="form-title">Editar Producto</v-card-title>
           <v-card-text>
             <ProductUpdate :product="editingProduct" @save="handleSave" />
           </v-card-text>
           <v-card-actions>
-            <v-btn style="color: #009c8c" text @click="showEditDialog = false">
+            <v-btn class="cancel-button" @click="showEditDialog = false">
               Cancelar
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
       <v-dialog v-model="showDeleteDialog" max-width="300px">
-        <v-card style="background-color: #009c8c; border-radius: 6%">
+        <v-card>
           <v-card-text>
             <ProductDelete :product="productToDelete" @deleted="handleDelete" />
           </v-card-text>
           <v-card-actions>
-            <v-btn
-              style="color: aliceblue"
-              text
-              @click="showDeleteDialog = false"
-            >
-              Cancelar
-            </v-btn>
+            <v-btn text @click="showDeleteDialog = false"> Cancelar </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
     </div>
   </div>
-  <footer class="footer">
-    <div>
-      <div class="footer-bottom">
-        {{ new Date().getFullYear() }} —
-        <strong>Antigüedades Chespirito</strong>
-      </div>
-    </div>
-  </footer>
 </template>
 
 <script setup>
@@ -207,13 +109,12 @@ import { useAuth } from "~/store/auth";
 import Swal from "sweetalert2";
 import ProductUpdate from "./ProductUpdate.vue";
 import ProductDelete from "./ProductDelete.vue";
-const CONFIG = useRuntimeConfig();
 
-const drawer = ref(true);
-const rail = ref(true);
+const CONFIG = useRuntimeConfig();
+const router = useRouter();
+
 const page = ref(1);
 const pageSize = ref(10);
-const router = useRouter();
 const userStore = useAuth();
 const showEditDialog = ref(false);
 const editingProduct = ref(null);
@@ -249,16 +150,16 @@ const getImageUrl = (imagePath) => {
 };
 
 onMounted(async () => {
-  if(!userStore.user){
+  if (!userStore.user) {
     Swal.fire({
-      icon:'error',
-      title:'Acceso Denegado',
-      text:'Debe iniciar sesión primero',
-      confirmButtonText: 'Aceptar'
-    }).then(()=> {
-      router.push('/');
+      icon: "error",
+      title: "Acceso Denegado",
+      text: "Debe iniciar sesión primero",
+      confirmButtonText: "Aceptar",
+    }).then(() => {
+      router.push("/");
     });
-  }else{
+  } else {
     isAuthenticated.value = true;
     await nextTick();
     await getProducts();
@@ -294,21 +195,6 @@ watch(pageSize, async () => {
   await getProducts();
 });
 
-const confirmLogout = () => {
-  Swal.fire({
-    title: "¿Estás seguro?",
-    text: "¿Quieres cerrar sesión?",
-    icon: "question",
-    showCancelButton: true,
-    confirmButtonText: "Sí, cerrar sesión",
-    cancelButtonText: "Cancelar",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      handleLogout();
-    }
-  });
-};
-
 const editProduct = (pro) => {
   if (pro && pro.id) {
     editingProduct.value = { ...pro };
@@ -343,15 +229,6 @@ const handleDelete = async (productId) => {
   showDeleteDialog.value = false;
 };
 
-const handleLogout = () => {
-  userStore.logout();
-  router.push("/");
-};
-
-const goHome = () => {
-  router.push("/user/gestion");
-};
-
 const product = () => {
   router.push("/product/register");
 };
@@ -362,16 +239,146 @@ const confirmDelete = (product) => {
 };
 </script>
 
-<style>
-.footer-bottom {
-  margin-top: 10px;
-  font-size: 14px;
-}
-
-.footer {
+<style scoped>
+.header-container {
   display: flex;
-  justify-content: center;
-  margin-top: 2%;
+  justify-content: space-between;
+}
+.register-button {
+  margin-top: 5%;
+  margin-left: 13%;
+  color: white;
+  background-color: #009c8c;
+}
+.search-field {
+  max-width: 300px;
+  margin-top: 3%;
+  margin-right: 0%;
+}
+.page-select {
+  max-width: 300px;
+  margin-left: 13%;
+  margin-top: 5%;
+}
+.product-container {
+  margin-left: 10%;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 2%;
+}
+.product-item {
+  flex: 1 1 22%;
+  max-width: 22%;
+  margin: 1%;
+  box-sizing: border-box;
+  text-align: center;
+}
+.product-image {
+  width: 100%;
+}
+.product-button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #009c8c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.button-text {
+  margin: 0;
+}
+.edit-dialog {
+  background-color: white;
+  border-style: groove;
+  border-radius: 6%;
+  border-color: #009c8c;
+}
+.form-title {
+  align-self: center;
+}
+.cancel-button {
+  background-color: white;
   color: #009c8c;
+}
+@media (max-width: 1024px) {
+  .main-container {
+    margin-top: 8%;
+    margin-right: 5%;
+  }
+}
+@media (max-width: 540px) {
+  .main-container {
+    margin-right: 5%;
+    margin-top: 0%;
+  }
+  .header-container {
+    align-self: center;
+    display: inline;
+  }
+  .register-button {
+    width: 80%;
+    font-size: 4vw;
+    margin-top: 15%;
+  }
+  .search-field {
+    max-width: 80%;
+    margin-left: 13%;
+  }
+  .page-select {
+    max-width: 80%;
+  }
+  .product-item {
+    flex: 1 1 80%;
+    max-width: 93.5%;
+  }
+  .button-text {
+    font-size: 5vw;
+    margin: 0;
+  }
+}
+@media (max-width: 430px) {
+  .main-container {
+    margin-right: 0%;
+    margin-top: 0%;
+  }
+  .header-container {
+    display: inline;
+  }
+  .register-button {
+    width: 96%;
+    font-size: 5vw;
+    margin-left: 1.5%;
+    margin-top: 20%;
+  }
+  .search-field {
+    max-width: 100%;
+    margin-right: 0%;
+    margin-left: 0%;
+    padding: 2%;
+  }
+  .page-select {
+    max-width: 100%;
+    margin-left: 0%;
+    padding: 2%;
+  }
+  .product-container {
+    margin-left: 0%;
+  }
+  .product-item {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+  .button-text {
+    font-size: 5vw;
+    margin: 0;
+  }
+  .form-title {
+    font-size: 5vw;
+  }
+  .cancel-button {
+    font-size: 5vw;
+  }
 }
 </style>

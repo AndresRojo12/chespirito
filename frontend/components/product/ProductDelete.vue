@@ -1,16 +1,13 @@
 <template>
-  <v-card-title style="color:aliceblue ;" class="headline">Eliminar Producto</v-card-title>
-  <v-card-text style="color:aliceblue ;"> ¿Estás seguro de que deseas eliminar el producto </v-card-text>
+  <v-card-title>Eliminar Producto</v-card-title>
+  <v-card-text> ¿Seguro que desea eliminar el producto? </v-card-text>
   <v-card-actions>
-    <v-btn style="background-color:#009c8c ;
-      color: aliceblue;" text @click.prevent="deleteProduct"
-      >Sí, eliminar</v-btn
-    >
+    <v-btn text @click.prevent="deleteProduct">Sí, eliminar</v-btn>
   </v-card-actions>
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { defineProps, defineEmits } from "vue";
 import Swal from "sweetalert2";
 const CONFIG = useRuntimeConfig();
@@ -53,3 +50,9 @@ const deleteProduct = async () => {
   }
 };
 </script>
+
+<style scoped>
+.title {
+  align-self: center;
+}
+</style>

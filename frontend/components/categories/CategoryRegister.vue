@@ -144,18 +144,11 @@ const back = () => {
   color: #009c8c;
   width: 40%;
 }
-.footer-bottom {
-  margin-top: 10px;
-  font-size: 14px;
-}
-.footer {
-  display: flex;
-  justify-content: center;
-  margin-top: 2%;
-  color: #009c8c;
-}
-
-@media (max-width: 429px) {
+@media (max-width: 430px) {
+  .exit-icon {
+    display: flex;
+    font-size: 5vw;
+  }
   .main-container {
     max-width: 100%;
     padding: 3%;
@@ -163,39 +156,23 @@ const back = () => {
   .header-container {
     display: flex;
   }
-  .exit-icon {
-    display: flex;
-    font-size: 5vw;
-  }
   .form-container {
     max-width: 100%;
   }
   .title {
     font-size: 5vw;
-    margin-bottom: 5%;
   }
   .submit-buttons {
-    display: flex;
-    justify-content: space-around;
+    display: inline;
   }
-  .submit-button {
+  .submit {
     width: 100%;
     font-size: 4vw;
+    margin-bottom: 5%;
   }
-  .clean-button {
+  .clean {
     width: 100%;
     font-size: 4vw;
-    margin-left: 0%;
-  }
-  .footer-bottom {
-    margin-top: 10px;
-    font-size: 5vw;
-  }
-  .footer {
-    display: flex;
-    justify-content: center;
-    margin-top: 2%;
-    color: #009c8c;
   }
 }
 </style>

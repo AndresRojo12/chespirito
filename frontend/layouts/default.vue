@@ -93,7 +93,7 @@ const drawer = ref(true);
 const isLargeScreen = ref(true);
 
 const showAppBar = computed(() => {
-  const routesWithAppBar = ["/user/gestion", "/sales/list"];
+  const routesWithAppBar = ["/user/gestion", "/product/list", "/sales/list"];
   return routesWithAppBar.includes(route.path);
 });
 
@@ -104,13 +104,13 @@ const showLayout = computed(() => {
 
 const checkScreenSize = () => {
   if (typeof window !== "undefined") {
-    isLargeScreen.value = window.innerWidth > 430;
+    isLargeScreen.value = window.innerWidth > 1024;
     drawer.value = !isLargeScreen.value;
   }
 };
 
 const updateDrawerState = () => {
-  if (window.innerWidth <= 430) {
+  if (window.innerWidth <= 1024) {
     drawer.value = false;
   } else {
     drawer.value = true;
@@ -200,6 +200,22 @@ const handleLogout = () => {
   margin-top: 2%;
   color: #009c8c;
 }
+@media (max-width: 1024px) {
+  .title {
+    display: none;
+  }
+  .app-bar {
+    display: flex;
+  }
+  .title-toolbar {
+    margin-left: 30%;
+  }
+}
+@media (max-width: 540px) {
+  .title-toolbar {
+    margin-left: 20%;
+  }
+}
 @media (max-width: 430px) {
   .title {
     display: none;
@@ -209,7 +225,10 @@ const handleLogout = () => {
   }
   .title-toolbar {
     font-size: 5vw;
-    margin-left: 10%;
+    margin-left: 13%;
+  }
+  .footer-bottom{
+    font-size: 5vw;
   }
 }
 </style>

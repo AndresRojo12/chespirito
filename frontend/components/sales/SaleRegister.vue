@@ -230,10 +230,20 @@ const back = () => {
   .form-container {
     max-width: 100%;
   }
-  @media (max-width: 430px) {
-    .title {
-      font-size: 5vw;
-    }
+  .title {
+    font-size: 5vw;
+  }
+  .submit-buttons {
+    display: inline;
+  }
+  .submit {
+    width: 100%;
+    font-size: 4vw;
+    margin-bottom: 5%;
+  }
+  .clean {
+    width: 100%;
+    font-size: 4vw;
   }
 }
 </style>

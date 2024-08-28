@@ -1,126 +1,53 @@
 <template>
-  <div v-if="isAuthenticated">
-    <h1
-      style="
-        display: flex;
-        margin-top: 0%;
-        background-color: white;
-        color: #009c8c;
-        justify-content: center;
-      "
-    >
-      ANTIGÜEDADES CHESPIRITO
-    </h1>
-    <v-layout>
-      <v-navigation-drawer
-        style="background-color: white; max-width: 155px"
-        expand-on-hover
-        rail
-      >
-        <v-list>
-          <v-list-item
-            style="color: #009c8c"
-            prepend-icon="mdi-account-circle"
-            :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
-          ></v-list-item>
-        </v-list>
+  <div class="main-container" v-if="isAuthenticated">
+    <div class="header-container">
+      <v-list-item
+        prepend-icon="mdi-arrow-left"
+        class="exit-icon"
+        @click="back"
+      ></v-list-item>
+    </div>
+    <v-container class="form-container">
+      <h1 class="title">Registro de productos</h1>
 
-        <v-divider></v-divider>
-
-        <v-list density="compact" nav>
-          <v-list-item
-            style="color: #009c8c"
-            prepend-icon="mdi-home-city"
-            title="Inicio"
-            @click="goHome"
-          ></v-list-item>
-
-          <v-list-item
-            style="color: #009c8c"
-            prepend-icon="mdi-cash"
-            title="Productos"
-            @click.prevent="products"
-          ></v-list-item>
-
-          <v-list-item
-            style="color: #009c8c"
-            @click.prevent="confirmLogout"
-            prepend-icon="mdi-logout"
-            title="Salir"
-          ></v-list-item>
-        </v-list>
-      </v-navigation-drawer>
-    </v-layout>
-    <v-container
-      style="
-        width: 340px;
-        margin-top: 4%;
-        border-style: groove;
-        border-radius: 6%;
-        border-color: #009c8c;
-        background-color: white;
-      "
-    >
-      <h1 style="text-align: center; font-size: larger; color: #009c8c">
-        Registro de productos
-      </h1>
-      <v-sheet class="mx-auto" width="300" style="border-style: groove">
-        <form style="margin-top: 2%" @submit.prevent="registerProduct">
-          <v-text-field
-            v-model="name"
-            style="background-color: white; color: #009c8c"
-            label="Nombre"
-            required
-          >
-          </v-text-field>
-          <v-textarea
-            style="background-color: white; color: #009c8c"
-            v-model="description"
-            label="Descripción"
-            required
-          ></v-textarea>
-          <v-text-field
-            v-model="price"
-            label="Precio"
-            required
-            style="background-color: white; color: #009c8c"
-          ></v-text-field>
-          <v-file-input
-            v-model="image"
-            style="background-color: white; color: #009c8c"
-            label="Seleccionar Imagen"
-            accept="image/*"
-            required
-          ></v-file-input>
-          <v-autocomplete
-            style="background-color: white; color: #009c8c"
-            v-model="selectedCategory"
-            :items="categories"
-            item-title="name"
-            item-value="id"
-            label="Seleccionar Categoría"
-            required
-          ></v-autocomplete>
-          <v-btn style="background-color: white; color: #009c8c" type="submit"
-            >Enviar</v-btn
-          >
-          <v-btn
-            style="background-color: white; color: #009c8c"
-            @click="handleReset"
-            >Limpiar</v-btn
-          >
-        </form>
-      </v-sheet>
+      <form @submit.prevent="registerProduct">
+        <v-text-field class="input" v-model="name" label="Nombre" required>
+        </v-text-field>
+        <v-textarea
+          class="text-area"
+          v-model="description"
+          label="Descripción"
+          required
+        ></v-textarea>
+        <v-text-field
+          class="input"
+          v-model="price"
+          label="Precio"
+          required
+        ></v-text-field>
+        <v-file-input
+          class="file-input"
+          v-model="image"
+          label="Seleccionar Imagen"
+          accept="image/*"
+          required
+        ></v-file-input>
+        <v-autocomplete
+          class="select"
+          v-model="selectedCategory"
+          :items="categories"
+          item-title="name"
+          item-value="id"
+          label="Seleccionar Categoría"
+          required
+        ></v-autocomplete>
+        <div class="submit-buttons">
+          <v-btn class="submit" type="submit">Enviar</v-btn>
+          <v-btn class="clean" @click="handleReset">Limpiar</v-btn>
+        </div>
+      </form>
     </v-container>
   </div>
-  <footer class="footer">
-    <div>
-      <div class="footer-bottom">
-        {{ new Date().getFullYear() }} —
-        <strong>Antigüedades Chespirito</strong>
-      </div>
-    </div>
-  </footer>
 </template>
 
 <script setup>
@@ -216,26 +143,6 @@ const registerProduct = async () => {
   }
 };
 
-const confirmLogout = () => {
-  Swal.fire({
-    title: "¿Estás seguro?",
-    text: "¿Quieres cerrar sesión?",
-    icon: "question",
-    showCancelButton: true,
-    confirmButtonText: "Sí, cerrar sesión",
-    cancelButtonText: "Cancelar",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      handleLogout();
-    }
-  });
-};
-
-const handleLogout = () => {
-  userStore.logout();
-  router.push("/");
-};
-
 const handleReset = () => {
   name.value = "";
   description.value = "";
@@ -245,41 +152,107 @@ const handleReset = () => {
 };
 
 onMounted(async () => {
-  if(!userStore.user){
+  if (!userStore.user) {
     Swal.fire({
-      icon:'error',
-      title:'Acceso Denegado',
-      text:'Debe iniciar sesión primero',
-      confirmButtonText:'Aceptar'
-    }).then(()=>{
-      router.push('/')
+      icon: "error",
+      title: "Acceso Denegado",
+      text: "Debe iniciar sesión primero",
+      confirmButtonText: "Aceptar",
+    }).then(() => {
+      router.push("/");
     });
-  }else{
+  } else {
     isAuthenticated.value = true;
     await nextTick();
     await fetchCategories();
   }
 });
 
-const goHome = () => {
-  router.push("/user/gestion");
-};
-
-const products = () => {
-  router.push("/product/list");
+const back = () => {
+  router.back();
 };
 </script>
 
-<style>
-.footer-bottom {
-  margin-top: 10px;
-  font-size: 14px;
+<style scoped>
+.exit-icon {
+  display: none;
 }
-
-.footer {
-  display: flex;
-  justify-content: center;
-  margin-top: 2%;
+.form-container {
+  width: 340px;
+  margin-top: 4%;
+  border-style: groove;
+  border-radius: 6%;
+  border-color: black;
+  background-color: white;
+}
+.title {
+  text-align: center;
+  font-size: larger;
   color: #009c8c;
+  margin-bottom: 5%;
+}
+.input,
+.text-area,
+.file-input,
+.select {
+  color: #009c8c;
+}
+.submit-buttons {
+  display: flex;
+  justify-content: space-around;
+}
+.submit {
+  background-color: #009c8c;
+  color: white;
+  width: 40%;
+}
+.clean {
+  background-color: white;
+  color: #009c8c;
+  width: 40%;
+}
+@media (max-width: 1024px) {
+  .exit-icon {
+    display: flex;
+    font-size: 3vw;
+    margin-left: 2%;
+    margin-top: 2%;
+  }
+  .header-container {
+    display: flex;
+  }
+}
+@media (max-width: 430px) {
+  .exit-icon {
+    display: flex;
+    font-size: 5vw;
+    margin-left: 0%;
+    margin-top: 0%;
+  }
+  .main-container {
+    max-width: 100%;
+    padding: 3%;
+  }
+  .header-container {
+    display: flex;
+  }
+  .form-container {
+    max-width: 100%;
+  }
+  .title {
+    font-size: 5vw;
+  }
+  .submit-buttons {
+    display: inline;
+  }
+  .submit {
+    width: 100%;
+    font-size: 4vw;
+    margin-bottom: 5%;
+  }
+  .clean {
+    width: 100%;
+    font-size: 4vw;
+  }
 }
 </style>

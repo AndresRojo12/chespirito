@@ -25,48 +25,64 @@
 
   <div class="category-container">
     <div
-      v-for="cate in filteredCategories.data"
-      :key="cate.id"
       class="category-item"
+      v-for="cate in filteredCategories.data || []"
+      :key="cate.id"
     >
       <div>
         <img class="category-image" :src="getImageUrl(cate.imagePath)" />
       </div>
       <nuxt-link :to="`/categories/${cate.id}`">
         <button class="category-button">
-          <h3 class="category-title">{{ cate.name }}</h3>
-          <p class="category-description">{{ cate.description }}</p>
+          <h3 class="button-text">{{ cate.name }}</h3>
+          <p class="button-text">{{ cate.description }}</p>
         </button>
       </nuxt-link>
+      <v-tooltip text="Editar">
+        <template v-slot:activator="{ props }">
+          <v-icon
+            v-bind="props"
+            @click="editCategory(cate)"
+            style="color: rgba(228, 192, 11, 0.663)"
+          >
+            mdi-pencil
+          </v-icon>
+        </template>
+      </v-tooltip>
+      <v-tooltip text="Eliminar">
+        <template v-slot:activator="{ props }">
+          <v-icon
+            v-bind="props"
+            @click="confirmDelete(cate)"
+            style="color: darkslategrey"
+          >
+            mdi-delete
+          </v-icon>
+        </template>
+      </v-tooltip>
     </div>
-    <v-tooltip text="Editar">
-      <template v-slot:activator="{ props }">
-        <v-icon
-          v-bind="props"
-          @click="editCategory(cate)"
-          style="color: rgba(228, 192, 11, 0.663)"
-        >
-          mdi-pencil
-        </v-icon>
-      </template>
-    </v-tooltip>
-    <v-tooltip text="Eliminar">
-      <template v-slot:activator="{ props }">
-        <v-icon
-          v-bind="props"
-          @click="confirmDelete(cate)"
-          style="color: darkslategrey"
-        >
-          mdi-delete
-        </v-icon>
-      </template>
-    </v-tooltip>
   </div>
 
   <div class="text-center">
-    <v-dialog v-model="showEditDialog" max-width="600px">
-      <v-card>
-        <v-card-title class="headline">Editar Categoría</v-card-title>
+    <v-container>
+      <v-row justify="center">
+        <v-col cols="8">
+          <v-container class="max-width">
+            <v-pagination
+              v-model="page"
+              :length="filteredCategories.totalPages || 1"
+              class="my-4"
+              @input="getCategories"
+            ></v-pagination>
+          </v-container>
+        </v-col>
+      </v-row>
+    </v-container>
+    <v-dialog v-model="showEditDialog" max-width="300px">
+      <v-card class="edit-dialog">
+        <v-card-title style="color: #009c8c" class="headline"
+          >Editar Categoría</v-card-title
+        >
         <v-card-text>
           <CategoriesProductUpdate
             :category="editingCategory"
@@ -74,12 +90,13 @@
           />
         </v-card-text>
         <v-card-actions>
-          <v-btn color="blue darken-1" text @click="showEditDialog = false"
+          <v-btn style="color: #009c8c" text @click="showEditDialog = false"
             >Cancelar</v-btn
           >
         </v-card-actions>
       </v-card>
     </v-dialog>
+
     <v-dialog v-model="showDeleteDialog" max-width="600px">
       <v-card>
         <v-card-text>
@@ -102,15 +119,16 @@
 import { ref, onMounted, watch, nextTick } from "vue";
 import CategoriesProductUpdate from "../categories/CategoriesProductUpdate.vue";
 import CategoryDelete from "../categories/CategoryDelete.vue";
+
 const CONFIG = useRuntimeConfig();
+const router = useRouter();
 
 const page = ref(1);
 const pageSize = ref(10);
-const router = useRouter();
 const showEditDialog = ref(false);
+const showDeleteDialog = ref(false);
 const editingCategory = ref(null);
 const categoryToDelete = ref(null);
-const showDeleteDialog = ref(false);
 
 const categories = ref([]);
 const filteredCategories = ref({ data: [], totalPages: 1 });
@@ -199,7 +217,7 @@ const handleDelete = async (categoryId) => {
     (item) => item.id === categoryId,
   );
 
-  if(index !== -1){
+  if (index !== -1) {
     filteredCategories.value.data.splice(index, 1);
   }
   await getCategories();
@@ -234,7 +252,7 @@ const confirmDelete = async (category) => {
 }
 .page-select {
   max-width: 300px;
-  margin-left: 12%;
+  margin-left: 13%;
   margin-top: 5%;
 }
 .category-container {
@@ -263,9 +281,14 @@ const confirmDelete = async (category) => {
   border-radius: 5px;
   cursor: pointer;
 }
-.category-title,
-.category-description {
+.button-text {
   margin: 0;
+}
+.edit-dialog {
+  background-color: white;
+  border-style: groove;
+  border-radius: 6%;
+  border-color: #009c8c;
 }
 
 @media (max-width: 430px) {
@@ -295,24 +318,8 @@ const confirmDelete = async (category) => {
     flex: 1 1 100%;
     max-width: 100%;
   }
-  .category-title,
-  .category-description {
+  .button-text {
     font-size: 5vw;
-  }
-  .app-bar {
-    display: flex;
-  }
-  .title-toolbar {
-    font-size: 5vw;
-    margin-left: 12%;
-  }
-  .footer-bottom {
-    font-size: 5vw;
-  }
-}
-@media (min-width: 431px) {
-  .app-bar {
-    display: none;
   }
 }
 </style>
