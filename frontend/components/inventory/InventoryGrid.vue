@@ -1,202 +1,154 @@
 <template>
-  <div v-if="isAuthenticated">
-    <v-card style="max-height: 10rem">
-      <h1
-        style="
-          display: flex;
-          background-color: white;
-          justify-content: center;
-          color:#009c8c;
-        "
-      >
-        ANTIGÜEDADES CHESPIRITO
-      </h1>
-    </v-card>
-
-    <v-btn
-      @click.prevent="registerInve"
-      style="margin-left: 10%;
-      background-color: white; color:#009c8c; margin-top: 2%"
-    >
-      Registrar Inventario
-    </v-btn>
-    <v-container style="margin-top: 0px">
-      <v-layout>
-        <v-navigation-drawer
-          style="background-color: white; max-width: 155px"
-          expand-on-hover
-          rail
-        >
-          <v-list>
-            <v-list-item
-              style="color:#009c8c"
-              prepend-icon="mdi-account-circle"
-              :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
-            ></v-list-item>
-          </v-list>
-
-          <v-divider></v-divider>
-
-          <v-list density="compact" nav>
-            <v-list-item
-              style="color:#009c8c"
-              prepend-icon="mdi-home-city"
-              title="Inicio"
-              @click="goHome"
-            ></v-list-item>
-
-            <v-list-item
-              style="color:#009c8c"
-              @click.prevent="confirmLogout"
-              prepend-icon="mdi-logout"
-              title="Salir"
-            ></v-list-item>
-          </v-list>
-        </v-navigation-drawer>
-
-        <v-main style="height: 100px"></v-main>
-      </v-layout>
+  <div class="main-container" v-if="isAuthenticated">
+    <div class="header-container">
+      <v-btn class="register-button" @click.prevent="registerInve">
+        Registrar Inventario
+      </v-btn>
       <v-select
+        class="page-select"
         v-model="pageSize"
-        style="max-width: 300px;
-        color:#009c8c; margin-left: 12%"
         :items="[5, 10, 20, 30, 40, 50, 100]"
         label="Seleccionar datos por Página"
         @change="getInventories"
       >
       </v-select>
-      <div class="table-container">
-        <v-table style="width: 100%;
-        color: #009c8c;">
-          <thead>
-            <tr>
-              <th class="text-left">
-                <v-col>
-                  <v-text-field
-                    style="width: 200px"
-                    v-model="filters.salesId"
-                    clearable
-                    @input="updatePage(1)"
-                    label="ventas"
-                  >
-                  </v-text-field>
-                </v-col>
-              </th>
-              <th class="text-left">
-                <v-col>
-                  <v-text-field
-                    style="width: 200px"
-                    v-model="filters.productName"
-                    clearable
-                    @input="updatePage(1)"
-                    label="Producto vendido"
-                  ></v-text-field>
-                </v-col>
-              </th>
-              <th class="text-left">
-                <v-col>
-                  <v-text-field
-                    style="width: 200px"
-                    v-model="filters.status"
-                    clearable
-                    @input="updatePage(1)"
-                    label="Estado de producto"
-                  ></v-text-field>
-                </v-col>
-              </th>
-              <th class="text-left">
-                <v-col>
-                  <v-text-field
-                    style="width: 200px"
-                    v-model="filters.created_at"
-                    clearable
-                    @input="updatePage(1)"
-                    label="Fecha de registro"
-                  ></v-text-field>
-                </v-col>
-              </th>
-              <th class="text-left">
-                <v-col>
-                  <v-text-field
-                    style="width: 200px"
-                    v-model="filters.updated_at"
-                    clearable
-                    @input="updatePage(1)"
-                    label="Fecha actualización"
-                  ></v-text-field>
-                </v-col>
-              </th>
-              <th class="text-left">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="inve in combinedData" :key="inve.id">
-              <td>{{ inve.salesId }}</td>
-              <td>{{ inve.productName }}</td>
-              <td>{{ inve.status }}</td>
-              <td>
-                {{
-                  moment(inve.createdAt)
-                    .tz("America/Bogota")
-                    .format("DD/MM/YYYY/ hh:mm A")
-                }}
-              </td>
-              <td>
-                {{
-                  moment(inve.updatedAt)
-                    .tz("America/Bogota")
-                    .format("DD/MM/YYYY/ hh:mm A")
-                }}
-              </td>
-              <v-tooltip text="Editar">
-                <template v-slot:activator="{ props }">
-                  <v-icon style="color: rgba(228, 192, 11, 0.663);" v-bind="props" @click="editInventory(inve)">
-                    mdi-pencil
-                  </v-icon>
-                </template>
-              </v-tooltip>
-              <v-icon style="color:darkslategrey"> mdi-delete </v-icon>
-            </tr>
-          </tbody>
-        </v-table>
-        <div v-if="noRecordsFound" style="text-align: center; margin-top: 20px">
-          <v-alert color="blue" type="warning"
-            >No se encontraron registros.</v-alert
-          >
-        </div>
-      </div>
-      <v-pagination
-        style="color:#009c8c;"
-        v-model="page"
-        :length="totalPages"
-        @input="getInventories"
-        class="my-4"
-      ></v-pagination>
-    </v-container>
-    <v-dialog v-model="showEditDialog" max-width="300px">
-      <v-card style="border-radius:6%;
-      background-color:white">
-        <v-card-title style="color:#009c8c;" class="headline"
-          >Editar el estado de Inventario</v-card-title
+    </div>
+
+    <div class="table-container">
+      <v-table>
+        <thead>
+          <tr>
+            <th class="text-left">
+              <v-col>
+                <v-text-field
+                  style="width: 200px"
+                  v-model="filters.salesId"
+                  clearable
+                  @input="updatePage(1)"
+                  label="ventas"
+                >
+                </v-text-field>
+              </v-col>
+            </th>
+            <th class="text-left">
+              <v-col>
+                <v-text-field
+                  style="width: 200px"
+                  v-model="filters.productName"
+                  clearable
+                  @input="updatePage(1)"
+                  label="Producto vendido"
+                ></v-text-field>
+              </v-col>
+            </th>
+            <th class="text-left">
+              <v-col>
+                <v-text-field
+                  style="width: 200px"
+                  v-model="filters.status"
+                  clearable
+                  @input="updatePage(1)"
+                  label="Estado de producto"
+                ></v-text-field>
+              </v-col>
+            </th>
+            <th class="text-left">
+              <v-col>
+                <v-text-field
+                  style="width: 200px"
+                  v-model="filters.created_at"
+                  clearable
+                  @input="updatePage(1)"
+                  label="Fecha de registro"
+                ></v-text-field>
+              </v-col>
+            </th>
+            <th class="text-left">
+              <v-col>
+                <v-text-field
+                  style="width: 200px"
+                  v-model="filters.updated_at"
+                  clearable
+                  @input="updatePage(1)"
+                  label="Fecha actualización"
+                ></v-text-field>
+              </v-col>
+            </th>
+            <th class="text-left">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="inve in combinedData" :key="inve.id">
+            <td>{{ inve.salesId }}</td>
+            <td>{{ inve.productName }}</td>
+            <td>{{ inve.status }}</td>
+            <td>
+              {{
+                moment(inve.createdAt)
+                  .tz("America/Bogota")
+                  .format("DD/MM/YYYY/ hh:mm A")
+              }}
+            </td>
+            <td>
+              {{
+                moment(inve.updatedAt)
+                  .tz("America/Bogota")
+                  .format("DD/MM/YYYY/ hh:mm A")
+              }}
+            </td>
+            <v-tooltip text="Editar">
+              <template v-slot:activator="{ props }">
+                <v-icon
+                  style="color: rgba(228, 192, 11, 0.663)"
+                  v-bind="props"
+                  @click="editInventory(inve)"
+                >
+                  mdi-pencil
+                </v-icon>
+              </template>
+            </v-tooltip>
+            <v-icon style="color: darkslategrey"> mdi-delete </v-icon>
+          </tr>
+        </tbody>
+      </v-table>
+      <div v-if="noRecordsFound" style="text-align: center; margin-top: 20px">
+        <v-alert color="blue" type="warning"
+          >No se encontraron registros.</v-alert
         >
+      </div>
+    </div>
+
+    <div class="text-center">
+      <v-container>
+        <v-row justify="center">
+          <v-col col="8">
+            <v-container class="max-width">
+              <v-pagination
+                v-model="page"
+                :length="totalPages"
+                @input="getInventories"
+                class="my-4"
+              ></v-pagination>
+            </v-container>
+          </v-col>
+        </v-row>
+      </v-container>
+    </div>
+
+    <v-dialog class="dialog" v-model="showEditDialog">
+      <v-card>
+        <h1 class="dialog-title">Editar estado</h1>
         <v-card-text>
           <InventoryUpdate :inventory="editingInventory" @save="handleSave" />
         </v-card-text>
         <v-card-actions>
-          <v-btn style="background-color:white; color: #009c8c;" text @click="showEditDialog = false">
+          <v-btn class="cancel-button" text @click="showEditDialog = false">
             Cancelar
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
   </div>
-  <footer class="footer">
-      <div>
-        <div class="footer-bottom">
-        {{ new Date().getFullYear() }} — <strong>Antigüedades Chespirito</strong>
-      </div>
-      </div>
-    </footer>
 </template>
 
 <script setup>
@@ -238,14 +190,6 @@ const getInventories = async () => {
         method: "GET",
       },
     );
-
-    // if(error.value){
-    //   if(error.value.status === 404) {
-    //     noRecordsFound.value = true;
-    //     combinedData.value = [];
-    //   }
-    //   return;
-    // }
 
     inventories.value = data.value.data;
     totalPages.value = data.value.totalPages;
@@ -296,12 +240,12 @@ const updatePage = (newPage) => {
 onMounted(async () => {
   if (!userStore.user) {
     Swal.fire({
-      icon: 'error',
-      title: 'Acceso denegado',
-      text: 'Debe iniciar sesión primero',
-      confirmButtonText: 'Aceptar'
-    }).then(()=>{
-      router.push('/')
+      icon: "error",
+      title: "Acceso denegado",
+      text: "Debe iniciar sesión primero",
+      confirmButtonText: "Aceptar",
+    }).then(() => {
+      router.push("/");
     });
   } else {
     isAuthenticated.value = true;
@@ -310,22 +254,6 @@ onMounted(async () => {
     await getSales();
   }
 });
-
-
-const confirmLogout = () => {
-  Swal.fire({
-    title: "¿Estás seguro?",
-    text: "¿Quieres cerrar sesión?",
-    icon: "question",
-    showCancelButton: true,
-    confirmButtonText: "Sí, cerrar sesión",
-    cancelButtonText: "Cancelar",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      handleLogout();
-    }
-  });
-};
 
 watch([page, pageSize, filters], () => {
   getInventories();
@@ -353,36 +281,119 @@ const handleSave = async (updatedInventory) => {
   showEditDialog.value = false;
 };
 
-const handleLogout = () => {
-  userStore.logout();
-  router.push("/");
-};
-
-const goHome = () => {
-  router.push("/user/gestion");
-};
-
 const registerInve = () => {
   router.push("/inventory/register");
 };
 </script>
 
 <style scoped>
+.header-container {
+  display: flex;
+}
+.register-button {
+  margin-left: 13%;
+  margin-top: 3%;
+  color: white;
+  background: linear-gradient(to bottom, #009c8c, #00b7a2);
+  font-family: "Arial", sans-serif;
+}
+.page-select {
+  max-width: 300px;
+  margin-top: 3%;
+  margin-left: 45%;
+}
 .table-container {
   max-height: 400px;
   overflow-y: auto;
-  margin-left: 10%;
-}
-
-.footer-bottom {
-  margin-top: 10px;
-  font-size: 14px;
-}
-
-.footer {
-  display: flex;
-  justify-content: center;
   margin-top: 2%;
-  color:#009c8c
+  margin-left: 12%;
+}
+.dialog {
+  max-width: 400px;
+}
+.dialog-title {
+  align-self: center;
+  background-image: linear-gradient(to bottom, #009c8c, #00b7a2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-top: 10px;
+  font-family: "Arial", sans-serif;
+  font-size: 2vw;
+}
+.cancel-button {
+  background-image: linear-gradient(to bottom, #009c8c, #00b7a2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: "Arial", sans-serif;
+}
+
+@media (max-width: 1024px) {
+  .main-container {
+    margin-top: 8%;
+    margin-right: 5%;
+  }
+  .dialog {
+    margin-bottom: 40%;
+  }
+}
+
+@media (max-width: 540px) {
+  .main-container {
+    margin-right: 5%;
+    margin-top: 0%;
+  }
+  .header-container {
+    display: inline;
+  }
+  .register-button {
+    width: 80%;
+    font-size: 4vw;
+    margin-top: 15%;
+  }
+  .page-select {
+    max-width: 100%;
+    margin-left: 0%;
+    padding: 2%;
+  }
+  .dialog-title {
+    font-size: 4vw;
+  }
+}
+
+@media (max-width: 430px) {
+  .main-container {
+    margin-right: 0%;
+  }
+  .header-container {
+    display: inline;
+    padding: 1.5%;
+  }
+  .register-button {
+    width: 97%;
+    font-size: 5vw;
+    margin-top: 20%;
+    margin-left: 0%;
+  }
+  .page.select {
+    max-width: 100%;
+    padding: 2%;
+  }
+  .table-container {
+    display: flex;
+    margin-left: 0%;
+    padding: 2%;
+  }
+  .dialog {
+    margin-bottom: 0%;
+  }
+  .dialog-title {
+    margin-top: 5%;
+    font-size: 5vw;
+  }
+  .cancel-button {
+    font-size: 4vw;
+    width: 100%;
+    margin-bottom: 5%;
+  }
 }
 </style>

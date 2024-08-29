@@ -93,7 +93,7 @@ const drawer = ref(true);
 const isLargeScreen = ref(true);
 
 const showAppBar = computed(() => {
-  const routesWithAppBar = ["/user/gestion", "/product/list", "/sales/list"];
+  const routesWithAppBar = ["/user/gestion", "/product/list", "/sales/list", "/inventory/list"];
   return routesWithAppBar.includes(route.path);
 });
 
@@ -179,26 +179,32 @@ const handleLogout = () => {
   margin-top: 2%;
   justify-content: center;
   font-size: 2rem;
-  color: #009c8c;
+  background-image: linear-gradient(to bottom, #009c8c, #00b7a2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 10px;
+  font-family: "Arial", sans-serif;
 }
 .drawer {
   max-width: 155px;
 }
 .buttons {
-  color: #009c8c;
+  color: black;
 }
 .app-bar {
   display: none;
 }
-.footer-bottom {
-  margin-bottom: 10px;
-  font-size: 14px;
-}
 .footer {
   display: flex;
   justify-content: center;
-  margin-top: 2%;
-  color: #009c8c;
+}
+.footer-bottom {
+  margin-top: 15%;
+  background-image: linear-gradient(to bottom, #009c8c, #00b7a2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 10px;
+  font-family: "Arial", sans-serif;
 }
 @media (max-width: 1024px) {
   .title {
@@ -227,7 +233,7 @@ const handleLogout = () => {
     font-size: 5vw;
     margin-left: 13%;
   }
-  .footer-bottom{
+  .footer-bottom {
     font-size: 5vw;
   }
 }
