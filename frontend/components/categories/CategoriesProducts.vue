@@ -3,7 +3,7 @@
     <v-card max-height="10rem">
       <v-row
         class="align-center justify-center"
-        style="background-color: #007bff"
+        style="background-color: #009c8c"
       >
         <v-col cols="auto">
           <h1>{{ category.name }}</h1>
@@ -20,23 +20,19 @@
         v-for="product in category.products"
         :key="product.id"
         cols="12"
-        sm="6"
+        sm="8"
         md="4"
         lg="3"
         class="d-flex flex-column align-center"
       >
-        <v-img
-          :src="getImageUrl(product.imagePath)"
-          aspect-ratio="1"
-          class="mb-3"
-        ></v-img>
-        <v-btn color="primary" class="w-100" @click="onProductClick(product)">
-          <div>
-            <h3 class="mb-0">{{ product.name }}</h3>
-            <p class="mb-0">{{ product.description }}</p>
+        <div>
+            <v-img
+              :src="getImageUrl(product.imagePath)"
+            ></v-img>
+            <h3 class="mb-0">Nombre: {{ product.name }}</h3>
+            <p class="mb-0">Descripción: {{ product.description }}</p>
             <p>Precio: {{ product.price }}</p>
           </div>
-        </v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -59,6 +55,7 @@ const fetchCategory = async () => {
     const { data } = await useFetch(
       `${CONFIG.public.API_BASE_URL}/categories/${id}`,
     );
+    console.log("dta:",data);
     category.value = data.value;
   } catch (err) {
     error.value = err;
