@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 style="display: flex; justify-content: center; margin-top: 2%">
+    <h1 style="display: flex; color: #009c8c; justify-content: center; margin-top: 2%">
       Cambiar Contraseña
     </h1>
     <v-card
@@ -9,8 +9,9 @@
       max-width="350"
       rounded="lg"
     >
-      <div class="text-subtitle-1 text-medium-emphasis">Nueva Contraseña</div>
+      <div style="color:#009c8c ;">Nueva Contraseña</div>
       <v-text-field
+      style="color:#009c8c ;"
         v-model="newPassword"
         :type="visible ? 'text' : 'password'"
         placeholder="Inserta tu nueva contraseña"
@@ -22,7 +23,7 @@
 
       <v-btn
         class="mb-8"
-        color="blue"
+        color="#009c8c"
         size="large"
         variant="tonal"
         block
@@ -65,7 +66,7 @@ const changePassword = async () => {
         title: 'Éxito',
         text: data.message,
       });
-      router.push('/user/gestion');
+      router.push('/');
     } else {
       Swal.fire({
         icon: 'error',

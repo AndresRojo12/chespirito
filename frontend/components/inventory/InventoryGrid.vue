@@ -1,18 +1,5 @@
 <template>
   <div v-if="isAuthenticated">
-    <v-card style="max-height: 10rem">
-      <h1
-        style="
-          display: flex;
-          background-color: white;
-          justify-content: center;
-          color:#009c8c;
-        "
-      >
-        ANTIGÜEDADES CHESPIRITO
-      </h1>
-    </v-card>
-
     <v-btn
       @click.prevent="registerInve"
       style="margin-left: 10%;
@@ -190,13 +177,6 @@
       </v-card>
     </v-dialog>
   </div>
-  <footer class="footer">
-      <div>
-        <div class="footer-bottom">
-        {{ new Date().getFullYear() }} — <strong>Antigüedades Chespirito</strong>
-      </div>
-      </div>
-    </footer>
 </template>
 
 <script setup>

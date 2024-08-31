@@ -19,7 +19,7 @@
       v-model="pageSize"
       class="page-select"
       :items="[10, 20, 30, 40, 50]"
-      label="Seleccionar categorías por página"
+      label="Seleccionar productos por página"
       @change="getProducts"
     ></v-select>
     <div class="product-container">

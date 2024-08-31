@@ -1,10 +1,8 @@
 const express = require('express');
 const passport = require('passport');
-const authenticate = require('../middlewares/authenticate');
 const User = require('../services/login.user');
 const service = new User();
 const router = express.Router();
-
 
 router.post(
   '/login',
@@ -19,48 +17,19 @@ router.post(
   },
 );
 
-router.post('/change-password', authenticate, async (req, res, next) => {
+router.post('/change-password', async (req, res, next) => {
   try {
     const { newPassword } = req.body;
-    if(!newPassword){
-      return res.status(400).json({ message: 'La nueva contraseña no puede estar vacía' });
+    if (!newPassword) {
+      return res
+        .status(400)
+        .json({ message: 'La nueva contraseña no puede estar vacía' });
     }
-    const userId = req.userId;
-    const response = await service.changePassword(userId, newPassword);
+    const response = await service.changeDefaultPassword(newPassword);
     res.json(response);
   } catch (error) {
     next(error);
   }
 });
-
-// router.post(
-//   '/recovery',
-
-//   async (req, res, next) => {
-//     try {
-//       const { email } = req.body;
-//       const rta = await service.sendRecovery(email);
-//       res.json(rta);
-
-//     } catch (error) {
-//       next(error);
-//     }
-//   },
-// );
-
-// router.post(
-//   '/change-password',
-
-//   async (req, res, next) => {
-//     try {
-//       const { token, newPassword } = req.body;
-//       const rta = await service.changePassword(token, newPassword);
-//       res.json(rta);
-
-//     } catch (error) {
-//       next(error);
-//     }
-//   },
-// );
 
 module.exports = router;
