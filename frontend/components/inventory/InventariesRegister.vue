@@ -1,131 +1,49 @@
 <template>
-  <div v-if="isAuthenticated">
-    <v-card>
-      <h1
-        style="
-          display: flex;
-          background-color: white;
-          justify-content: center;
-          color:#009c8c
-        "
-      >
-        ANTIGÜEDADES CHESPIRITO
-      </h1>
-    </v-card>
+  <div class="main-container" v-if="isAuthenticated">
+    <div class="header-container">
+      <v-list-item
+        class="exit-icon"
+        prepend-icon="mdi-arrow-left"
+        @click="back"
+      ></v-list-item>
+    </div>
 
-    <v-layout>
-      <v-navigation-drawer
-        style="background-color: white; max-width: 155px"
-        expand-on-hover
-        rail
-      >
-        <v-list>
-          <v-list-item
-            style="color:#009c8c;"
-            prepend-icon="mdi-account-circle"
-            :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
-          ></v-list-item>
-        </v-list>
-
-        <v-divider></v-divider>
-
-        <v-list density="compact" nav>
-          <v-list-item
-          style="color:#009c8c;"
-            prepend-icon="mdi-home-city"
-            title="Inicio"
-            @click="goHome"
-          ></v-list-item>
-
-          <v-list-item
-          style="color:#009c8c;"
-            prepend-icon="mdi-cash"
-            title="Inventarios"
-            @click.prevent="homeInventory"
-          ></v-list-item>
-
-          <v-list-item
-          style="color:#009c8c;"
-            @click.prevent="confirmLogout"
-            prepend-icon="mdi-logout"
-            title="Salir"
-          ></v-list-item>
-        </v-list>
-      </v-navigation-drawer>
-    </v-layout>
-    <v-container
-      style="
-        width: 340px;
-        margin-top: 4%;
-        border-style: groove;
-        border-radius: 6%;
-        border-color: #009c8c;
-        background-color: white;
-        height: 100%;
-      "
-    >
-      <h1
-        style="text-align: center; font-size: larger; color:#009c8c"
-      >
-        Registro de inventario
-      </h1>
-      <v-sheet class="mx-auto" width="300" style="border-style: groove;">
-        <form
-          style="margin-top: 10%; background-color:white;
-          "
-          @submit.prevent="registerInventory"
+    <v-container class="form-container">
+      <h1 class="title">Registro de inventario</h1>
+      <form @submit.prevent="registerInventory">
+        <v-autocomplete
+          class="select"
+          v-model="sales"
+          :items="salesId"
+          item-title="products.name"
+          item-value="id"
+          label="Seleccionar producto vendido"
+          required
         >
-          <v-autocomplete
-            style="color:#009c8c"
-            v-model="sales"
-            :items="salesId"
-            item-title="products.name"
-            item-value="id"
-            label="Seleccionar producto vendido"
-            required
-          >
-          </v-autocomplete>
-          <v-text-field
-            style="color:#009c8c"
-            v-model="status"
-            label="Estado"
-            required
-          >
-          </v-text-field>
-          <v-btn
-            style="background-color:white; color:#009c8c"
-            type="submit"
-            >Enviar</v-btn
-          >
-          <v-btn
-            style="background-color:white; color:#009c8c"
-            @click="handleReset"
-            >Limpiar</v-btn
-          >
-        </form>
-      </v-sheet>
+        </v-autocomplete>
+        <v-text-field class="input" v-model="status" label="Estado" required>
+        </v-text-field>
+        <div class="submit-buttons">
+          <v-btn class="submit">Enviar</v-btn>
+          <v-btn class="clean" @click="handleReset">Limpiar</v-btn>
+        </div>
+      </form>
     </v-container>
   </div>
-    <footer class="footer">
-      <div>
-        <div class="footer-bottom">
-        {{ new Date().getFullYear() }} — <strong>Antigüedades Chespirito</strong>
-      </div>
-      </div>
-    </footer>
 </template>
 
 <script setup>
+import { useRouter } from "vue-router";
 import { ref, onMounted, nextTick } from "vue";
 import Swal from "sweetalert2";
 import { useAuth } from "~/store/auth";
 
 const CONFIG = useRuntimeConfig();
+const router = useRouter()
 const sales = ref("");
 const status = ref("");
 const salesId = ref([]);
 const userStore = useAuth();
-const router = useRouter();
 
 const isAuthenticated = ref(false);
 const getVentas = async () => {
@@ -170,68 +88,108 @@ const registerInventory = async () => {
   }
 };
 
-const handleLogout = () => {
-  userStore.logout();
-  router.push("/");
-};
-
 const handleReset = () => {
   sales.value = "";
   status.value = "";
 };
 
-const goHome = () => {
-  router.push("/user/gestion");
-};
-
-const homeInventory = () => {
-  router.push("/inventory/list");
-};
-
-const confirmLogout = () => {
-  Swal.fire({
-    title: "¿Estás seguro?",
-    text: "¿Quieres cerrar sesión?",
-    icon: "question",
-    showCancelButton: true,
-    confirmButtonText: "Sí, cerrar sesión",
-    cancelButtonText: "Cancelar",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      handleLogout();
-    }
-  });
-};
-
 onMounted(async () => {
-  if(!userStore.user) {
+  if (!userStore.user) {
     Swal.fire({
-      icon: 'error',
-      title: 'Acceso denegado',
-      text: 'Debe iniciar sesión primero',
-      confirmButtonText: 'Aceptar'
-    }).then(()=>{
-      router.push('/')
+      icon: "error",
+      title: "Acceso denegado",
+      text: "Debe iniciar sesión primero",
+      confirmButtonText: "Aceptar",
+    }).then(() => {
+      router.push("/");
     });
-  }else {
+  } else {
     isAuthenticated.value = true;
     await nextTick();
     await getVentas();
   }
-
 });
+
+const back = () => {
+  router.back();
+};
 </script>
 
-<style>
-  .footer-bottom {
-  margin-top: 10px;
-  font-size: 14px;
+<style scoped>
+.exit-icon {
+  display: none;
+}
+.form-container {
+  width: 340px;
+  margin-top: 4%;
+  border: 1px solid;
+  border-radius: 6%;
+  border-color: #116a7b;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.title {
+  text-align: center;
+  font-size: 2vw;
+  margin-bottom: 5%;
+  font-family: "Arial", sans-serif;
+}
+.input,
+.text-area,
+.file-input {
+  color: #116a7b;
+}
+.submit-buttons {
+  display: flex;
+  justify-content: space-around;
+}
+.submit {
+  background: linear-gradient(45deg, #009c8c, #00b7a2);
+  color: white;
+  width: 40%;
+  font-family: "Arial", sans-serif;
+}
+.clean {
+  background-color: white;
+  color: #116a7b;
+  width: 40%;
+  font-family: "Arial", sans-serif;
 }
 
-.footer {
-  display: flex;
-  justify-content: center;
-  margin-top: 2%;
-  color:#009c8c
+@media (max-width: 1024px) {
+  .exit-icon {
+    display: flex;
+  }
+}
+
+@media (max-width: 430px) {
+  .exit-icon {
+    display: flex;
+    font-size: 5vw;
+  }
+  .main-container {
+    max-width: 100%;
+    padding: 3%;
+  }
+  .header-container {
+    display: flex;
+  }
+  .form-container {
+    max-width: 100%;
+  }
+  .title {
+    font-size: 6vw;
+  }
+  .submit-buttons {
+    display: inline;
+  }
+  .submit {
+    width: 100%;
+    font-size: 4vw;
+    margin-bottom: 5%;
+  }
+  .clean {
+    width: 100%;
+    font-size: 4vw;
+  }
 }
 </style>

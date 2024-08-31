@@ -75,9 +75,9 @@
           </v-col>
         </v-row>
       </v-container>
-      <v-dialog v-model="showEditDialog" max-width="300px">
-        <v-card class="edit-dialog">
-          <v-card-title class="form-title">Editar Producto</v-card-title>
+      <v-dialog class="dialog" v-model="showEditDialog">
+        <v-card>
+          <v-card-title class="dialog-title">Editar Producto</v-card-title>
           <v-card-text>
             <ProductUpdate :product="editingProduct" @save="handleSave" />
           </v-card-text>
@@ -88,7 +88,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="showDeleteDialog" max-width="300px">
+      <v-dialog class="dialog" v-model="showDeleteDialog">
         <v-card>
           <v-card-text>
             <ProductDelete :product="productToDelete" @deleted="handleDelete" />
@@ -248,12 +248,12 @@ const confirmDelete = (product) => {
   margin-top: 5%;
   margin-left: 13%;
   color: white;
-  background-color: #009c8c;
+  background: linear-gradient(45deg, #009c8c, #00b7a2);
 }
 .search-field {
   max-width: 300px;
   margin-top: 3%;
-  margin-right: 0%;
+  margin-right: 5%;
 }
 .page-select {
   max-width: 300px;
@@ -280,7 +280,7 @@ const confirmDelete = (product) => {
   width: 100%;
   padding: 10px;
   margin-top: 10px;
-  background-color: #009c8c;
+  background: linear-gradient(45deg, #009c8c, #00b7a2);
   color: white;
   border: none;
   border-radius: 5px;
@@ -289,25 +289,36 @@ const confirmDelete = (product) => {
 .button-text {
   margin: 0;
 }
-.edit-dialog {
-  background-color: white;
-  border-style: groove;
-  border-radius: 6%;
-  border-color: #009c8c;
+.dialog {
+  max-width: 450px;
 }
-.form-title {
+.dialog-title {
   align-self: center;
+  background-image: linear-gradient(to bottom, #009c8c, #00b7a2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-top: 10px;
+  font-family: "Arial", sans-serif;
 }
 .cancel-button {
-  background-color: white;
-  color: #009c8c;
+  background-image: linear-gradient(to bottom, #009c8c, #00b7a2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: "Arial", sans-serif;
 }
 @media (max-width: 1024px) {
   .main-container {
     margin-top: 8%;
     margin-right: 5%;
   }
+  .search-field {
+    margin-right: 0%;
+  }
+  .dialog {
+    margin-bottom: 40%;
+  }
 }
+
 @media (max-width: 540px) {
   .main-container {
     margin-right: 5%;
@@ -337,7 +348,11 @@ const confirmDelete = (product) => {
     font-size: 5vw;
     margin: 0;
   }
+  .dialog {
+    margin-bottom: 0%;
+  }
 }
+
 @media (max-width: 430px) {
   .main-container {
     margin-right: 0%;
@@ -347,7 +362,7 @@ const confirmDelete = (product) => {
     display: inline;
   }
   .register-button {
-    width: 96%;
+    width: 97%;
     font-size: 5vw;
     margin-left: 1.5%;
     margin-top: 20%;
@@ -364,13 +379,18 @@ const confirmDelete = (product) => {
     padding: 2%;
   }
   .product-container {
+    max-width: 100%;
     margin-left: 0%;
   }
   .product-item {
     flex: 1 1 100%;
     max-width: 100%;
   }
+  .product-button {
+    max-width: 100%;
+  }
   .button-text {
+    max-width: 100%;
     font-size: 5vw;
     margin: 0;
   }
@@ -379,6 +399,9 @@ const confirmDelete = (product) => {
   }
   .cancel-button {
     font-size: 5vw;
+  }
+  .dialog-title {
+    font-size: 4vw;
   }
 }
 </style>

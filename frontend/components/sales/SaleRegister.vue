@@ -8,7 +8,7 @@
       ></v-list-item>
     </div>
     <v-container class="form-container">
-      <h1 class="title">Registro de ventas</h1>
+      <h1 class="form-title">Registro de ventas</h1>
       <form style="margin-top: 5%" @submit.prevent="registerSale">
         <v-text-field
           class="input"
@@ -186,36 +186,50 @@ const back = () => {
 .form-container {
   width: 340px;
   margin-top: 4%;
-  border-style: groove;
+  border: 1px solid;
   border-radius: 6%;
-  border-color: black;
-  background-color: white;
+  border-color: #116a7b;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
-.title {
+.form-title {
   text-align: center;
-  font-size: larger;
-  color: #009c8c;
+  font-size: 2vw;
   margin-bottom: 5%;
+  font-family: "Arial", sans-serif;
 }
 .input,
-.select {
-  color: #009c8c;
+.text-area,
+.file-input {
+  color: #116a7b;
 }
 .submit-buttons {
   display: flex;
   justify-content: space-around;
 }
 .submit {
-  background-color: #009c8c;
+  background: linear-gradient(45deg, #009c8c, #00b7a2);
   color: white;
   width: 40%;
+  font-family: "Arial", sans-serif;
 }
 .clean {
   background-color: white;
-  color: #009c8c;
+  color: #116a7b;
   width: 40%;
+  font-family: "Arial", sans-serif;
 }
+
+@media (max-width: 1024px) {
+  .exit-icon {
+    display: flex;
+  }
+}
+
 @media (max-width: 430px) {
+  .exit-icon {
+    display: flex;
+    font-size: 5vw;
+  }
   .main-container {
     max-width: 100%;
     padding: 3%;
@@ -223,15 +237,11 @@ const back = () => {
   .header-container {
     display: flex;
   }
-  .exit-icon {
-    display: flex;
-    font-size: 5vw;
-  }
   .form-container {
     max-width: 100%;
   }
-  .title {
-    font-size: 5vw;
+  .form-title {
+    font-size: 7vw;
   }
   .submit-buttons {
     display: inline;

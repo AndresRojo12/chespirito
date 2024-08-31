@@ -26,11 +26,7 @@
       accept="image/*"
       prepend-icon="mdi-image"
     />
-    <v-btn
-      style="background-color: #009c8c; color: white"
-      @click="updateProduct"
-      >Guardar</v-btn
-    >
+    <v-btn class="save-button" @click="updateProduct">Guardar</v-btn>
   </v-form>
 </template>
 
@@ -105,6 +101,21 @@ const updateProduct = async () => {
 <style scoped>
 .input,
 .file-input {
-  color: #009c8c;
+  color: #116a7b;
+}
+.save-button {
+  background: linear-gradient(to bottom, #009c8c, #00b7a2);
+  color: white;
+  font-family: "Arial", sans-serif;
+}
+
+@media (max-width: 430px) {
+  .form-container {
+    max-width: 100%;
+  }
+  .save-button {
+    width: 100%;
+    font-size: 4vw;
+  }
 }
 </style>
