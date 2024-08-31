@@ -88,13 +88,13 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog class="dialog" v-model="showDeleteDialog">
+      <v-dialog class="dialog-delete" v-model="showDeleteDialog">
         <v-card>
           <v-card-text>
             <ProductDelete :product="productToDelete" @deleted="handleDelete" />
           </v-card-text>
           <v-card-actions>
-            <v-btn text @click="showDeleteDialog = false"> Cancelar </v-btn>
+            <v-btn style="color:#009c8c ;" text @click="showDeleteDialog = false"> Cancelar </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -290,7 +290,11 @@ const confirmDelete = (product) => {
   margin: 0;
 }
 .dialog {
-  max-width: 450px;
+  max-width: 350px;
+}
+
+.dialog-delete {
+  max-width: 300px;
 }
 .dialog-title {
   align-self: center;

@@ -99,7 +99,7 @@
             <v-tooltip text="Editar">
               <template v-slot:activator="{ props }">
                 <v-icon
-                  style="color: rgba(228, 192, 11, 0.663)"
+                  style="color:#009c8c"
                   v-bind="props"
                   @click="editInventory(inve)"
                 >
@@ -107,7 +107,6 @@
                 </v-icon>
               </template>
             </v-tooltip>
-            <v-icon style="color: darkslategrey"> mdi-delete </v-icon>
           </tr>
         </tbody>
       </v-table>
