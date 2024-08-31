@@ -111,7 +111,7 @@
         </tbody>
       </v-table>
       <div v-if="noRecordsFound" style="text-align: center; margin-top: 20px">
-        <v-alert color="blue" type="warning"
+        <v-alert color="#009c8c" type="warning"
           >No se encontraron registros.</v-alert
         >
       </div>
@@ -187,22 +187,30 @@ const getInventories = async () => {
       &pageSize=${pageSize.value}&status=${filters.value.status}&salesId=${filters.value.salesId}&productName=${filters.value.productName}&createdAt=${filters.value.created_at}&updatedAt=${filters.value.updated_at}`,
       {
         method: "GET",
-      },
+      }
     );
+
+    if (error.value || !data.value) {
+      noRecordsFound.value = true;
+      inventories.value = [];
+      combinedData.value = [];
+      return;
+    }
 
     inventories.value = data.value.data;
     totalPages.value = data.value.totalPages;
     combineData();
 
-    if (combinedData.value === null) {
+    // Verifica si hay datos en combinedData
+    if (combinedData.value.length === 0) {
       noRecordsFound.value = true;
-      combinedData.value = [];
     }
   } catch (error) {
     console.log(error);
     noRecordsFound.value = true;
   }
 };
+
 
 const getSales = async () => {
   try {
