@@ -117,7 +117,9 @@
 </template>
 
 <script setup>
+import { useRouter } from "vue-router";
 import { ref, onMounted, watch, nextTick } from "vue";
+
 import CategoriesProductUpdate from "../categories/CategoriesProductUpdate.vue";
 import CategoryDelete from "../categories/CategoryDelete.vue";
 
@@ -130,7 +132,6 @@ const showEditDialog = ref(false);
 const showDeleteDialog = ref(false);
 const editingCategory = ref(null);
 const categoryToDelete = ref(null);
-
 const categories = ref([]);
 const filteredCategories = ref({ data: [], totalPages: 1 });
 const search = ref("");

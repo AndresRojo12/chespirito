@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container" v-if="isAuthenticated">
+  <div class="main-container">
     <div class="header-container">
       <v-btn class="register-button" @click.prevent="registerInve">
         Registrar Inventario
@@ -99,7 +99,7 @@
             <v-tooltip text="Editar">
               <template v-slot:activator="{ props }">
                 <v-icon
-                  style="color:#009c8c"
+                  style="color: #009c8c"
                   v-bind="props"
                   @click="editInventory(inve)"
                 >
@@ -152,17 +152,16 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from "vue";
-import { useAuth } from "~/store/auth";
-import Swal from "sweetalert2";
 import moment from "moment-timezone";
+
 import InventoryUpdate from "./InventoryUpdate.vue";
+
+const CONFIG = useRuntimeConfig();
+const router = useRouter();
 
 const inventories = ref([]);
 const sales = ref([]);
 const combinedData = ref([]);
-const CONFIG = useRuntimeConfig();
-const router = useRouter();
-const userStore = useAuth();
 const showEditDialog = ref(false);
 const editingInventory = ref(null);
 const page = ref(1);
@@ -177,7 +176,6 @@ const filters = ref({
 });
 
 const noRecordsFound = ref(false);
-const isAuthenticated = ref(false);
 
 const getInventories = async () => {
   noRecordsFound.value = false;
@@ -187,7 +185,7 @@ const getInventories = async () => {
       &pageSize=${pageSize.value}&status=${filters.value.status}&salesId=${filters.value.salesId}&productName=${filters.value.productName}&createdAt=${filters.value.created_at}&updatedAt=${filters.value.updated_at}`,
       {
         method: "GET",
-      }
+      },
     );
 
     if (error.value || !data.value) {
@@ -201,7 +199,6 @@ const getInventories = async () => {
     totalPages.value = data.value.totalPages;
     combineData();
 
-    // Verifica si hay datos en combinedData
     if (combinedData.value.length === 0) {
       noRecordsFound.value = true;
     }
@@ -210,7 +207,6 @@ const getInventories = async () => {
     noRecordsFound.value = true;
   }
 };
-
 
 const getSales = async () => {
   try {
@@ -226,6 +222,12 @@ const getSales = async () => {
     console.log(error);
   }
 };
+
+onMounted(async () => {
+  await nextTick();
+  await getSales();
+  await getInventories();
+});
 
 const combineData = () => {
   if (inventories.value.length > 0 && sales.value.length > 0) {
@@ -243,24 +245,6 @@ const updatePage = (newPage) => {
   page.value = newPage;
   getInventories();
 };
-
-onMounted(async () => {
-  if (!userStore.user) {
-    Swal.fire({
-      icon: "error",
-      title: "Acceso denegado",
-      text: "Debe iniciar sesión primero",
-      confirmButtonText: "Aceptar",
-    }).then(() => {
-      router.push("/");
-    });
-  } else {
-    isAuthenticated.value = true;
-    await nextTick();
-    await getInventories();
-    await getSales();
-  }
-});
 
 watch([page, pageSize, filters], () => {
   getInventories();

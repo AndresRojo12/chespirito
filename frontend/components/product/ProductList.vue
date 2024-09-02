@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container" v-if="isAuthenticated">
+  <div class="main-container">
     <div class="header-container">
       <v-btn class="register-button" @click.prevent="product">
         Registrar producto
@@ -75,6 +75,7 @@
           </v-col>
         </v-row>
       </v-container>
+
       <v-dialog class="dialog" v-model="showEditDialog">
         <v-card>
           <v-card-title class="dialog-title">Editar Producto</v-card-title>
@@ -88,13 +89,20 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog class="dialog-delete" v-model="showDeleteDialog">
+
+      <v-dialog class="dialog" v-model="showDeleteDialog">
         <v-card>
           <v-card-text>
             <ProductDelete :product="productToDelete" @deleted="handleDelete" />
           </v-card-text>
           <v-card-actions>
-            <v-btn style="color:#009c8c ;" text @click="showDeleteDialog = false"> Cancelar </v-btn>
+            <v-btn
+              style="color: #009c8c"
+              text
+              @click="showDeleteDialog = false"
+            >
+              Cancelar
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -103,10 +111,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, nextTick } from "vue";
+import { ref, watch, onMounted, nextTick } from "vue";
 import { useRouter } from "vue-router";
-import { useAuth } from "~/store/auth";
-import Swal from "sweetalert2";
+
 import ProductUpdate from "./ProductUpdate.vue";
 import ProductDelete from "./ProductDelete.vue";
 
@@ -115,13 +122,10 @@ const router = useRouter();
 
 const page = ref(1);
 const pageSize = ref(10);
-const userStore = useAuth();
 const showEditDialog = ref(false);
 const editingProduct = ref(null);
 const showDeleteDialog = ref(false);
 const productToDelete = ref(null);
-const isAuthenticated = ref(false);
-
 const products = ref([]);
 const filteredProducts = ref({ data: [], totalPages: 1 });
 const search = ref("");
@@ -145,26 +149,14 @@ const getProducts = async () => {
   }
 };
 
+onMounted(async () => {
+  await nextTick();
+  await getProducts();
+});
+
 const getImageUrl = (imagePath) => {
   return imagePath;
 };
-
-onMounted(async () => {
-  if (!userStore.user) {
-    Swal.fire({
-      icon: "error",
-      title: "Acceso Denegado",
-      text: "Debe iniciar sesión primero",
-      confirmButtonText: "Aceptar",
-    }).then(() => {
-      router.push("/");
-    });
-  } else {
-    isAuthenticated.value = true;
-    await nextTick();
-    await getProducts();
-  }
-});
 
 watch(search, async (newSearch) => {
   if (!newSearch.trim()) {
@@ -290,11 +282,7 @@ const confirmDelete = (product) => {
   margin: 0;
 }
 .dialog {
-  max-width: 350px;
-}
-
-.dialog-delete {
-  max-width: 300px;
+  max-width: 400px;
 }
 .dialog-title {
   align-self: center;

@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container" v-if="isAuthenticated">
+  <div class="main-container">
     <div class="header-container">
       <v-list-item
         class="exit-icon"
@@ -33,19 +33,17 @@
 </template>
 
 <script setup>
-import { useRouter } from "vue-router";
 import { ref, onMounted, nextTick } from "vue";
+import { useRouter } from "vue-router";
 import Swal from "sweetalert2";
-import { useAuth } from "~/store/auth";
 
 const CONFIG = useRuntimeConfig();
-const router = useRouter()
+const router = useRouter();
+
 const sales = ref("");
 const status = ref("");
 const salesId = ref([]);
-const userStore = useAuth();
 
-const isAuthenticated = ref(false);
 const getVentas = async () => {
   const { data, error } = await useFetch(`${CONFIG.public.API_BASE_URL}sales`);
 
@@ -58,6 +56,11 @@ const getVentas = async () => {
     throw new Error(error.value.message);
   }
 };
+
+onMounted(async () => {
+  await nextTick();
+  await getVentas();
+});
 
 const registerInventory = async () => {
   const { data, error } = await useFetch(
@@ -92,23 +95,6 @@ const handleReset = () => {
   sales.value = "";
   status.value = "";
 };
-
-onMounted(async () => {
-  if (!userStore.user) {
-    Swal.fire({
-      icon: "error",
-      title: "Acceso denegado",
-      text: "Debe iniciar sesión primero",
-      confirmButtonText: "Aceptar",
-    }).then(() => {
-      router.push("/");
-    });
-  } else {
-    isAuthenticated.value = true;
-    await nextTick();
-    await getVentas();
-  }
-});
 
 const back = () => {
   router.back();

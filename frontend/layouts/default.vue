@@ -1,5 +1,8 @@
 <template>
-  <div v-if="showLayout" class="main-container">
+  <div v-if="!userStore.isAuthenticated">
+    <LoadingSpinner></LoadingSpinner>
+  </div>
+  <div v-else class="main-container">
     <h1 class="title">ANTIGÜEDADES CHESPIRITO</h1>
     <v-layout>
       <v-navigation-drawer
@@ -73,17 +76,15 @@
       </div>
     </footer>
   </div>
-  <div v-else>
-    <slot />
-  </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import { useAuth } from "~/store/auth";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import Swal from "sweetalert2";
-import { useRoute } from "vue-router";
+
+import LoadingSpinner from "~/components/LoadingSpinner.vue";
 
 const userStore = useAuth();
 const router = useRouter();
@@ -93,13 +94,13 @@ const drawer = ref(true);
 const isLargeScreen = ref(true);
 
 const showAppBar = computed(() => {
-  const routesWithAppBar = ["/user/gestion", "/product/list", "/sales/list", "/inventory/list"];
+  const routesWithAppBar = [
+    "/user/gestion",
+    "/product/list",
+    "/sales/list",
+    "/inventory/list",
+  ];
   return routesWithAppBar.includes(route.path);
-});
-
-const showLayout = computed(() => {
-  const routesWithoutLayout = ["/", "/user/change-password"];
-  return !routesWithoutLayout.includes(route.path);
 });
 
 const checkScreenSize = () => {

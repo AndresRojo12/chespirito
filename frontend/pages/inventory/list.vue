@@ -3,5 +3,9 @@
 </template>
 
 <script setup>
-  import InventoryGrid from '../../components/inventory/InventoryGrid.vue';
+import InventoryGrid from "../../components/inventory/InventoryGrid.vue";
+
+definePageMeta({
+  middleware: "auth",
+});
 </script>

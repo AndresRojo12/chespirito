@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container" v-if="isAuthenticated">
+  <div class="main-container">
     <div class="header-container">
       <v-list-item
         prepend-icon="mdi-arrow-left"
@@ -53,8 +53,9 @@
 <script setup>
 import { ref, onMounted, nextTick } from "vue";
 import Swal from "sweetalert2";
-import { useAuth } from "~/store/auth";
+
 const CONFIG = useRuntimeConfig();
+const router = useRouter();
 
 const name = ref("");
 const description = ref("");
@@ -62,9 +63,6 @@ const price = ref(0);
 const image = ref(null);
 const categories = ref([]);
 const selectedCategory = ref("");
-const router = useRouter();
-const userStore = useAuth();
-const isAuthenticated = ref(false);
 
 const fetchCategories = async () => {
   try {
@@ -89,6 +87,11 @@ const fetchCategories = async () => {
     });
   }
 };
+
+onMounted(async () => {
+  await nextTick();
+  await fetchCategories();
+});
 
 const registerProduct = async () => {
   if (
@@ -151,23 +154,6 @@ const handleReset = () => {
   selectedCategory.value = "";
 };
 
-onMounted(async () => {
-  if (!userStore.user) {
-    Swal.fire({
-      icon: "error",
-      title: "Acceso Denegado",
-      text: "Debe iniciar sesión primero",
-      confirmButtonText: "Aceptar",
-    }).then(() => {
-      router.push("/");
-    });
-  } else {
-    isAuthenticated.value = true;
-    await nextTick();
-    await fetchCategories();
-  }
-});
-
 const back = () => {
   router.back();
 };
@@ -189,7 +175,7 @@ const back = () => {
   text-align: center;
   font-size: 2vw;
   margin-bottom: 5%;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
 }
 .input,
 .text-area,
@@ -204,13 +190,13 @@ const back = () => {
 .submit {
   background: linear-gradient(45deg, #009c8c, #00b7a2);
   color: white;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   width: 40%;
 }
 .clean {
   background-color: white;
   color: #009c8c;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   width: 40%;
 }
 @media (max-width: 1024px) {

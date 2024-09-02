@@ -9,9 +9,9 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { defineProps, defineEmits } from "vue";
+import { ref, defineProps, defineEmits } from "vue";
 import Swal from "sweetalert2";
+
 const CONFIG = useRuntimeConfig();
 
 const props = defineProps({

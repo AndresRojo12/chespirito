@@ -4,4 +4,8 @@
 
 <script setup>
 import SalesGrid from "~/components/sales/SalesGrid.vue";
+
+definePageMeta({
+  middleware: "auth",
+});
 </script>

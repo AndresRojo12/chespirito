@@ -28,9 +28,9 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
-import { defineProps, defineEmits } from "vue";
+import { ref, watch, defineProps, defineEmits } from "vue";
 import Swal from "sweetalert2";
+
 const CONFIG = useRuntimeConfig();
 const image = ref(null);
 

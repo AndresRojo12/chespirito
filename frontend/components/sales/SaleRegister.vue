@@ -51,11 +51,12 @@
 
 <script setup>
 import { onMounted, nextTick, ref } from "vue";
-import Swal from "sweetalert2";
 import { useRouter } from "vue-router";
+import Swal from "sweetalert2";
 
 const CONFIG = useRuntimeConfig();
 const router = useRouter();
+
 const quantitySold = ref(0);
 const salePrice = ref(0);
 const selectedCategory = ref("");

@@ -1,6 +1,12 @@
 import { defineStore } from 'pinia';
-import { storeToken, getToken, removeToken, storeUser, getUser, removeUser } from '../util/token';
-
+import {
+  storeToken,
+  getToken,
+  removeToken,
+  storeUser,
+  getUser,
+  removeUser,
+} from '../util/token';
 
 export const useAuth = defineStore('auth', {
   state: () => {
@@ -20,7 +26,7 @@ export const useAuth = defineStore('auth', {
       this.user = user;
       this.isAuthenticated = true;
       this.setUser(user);
-      this.userId =user
+      this.userId = user;
     },
     setUser(user) {
       this.userId = user;
@@ -45,4 +51,3 @@ export const useAuth = defineStore('auth', {
     },
   },
 });
-

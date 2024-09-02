@@ -17,42 +17,37 @@
         <thead>
           <tr>
             <th class="text-left">
-              Categoría
               <v-text-field
                 v-model="filters.categoryName"
-                label="Buscar"
+                label="Categoría"
                 clearable
               ></v-text-field>
             </th>
             <th class="text-left">
-              Producto
               <v-text-field
                 v-model="filters.productName"
-                label="Buscar"
+                label="Producto"
                 clearable
               ></v-text-field>
             </th>
             <th class="text-left">
-              Cantidad
               <v-text-field
                 v-model="filters.quantitySold"
-                label="Buscar"
+                label="Cantidad"
                 clearable
               ></v-text-field>
             </th>
             <th class="text-left">
-              Total
               <v-text-field
                 v-model="filters.salePrice"
-                label="Buscar"
+                label="Total"
                 clearable
               ></v-text-field>
             </th>
             <th class="text-left">
-              Fecha
               <v-text-field
                 v-model="filters.date"
-                label="Buscar"
+                label="Fecha"
                 clearable
               ></v-text-field>
             </th>
@@ -73,7 +68,7 @@
         </tbody>
       </v-table>
       <div v-if="filteredData.length === 0" style="text-align: center">
-        <v-alert color="blue" type="warning"
+        <v-alert color="#009c8c" type="warning"
           >No se encontraron registros.</v-alert
         >
       </div>
@@ -103,6 +98,7 @@ import moment from "moment-timezone";
 
 const CONFIG = useRuntimeConfig();
 const router = useRouter();
+
 const page = ref(1);
 const pageSize = ref(10);
 const filteredSales = ref({ data: [], totalPages: 1 });
@@ -110,7 +106,6 @@ const sales = ref([]);
 const categories = ref([]);
 const products = ref([]);
 const combinedData = ref([]);
-
 const filters = ref({
   categoryName: "",
   productName: "",
@@ -165,6 +160,7 @@ const getSales = async () => {
         method: "GET",
       },
     );
+
     sales.value = data.value.data;
     filteredSales.value = {
       data: data.value.data,
@@ -271,7 +267,7 @@ const salesRegister = () => {
     display: flex;
     justify-content: space-around;
   }
-  .page-select{
+  .page-select {
     max-width: 300px;
   }
   .dialog {

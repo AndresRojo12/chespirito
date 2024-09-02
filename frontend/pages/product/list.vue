@@ -3,6 +3,8 @@
 </template>
 
 <script setup>
-import ProductList from '../../components/product/ProductList.vue';
-
+import ProductList from "../../components/product/ProductList.vue";
+definePageMeta({
+  middleware: "auth",
+});
 </script>
