@@ -1,13 +1,33 @@
 <template>
-  <div class="main-container">
-    <div class="header-container">
-      <v-list-item
-        class="exit-icon"
-        prepend-icon="mdi-arrow-left"
-        @click="back"
-      ></v-list-item>
-    </div>
+  <div>
+    <v-list-item
+      class="exit-icon"
+      prepend-icon="mdi-arrow-left"
+      @click="back"
+    ></v-list-item>
+  </div>
 
+  <v-container class="form-container">
+    <h1 class="form-title">Registro de inventario</h1>
+    <form @submit.prevent="registerInventory">
+      <v-autocomplete
+        class="select"
+        v-model="sales"
+        :items="salesId"
+        item-title="products.name"
+        item-value="id"
+        label="Seleccionar producto vendido"
+        required
+      >
+      </v-autocomplete>
+      <v-text-field class="input" v-model="status" label="Estado" required>
+      </v-text-field>
+      <div class="submit-buttons">
+        <v-btn class="submit">Enviar</v-btn>
+        <v-btn class="clean" @click="handleReset">Limpiar</v-btn>
+      </div>
+    </form>
+  </v-container>
     <v-container class="form-container">
       <h1 class="title">Registro de inventario</h1>
       <form @submit.prevent="registerInventory">
@@ -122,21 +142,19 @@ const back = () => {
 }
 .form-container {
   width: 340px;
-  margin-top: 4%;
   border: 1px solid;
   border-radius: 6%;
   border-color: #116a7b;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
-.title {
+.form-title {
   text-align: center;
   font-size: 2vw;
-  margin-bottom: 5%;
   font-family: "Arial", sans-serif;
+  margin-bottom: 3%;
 }
 .input,
-.text-area,
-.file-input {
+.select {
   color: #116a7b;
 }
 .submit-buttons {
@@ -160,25 +178,28 @@ const back = () => {
   .exit-icon {
     display: flex;
   }
+  .form-title {
+    font-size: 3vw;
+  }
+}
+
+@media (max-width: 540px) {
+  .form-title {
+    font-size: 4vw;
+  }
 }
 
 @media (max-width: 430px) {
   .exit-icon {
     display: flex;
-    font-size: 5vw;
+    font-size: 4vw;
+    margin-bottom: 4%;
   }
-  .main-container {
-    max-width: 100%;
-    padding: 3%;
-  }
-  .header-container {
-    display: flex;
+  .form-title {
+    font-size: 6vw;
   }
   .form-container {
     max-width: 100%;
-  }
-  .title {
-    font-size: 6vw;
   }
   .submit-buttons {
     display: inline;

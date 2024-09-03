@@ -1,52 +1,50 @@
 <template>
-  <div class="main-container">
-    <div class="header-container">
-      <v-list-item
-        prepend-icon="mdi-arrow-left"
-        class="exit-icon"
-        @click="back"
-      ></v-list-item>
-    </div>
-    <v-container class="form-container">
-      <h1 class="form-title">Registro de ventas</h1>
-      <form style="margin-top: 5%" @submit.prevent="registerSale">
-        <v-text-field
-          class="input"
-          v-model="quantitySold"
-          label="Cantidad"
-          required
-        ></v-text-field>
-        <v-text-field
-          class="input"
-          v-model="salePrice"
-          label="Total"
-          required
-        ></v-text-field>
-        <v-autocomplete
-          class="select"
-          v-model="selectedCategory"
-          :items="categories"
-          item-title="name"
-          item-value="id"
-          label="Seleccionar Categoría"
-          required
-        ></v-autocomplete>
-        <v-autocomplete
-          class="select"
-          v-model="selectedProduct"
-          :items="products"
-          item-title="name"
-          item-value="id"
-          label="Seleccionar Producto"
-          required
-        ></v-autocomplete>
-        <div class="submit-buttons">
-          <v-btn class="submit" type="submit">Enviar</v-btn>
-          <v-btn class="clean" @click="handleReset">Limpiar</v-btn>
-        </div>
-      </form>
-    </v-container>
+  <div>
+    <v-list-item
+      prepend-icon="mdi-arrow-left"
+      class="exit-icon"
+      @click="back"
+    ></v-list-item>
   </div>
+  <v-container class="form-container">
+    <h1 class="form-title">Registro de ventas</h1>
+    <form style="margin-top: 5%" @submit.prevent="registerSale">
+      <v-text-field
+        class="input"
+        v-model="quantitySold"
+        label="Cantidad"
+        required
+      ></v-text-field>
+      <v-text-field
+        class="input"
+        v-model="salePrice"
+        label="Total"
+        required
+      ></v-text-field>
+      <v-autocomplete
+        class="select"
+        v-model="selectedCategory"
+        :items="categories"
+        item-title="name"
+        item-value="id"
+        label="Seleccionar Categoría"
+        required
+      ></v-autocomplete>
+      <v-autocomplete
+        class="select"
+        v-model="selectedProduct"
+        :items="products"
+        item-title="name"
+        item-value="id"
+        label="Seleccionar Producto"
+        required
+      ></v-autocomplete>
+      <div class="submit-buttons">
+        <v-btn class="submit" type="submit">Enviar</v-btn>
+        <v-btn class="clean" @click="handleReset">Limpiar</v-btn>
+      </div>
+    </form>
+  </v-container>
 </template>
 
 <script setup>
@@ -186,7 +184,6 @@ const back = () => {
 }
 .form-container {
   width: 340px;
-  margin-top: 4%;
   border: 1px solid;
   border-radius: 6%;
   border-color: #116a7b;
@@ -195,12 +192,10 @@ const back = () => {
 .form-title {
   text-align: center;
   font-size: 2vw;
-  margin-bottom: 5%;
   font-family: "Arial", sans-serif;
 }
 .input,
-.text-area,
-.file-input {
+.select {
   color: #116a7b;
 }
 .submit-buttons {
@@ -224,25 +219,28 @@ const back = () => {
   .exit-icon {
     display: flex;
   }
+  .form-title {
+    font-size: 2.5vw;
+  }
+}
+
+@media (max-width: 540px) {
+  .form-title {
+    font-size: 4vw;
+  }
 }
 
 @media (max-width: 430px) {
   .exit-icon {
     display: flex;
-    font-size: 5vw;
-  }
-  .main-container {
-    max-width: 100%;
-    padding: 3%;
-  }
-  .header-container {
-    display: flex;
+    font-size: 4vw;
+    margin-bottom: 4%;
   }
   .form-container {
     max-width: 100%;
   }
   .form-title {
-    font-size: 7vw;
+    font-size: 6vw;
   }
   .submit-buttons {
     display: inline;

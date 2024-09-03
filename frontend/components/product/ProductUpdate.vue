@@ -1,5 +1,5 @@
 <template>
-  <v-form style="background-color: white">
+  <v-form>
     <v-text-field
       class="input"
       v-model="localProduct.name"

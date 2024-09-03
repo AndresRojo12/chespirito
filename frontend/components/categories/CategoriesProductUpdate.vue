@@ -93,12 +93,8 @@ const updateCategory = async () => {
 </script>
 
 <style scoped>
-.form-container {
-  max-width: 100%;
-}
 .input,
 .file-input {
-  width: 100%;
   color: #116a7b;
 }
 .save-button {
@@ -106,6 +102,7 @@ const updateCategory = async () => {
   color: white;
   font-family: "Arial", sans-serif;
 }
+
 @media (max-width: 430px) {
   .form-container {
     max-width: 100%;

@@ -1,42 +1,40 @@
 <template>
-  <div class="main-container">
-    <div class="header-container">
-      <v-list-item
-        class="exit-icon"
-        prepend-icon="mdi-arrow-left"
-        @click="back"
-      ></v-list-item>
-    </div>
-
-    <v-container class="form-container">
-      <h1 class="title">Registrar categoría</h1>
-      <form @submit.prevent="registerCategory">
-        <v-text-field
-          class="input"
-          v-model="name"
-          label="Nombre"
-          required
-        ></v-text-field>
-        <v-textarea
-          class="text-area"
-          v-model="description"
-          label="Descripción"
-          required
-        ></v-textarea>
-        <v-file-input
-          class="file-input"
-          v-model="image"
-          label="Seleccionar imagen"
-          accept="image/*"
-          required
-        ></v-file-input>
-        <div class="submit-buttons">
-          <v-btn class="submit" type="submit">Enviar</v-btn>
-          <v-btn @click="handleReset" class="clean">Limpiar</v-btn>
-        </div>
-      </form>
-    </v-container>
+  <div class="header-container">
+    <v-list-item
+      class="exit-icon"
+      prepend-icon="mdi-arrow-left"
+      @click="back"
+    ></v-list-item>
   </div>
+
+  <v-container class="form-container">
+    <h1 class="form-title">Registrar categoría</h1>
+    <form @submit.prevent="registerCategory">
+      <v-text-field
+        class="input"
+        v-model="name"
+        label="Nombre"
+        required
+      ></v-text-field>
+      <v-textarea
+        class="text-area"
+        v-model="description"
+        label="Descripción"
+        required
+      ></v-textarea>
+      <v-file-input
+        class="file-input"
+        v-model="image"
+        label="Seleccionar imagen"
+        accept="image/*"
+        required
+      ></v-file-input>
+      <div class="submit-buttons">
+        <v-btn class="submit" type="submit">Enviar</v-btn>
+        <v-btn @click="handleReset" class="clean">Limpiar</v-btn>
+      </div>
+    </form>
+  </v-container>
 </template>
 
 <script setup>
@@ -114,17 +112,16 @@ const back = () => {
 }
 .form-container {
   width: 340px;
-  margin-top: 4%;
   border: 1px solid;
   border-radius: 6%;
   border-color: #116a7b;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
-.title {
+.form-title {
   text-align: center;
   font-size: 2vw;
-  margin-bottom: 5%;
   font-family: "Arial", sans-serif;
+  margin-bottom: 4%;
 }
 .input,
 .text-area,
@@ -151,6 +148,16 @@ const back = () => {
 @media (max-width: 1024px) {
   .exit-icon {
     display: flex;
+    margin-bottom: 4%;
+  }
+  .form-title {
+    font-size: 3vw;
+  }
+}
+
+@media (max-width: 540px) {
+  .form-title {
+    font-size: 4vw;
   }
 }
 
@@ -158,18 +165,12 @@ const back = () => {
   .exit-icon {
     display: flex;
     font-size: 5vw;
-  }
-  .main-container {
-    max-width: 100%;
-    padding: 3%;
-  }
-  .header-container {
-    display: flex;
+    margin-bottom: 4%;
   }
   .form-container {
     max-width: 100%;
   }
-  .title {
+  .form-title {
     font-size: 6vw;
   }
   .submit-buttons {
