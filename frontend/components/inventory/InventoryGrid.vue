@@ -235,7 +235,7 @@ const combineData = () => {
       const sale = sales.value.find((sale) => sale.id === inventory.salesId);
       return {
         ...inventory,
-        productName: sale ? sale.products.name : "Desconocido",
+        productName: sale ? sale.products.name : inventory.sales.products.name,
       };
     });
   }

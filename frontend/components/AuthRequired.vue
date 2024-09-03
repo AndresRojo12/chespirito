@@ -22,14 +22,14 @@ function goToLogin() {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh; 
+  height: 100vh;
   text-align: center;
-  background-color: #f8f8f8; 
+  background-color: #f8f8f8;
   padding: 20px;
 }
 
 .access-denied-container h1 {
-  color: #FF1E1E; 
+  color: #FF1E1E;
   margin-bottom: 20px;
 }
 

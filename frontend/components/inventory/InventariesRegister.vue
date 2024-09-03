@@ -24,7 +24,7 @@
         <v-text-field class="input" v-model="status" label="Estado" required>
         </v-text-field>
         <div class="submit-buttons">
-          <v-btn class="submit">Enviar</v-btn>
+          <v-btn class="submit" type="submit">Enviar</v-btn>
           <v-btn class="clean" @click="handleReset">Limpiar</v-btn>
         </div>
       </form>
@@ -43,15 +43,29 @@ const router = useRouter();
 const sales = ref("");
 const status = ref("");
 const salesId = ref([]);
+const page = ref(1);
+const pageSize = ref(10);
 
 const getVentas = async () => {
-  const { data, error } = await useFetch(`${CONFIG.public.API_BASE_URL}sales`);
+
+  const { data: metaData } = await useFetch(
+    `${CONFIG.public.API_BASE_URL}sales?page=1&pageSize=1`
+  );
+
+  const totalItems = metaData.value.totalItems;
+
+  pageSize.value = totalItems;
+  
+  const { data, error } = await useFetch(
+    `${CONFIG.public.API_BASE_URL}sales?page=${page.value}&pageSize=${pageSize.value}`
+  );
 
   if (data.value != null) {
     salesId.value = data.value.data.map((e) => ({
       id: e.id,
       products: e.products,
     }));
+    console.log("datos", salesId);
   } else {
     throw new Error(error.value.message);
   }
@@ -74,9 +88,10 @@ const registerInventory = async () => {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-    },
+    }
   );
-  if ((data.value = !null)) {
+
+  if (data.value != null) {
     Swal.fire({
       title: "Inventario registrado con éxito!",
       icon: "success",
