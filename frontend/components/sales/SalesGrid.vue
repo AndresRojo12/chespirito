@@ -60,7 +60,9 @@
           <td>{{ sal.salePrice }}</td>
           <td>
             {{
-              moment(sal.createdAt).tz("America/Bogota").format("DD/MM/YYYY")
+              moment(sal.createdAt)
+                .tz("America/Bogota")
+                .format("DD/MM/YYYY/ hh:mm A")
             }}
           </td>
         </tr>

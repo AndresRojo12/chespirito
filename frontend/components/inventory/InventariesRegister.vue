@@ -28,28 +28,6 @@
       </div>
     </form>
   </v-container>
-    <v-container class="form-container">
-      <h1 class="title">Registro de inventario</h1>
-      <form @submit.prevent="registerInventory">
-        <v-autocomplete
-          class="select"
-          v-model="sales"
-          :items="salesId"
-          item-title="products.name"
-          item-value="id"
-          label="Seleccionar producto vendido"
-          required
-        >
-        </v-autocomplete>
-        <v-text-field class="input" v-model="status" label="Estado" required>
-        </v-text-field>
-        <div class="submit-buttons">
-          <v-btn class="submit" type="submit">Enviar</v-btn>
-          <v-btn class="clean" @click="handleReset">Limpiar</v-btn>
-        </div>
-      </form>
-    </v-container>
-  </div>
 </template>
 
 <script setup>
@@ -67,17 +45,16 @@ const page = ref(1);
 const pageSize = ref(10);
 
 const getVentas = async () => {
-
   const { data: metaData } = await useFetch(
-    `${CONFIG.public.API_BASE_URL}sales?page=1&pageSize=1`
+    `${CONFIG.public.API_BASE_URL}sales?page=1&pageSize=1`,
   );
 
   const totalItems = metaData.value.totalItems;
 
   pageSize.value = totalItems;
-  
+
   const { data, error } = await useFetch(
-    `${CONFIG.public.API_BASE_URL}sales?page=${page.value}&pageSize=${pageSize.value}`
+    `${CONFIG.public.API_BASE_URL}sales?page=${page.value}&pageSize=${pageSize.value}`,
   );
 
   if (data.value != null) {
@@ -108,7 +85,7 @@ const registerInventory = async () => {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-    }
+    },
   );
 
   if (data.value != null) {
