@@ -76,12 +76,8 @@ const updateInventory = async () => {
 </script>
 
 <style scoped>
-.form-container {
-  max-width: 100%;
-}
 .input,
 .file-input {
-  width: 100%;
   color: #116a7b;
 }
 .save-button {

@@ -1,94 +1,94 @@
 <template>
-  <div class="main-container">
-    <div class="header-container">
-      <v-btn class="register-button" @click.prevent="salesRegister"
-        >Registrar ventas</v-btn
+  <div class="header-container">
+    <v-btn class="register-button" @click.prevent="salesRegister"
+      >Registrar ventas</v-btn
+    >
+    <v-select
+      class="page-select"
+      label="Seleccionar número de items por página"
+      v-model="pageSize"
+      :items="[10, 20, 30, 40, 50, 100]"
+      @change="getSales"
+    ></v-select>
+  </div>
+  <div>
+    <v-table style="width: 100%">
+      <thead>
+        <tr>
+          <th class="text-left">
+            <v-text-field
+              v-model="filters.categoryName"
+              label="Categoría"
+              clearable
+            ></v-text-field>
+          </th>
+          <th class="text-left">
+            <v-text-field
+              v-model="filters.productName"
+              label="Producto"
+              clearable
+            ></v-text-field>
+          </th>
+          <th class="text-left">
+            <v-text-field
+              v-model="filters.quantitySold"
+              label="Cantidad"
+              clearable
+            ></v-text-field>
+          </th>
+          <th class="text-left">
+            <v-text-field
+              v-model="filters.salePrice"
+              label="Total"
+              clearable
+            ></v-text-field>
+          </th>
+          <th class="text-left">
+            <v-text-field
+              v-model="filters.date"
+              label="Fecha"
+              clearable
+            ></v-text-field>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="sal in filteredData" :key="sal.id">
+          <td>{{ sal.categoryName }}</td>
+          <td>{{ sal.productName }}</td>
+          <td>{{ sal.quantitySold }}</td>
+          <td>{{ sal.salePrice }}</td>
+          <td>
+            {{
+              moment(sal.createdAt)
+                .tz("America/Bogota")
+                .format("DD/MM/YYYY/ hh:mm A")
+            }}
+          </td>
+        </tr>
+      </tbody>
+    </v-table>
+    <div v-if="filteredData.length === 0" style="text-align: center">
+      <v-alert color="#009c8c" type="warning"
+        >No se encontraron registros.</v-alert
       >
-      <v-select
-        class="page-select"
-        label="Seleccionar número de items por página"
-        v-model="pageSize"
-        :items="[10, 20, 30, 40, 50, 100]"
-        @change="getSales"
-      ></v-select>
     </div>
-    <div class="table-container">
-      <v-table style="width: 100%">
-        <thead>
-          <tr>
-            <th class="text-left">
-              <v-text-field
-                v-model="filters.categoryName"
-                label="Categoría"
-                clearable
-              ></v-text-field>
-            </th>
-            <th class="text-left">
-              <v-text-field
-                v-model="filters.productName"
-                label="Producto"
-                clearable
-              ></v-text-field>
-            </th>
-            <th class="text-left">
-              <v-text-field
-                v-model="filters.quantitySold"
-                label="Cantidad"
-                clearable
-              ></v-text-field>
-            </th>
-            <th class="text-left">
-              <v-text-field
-                v-model="filters.salePrice"
-                label="Total"
-                clearable
-              ></v-text-field>
-            </th>
-            <th class="text-left">
-              <v-text-field
-                v-model="filters.date"
-                label="Fecha"
-                clearable
-              ></v-text-field>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="sal in filteredData" :key="sal.id">
-            <td>{{ sal.categoryName }}</td>
-            <td>{{ sal.productName }}</td>
-            <td>{{ sal.quantitySold }}</td>
-            <td>{{ sal.salePrice }}</td>
-            <td>
-              {{
-                moment(sal.createdAt).tz("America/Bogota").format("DD/MM/YYYY")
-              }}
-            </td>
-          </tr>
-        </tbody>
-      </v-table>
-      <div v-if="filteredData.length === 0" style="text-align: center">
-        <v-alert color="#009c8c" type="warning"
-          >No se encontraron registros.</v-alert
-        >
-      </div>
-    </div>
-    <div class="text-center">
-      <v-container>
-        <v-row justify="center">
-          <v-col cols="8">
-            <v-container class="max-width">
-              <v-pagination
-                v-model="page"
-                :length="filteredSales.totalPages || 1"
-                class="my-4"
-                @input="getSales"
-              ></v-pagination>
-            </v-container>
-          </v-col>
-        </v-row>
-      </v-container>
-    </div>
+  </div>
+  <div class="text-center">
+    <v-container>
+      <v-row justify="center">
+        <v-col cols="8">
+          <v-container class="max-width">
+            <v-pagination
+              v-model="page"
+              :length="filteredSales.totalPages || 1"
+              class="my-4"
+              @input="getSales"
+            ></v-pagination>
+          </v-container>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
@@ -238,88 +238,41 @@ const salesRegister = () => {
 <style scoped>
 .header-container {
   display: flex;
+  justify-content: space-between;
 }
 .register-button {
-  margin-left: 13%;
-  margin-top: 3%;
   color: white;
   background: linear-gradient(to bottom, #009c8c, #00b7a2);
   font-family: "Arial", sans-serif;
 }
 .page-select {
   max-width: 300px;
-  margin-top: 3%;
-  margin-left: 48%;
-}
-.table-container {
-  max-height: 400px;
-  overflow-y: auto;
-  margin-top: 2%;
-  margin-left: 12%;
-}
-
-@media (max-width: 1024px) {
-  .main-container {
-    margin-top: 8%;
-    margin-right: 5%;
-  }
-  .header-container {
-    display: flex;
-    justify-content: space-around;
-  }
-  .page-select {
-    max-width: 300px;
-  }
-  .dialog {
-    margin-bottom: 40%;
-  }
 }
 
 @media (max-width: 540px) {
-  .main-container {
-    margin-right: 5%;
-    margin-top: 0%;
-  }
   .header-container {
     display: inline;
   }
   .register-button {
-    width: 80%;
+    width: 100%;
     font-size: 4vw;
-    margin-top: 15%;
   }
   .page-select {
-    max-width: 85%;
-    margin-left: 10%;
-    padding: 2%;
-  }
-  .dialog-title {
-    font-size: 4vw;
+    max-width: 100%;
+    margin-top: 3%;
   }
 }
 
 @media (max-width: 430px) {
-  .main-container {
-    margin-right: 0%;
-  }
   .header-container {
     display: inline;
-    padding: 1.5%;
   }
   .register-button {
-    width: 97%;
+    width: 100%;
     font-size: 5vw;
-    margin-top: 20%;
-    margin-left: 0%;
   }
   .page.select {
     max-width: 100%;
-    padding: 2%;
-  }
-  .table-container {
-    display: flex;
-    margin-left: 0%;
-    padding: 2%;
   }
 }
 </style>

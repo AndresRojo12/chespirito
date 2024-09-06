@@ -1,118 +1,116 @@
 <template>
-  <div class="main-container">
-    <div class="header-container">
-      <v-btn @click.prevent="category" class="register-button"
-        >Registrar categoría</v-btn
-      >
-      <v-text-field
-        class="search-field"
-        v-model="search"
-        density="comfortable"
-        placeholder="Buscar categorías"
-        prepend-inner-icon="mdi-magnify"
-        variant="solo"
-        clearable
-        hide-details
-      ></v-text-field>
-    </div>
+  <div class="header-container">
+    <v-btn @click.prevent="category" class="register-button"
+      >Registrar categoría</v-btn
+    >
+    <v-text-field
+      class="search-field"
+      v-model="search"
+      density="comfortable"
+      placeholder="Buscar categorías"
+      prepend-inner-icon="mdi-magnify"
+      variant="solo"
+      clearable
+      hide-details
+    ></v-text-field>
+  </div>
 
-    <v-select
-      v-model="pageSize"
-      class="page-select"
-      :items="[10, 20, 30, 40, 50]"
-      label="Seleccionar categorías por página"
-      @change="getCategories"
-    ></v-select>
+  <v-select
+    v-model="pageSize"
+    class="page-select"
+    :items="[10, 20, 30, 40, 50]"
+    label="Seleccionar categorías por página"
+    @change="getCategories"
+  ></v-select>
 
-    <div class="category-container">
-      <div
-        class="category-item"
-        v-for="cate in filteredCategories.data || []"
-        :key="cate.id"
-      >
-        <div>
-          <img class="category-image" :src="getImageUrl(cate.imagePath)" />
-        </div>
-        <nuxt-link :to="`/categories/${cate.id}`">
-          <button class="category-button">
-            <h3 class="button-text">{{ cate.name }}</h3>
-            <p class="button-text">{{ cate.description }}</p>
-          </button>
-        </nuxt-link>
-        <v-tooltip text="Editar">
-          <template v-slot:activator="{ props }">
-            <v-icon
-              v-bind="props"
-              @click="editCategory(cate)"
-              style="color: rgba(228, 192, 11, 0.663)"
-            >
-              mdi-pencil
-            </v-icon>
-          </template>
-        </v-tooltip>
-        <v-tooltip text="Eliminar">
-          <template v-slot:activator="{ props }">
-            <v-icon
-              v-bind="props"
-              @click="confirmDelete(cate)"
-              style="color: darkslategrey"
-            >
-              mdi-delete
-            </v-icon>
-          </template>
-        </v-tooltip>
+  <div class="category-container">
+    <div
+      class="category-item"
+      v-for="cate in filteredCategories.data || []"
+      :key="cate.id"
+    >
+      <div>
+        <img class="category-image" :src="getImageUrl(cate.imagePath)" />
       </div>
+      <nuxt-link :to="`/categories/${cate.id}`">
+        <button class="category-info">
+          <h3>{{ cate.name }}</h3>
+          <p>{{ cate.description }}</p>
+        </button>
+      </nuxt-link>
+      <v-tooltip text="Editar">
+        <template v-slot:activator="{ props }">
+          <v-icon
+            v-bind="props"
+            @click="editCategory(cate)"
+            style="color: rgba(228, 192, 11, 0.663)"
+          >
+            mdi-pencil
+          </v-icon>
+        </template>
+      </v-tooltip>
+      <v-tooltip text="Eliminar">
+        <template v-slot:activator="{ props }">
+          <v-icon
+            v-bind="props"
+            @click="confirmDelete(cate)"
+            style="color: darkslategrey"
+          >
+            mdi-delete
+          </v-icon>
+        </template>
+      </v-tooltip>
     </div>
+  </div>
 
-    <div class="text-center">
-      <v-container>
-        <v-row justify="center">
-          <v-col cols="8">
-            <v-container class="max-width">
-              <v-pagination
-                v-model="page"
-                :length="filteredCategories.totalPages || 1"
-                class="my-4"
-                @input="getCategories"
-              ></v-pagination>
-            </v-container>
-          </v-col>
-        </v-row>
-      </v-container>
+  <div class="text-center">
+    <v-container>
+      <v-row justify="center">
+        <v-col cols="8">
+          <v-container class="max-width">
+            <v-pagination
+              v-model="page"
+              :length="filteredCategories.totalPages || 1"
+              class="my-4"
+              @input="getCategories"
+            ></v-pagination>
+          </v-container>
+        </v-col>
+      </v-row>
+    </v-container>
 
-      <v-dialog class="dialog" v-model="showEditDialog">
-        <v-card class="edit-dialog">
-          <h1 class="dialog-title">Editar Categoría</h1>
-          <v-card-text>
-            <CategoriesProductUpdate
-              :category="editingCategory"
-              @save="handleSave"
-            />
-          </v-card-text>
-          <v-card-actions>
-            <v-btn class="cancel-button" text @click="showEditDialog = false"
-              >Cancelar</v-btn
-            >
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+    <v-dialog class="dialog" v-model="showEditDialog">
+      <v-card>
+        <h1 class="dialog-title">Editar Categoría</h1>
+        <v-card-text>
+          <CategoriesProductUpdate
+            :category="editingCategory"
+            @save="handleSave"
+          />
+        </v-card-text>
+        <v-card-actions>
+          <v-btn class="cancel-button" text @click="showEditDialog = false"
+            >Cancelar</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
-      <v-dialog class="dialog" v-model="showDeleteDialog">
-        <v-card>
-          <v-card-text>
-            <CategoryDelete
-              :category="categoryToDelete"
-              @deleted="handleDelete"
-            />
-          </v-card-text>
-          <v-card-actions>
-            <v-btn color="blue darken-1" text @click="showDeleteDialog = false">
-              Cancelar
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </div>
+    <v-dialog class="dialog" v-model="showDeleteDialog">
+      <v-card>
+        <v-card-text>
+          <CategoryDelete
+            :category="categoryToDelete"
+            @deleted="handleDelete"
+          />
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="blue darken-1" text @click="showDeleteDialog = false">
+            Cancelar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -242,27 +240,20 @@ const confirmDelete = async (category) => {
   justify-content: space-between;
 }
 .register-button {
-  margin-top: 5%;
-  margin-left: 13%;
   color: white;
   background: linear-gradient(to bottom, #009c8c, #00b7a2);
   font-family: "Arial", sans-serif;
 }
 .search-field {
   max-width: 300px;
-  margin-top: 3%;
-  margin-right: 5%;
 }
 .page-select {
   max-width: 300px;
-  margin-left: 13%;
-  margin-top: 5%;
+  margin-top: 2%;
 }
 .category-container {
-  margin-left: 10%;
   display: flex;
   flex-wrap: wrap;
-  padding: 2%;
 }
 .category-item {
   flex: 1 1 22%;
@@ -274,10 +265,10 @@ const confirmDelete = async (category) => {
 .category-image {
   width: 100%;
 }
-.category-button {
+.category-info {
   width: 100%;
   padding: 10px;
-  margin-top: 10px;
+  margin-top: 5px;
   background: linear-gradient(to bottom, #009c8c, #00b7a2);
   color: white;
   font-family: "Arial", sans-serif;
@@ -285,11 +276,8 @@ const confirmDelete = async (category) => {
   border-radius: 5px;
   cursor: pointer;
 }
-.button-text {
-  margin: 0;
-}
 .dialog {
-  max-width: 400px;
+  max-width: 500px;
 }
 .dialog-title {
   align-self: center;
@@ -307,96 +295,66 @@ const confirmDelete = async (category) => {
 }
 
 @media (max-width: 1024px) {
-  .main-container {
-    margin-top: 8%;
-    margin-right: 5%;
-  }
-  .search-field {
-    margin-right: 0%;
-  }
   .dialog {
     margin-bottom: 40%;
   }
 }
 
 @media (max-width: 540px) {
-  .main-container {
-    margin-right: 5%;
-    margin-top: 0%;
-  }
   .header-container {
-    align-self: center;
     display: inline;
   }
   .register-button {
-    width: 80%;
+    width: 100%;
     font-size: 4vw;
-    margin-top: 15%;
   }
   .search-field {
-    max-width: 80%;
-    margin-left: 13%;
+    max-width: 100%;
+    margin-top: 3%;
   }
   .page-select {
-    max-width: 80%;
+    max-width: 100%;
   }
   .category-item {
     flex: 1 1 80%;
-    max-width: 93.5%;
+    max-width: 100%;
   }
-  .button-text {
-    font-size: 5vw;
-    margin: 0;
+  .dialog {
+    margin-bottom: 0%;
   }
   .dialog-title {
-    font-size: 4vw;
+    font-size: 6vw;
   }
 }
 
 @media (max-width: 430px) {
-  .main-container {
-    margin-right: 0%;
-  }
   .header-container {
     display: inline;
   }
   .register-button {
-    width: 97%;
+    width: 100%;
     font-size: 5vw;
-    margin-left: 1.5%;
-    margin-top: 20%;
   }
   .search-field {
     max-width: 100%;
-    margin-right: 0%;
-    margin-left: 0%;
-    padding: 2%;
   }
   .page-select {
     max-width: 100%;
-    margin-left: 0;
-    padding: 2%;
-  }
-  .category-container {
-    margin-left: 0%;
   }
   .category-item {
     flex: 1 1 100%;
     max-width: 100%;
-  }
-  .button-text {
-    font-size: 5vw;
   }
   .dialog {
     margin-bottom: 0%;
   }
   .dialog-title {
     margin-top: 5%;
-    font-size: 5vw;
+    font-size: 6vw;
   }
   .cancel-button {
-    font-size: 4vw;
     width: 100%;
+    font-size: 4vw;
     margin-bottom: 5%;
   }
 }

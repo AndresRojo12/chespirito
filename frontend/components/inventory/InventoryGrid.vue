@@ -1,153 +1,151 @@
 <template>
-  <div class="main-container">
-    <div class="header-container">
-      <v-btn class="register-button" @click.prevent="registerInve">
-        Registrar Inventario
-      </v-btn>
-      <v-select
-        class="page-select"
-        v-model="pageSize"
-        :items="[5, 10, 20, 30, 40, 50, 100]"
-        label="Seleccionar datos por Página"
-        @change="getInventories"
-      >
-      </v-select>
-    </div>
-
-    <div class="table-container">
-      <v-table>
-        <thead>
-          <tr>
-            <th class="text-left">
-              <v-col>
-                <v-text-field
-                  style="width: 200px"
-                  v-model="filters.salesId"
-                  clearable
-                  @input="updatePage(1)"
-                  label="ventas"
-                >
-                </v-text-field>
-              </v-col>
-            </th>
-            <th class="text-left">
-              <v-col>
-                <v-text-field
-                  style="width: 200px"
-                  v-model="filters.productName"
-                  clearable
-                  @input="updatePage(1)"
-                  label="Producto vendido"
-                ></v-text-field>
-              </v-col>
-            </th>
-            <th class="text-left">
-              <v-col>
-                <v-text-field
-                  style="width: 200px"
-                  v-model="filters.status"
-                  clearable
-                  @input="updatePage(1)"
-                  label="Estado de producto"
-                ></v-text-field>
-              </v-col>
-            </th>
-            <th class="text-left">
-              <v-col>
-                <v-text-field
-                  style="width: 200px"
-                  v-model="filters.created_at"
-                  clearable
-                  @input="updatePage(1)"
-                  label="Fecha de registro"
-                ></v-text-field>
-              </v-col>
-            </th>
-            <th class="text-left">
-              <v-col>
-                <v-text-field
-                  style="width: 200px"
-                  v-model="filters.updated_at"
-                  clearable
-                  @input="updatePage(1)"
-                  label="Fecha actualización"
-                ></v-text-field>
-              </v-col>
-            </th>
-            <th class="text-left">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="inve in combinedData" :key="inve.id">
-            <td>{{ inve.salesId }}</td>
-            <td>{{ inve.productName }}</td>
-            <td>{{ inve.status }}</td>
-            <td>
-              {{
-                moment(inve.createdAt)
-                  .tz("America/Bogota")
-                  .format("DD/MM/YYYY/ hh:mm A")
-              }}
-            </td>
-            <td>
-              {{
-                moment(inve.updatedAt)
-                  .tz("America/Bogota")
-                  .format("DD/MM/YYYY/ hh:mm A")
-              }}
-            </td>
-            <v-tooltip text="Editar">
-              <template v-slot:activator="{ props }">
-                <v-icon
-                  style="color: #009c8c"
-                  v-bind="props"
-                  @click="editInventory(inve)"
-                >
-                  mdi-pencil
-                </v-icon>
-              </template>
-            </v-tooltip>
-          </tr>
-        </tbody>
-      </v-table>
-      <div v-if="noRecordsFound" style="text-align: center; margin-top: 20px">
-        <v-alert color="#009c8c" type="warning"
-          >No se encontraron registros.</v-alert
-        >
-      </div>
-    </div>
-
-    <div class="text-center">
-      <v-container>
-        <v-row justify="center">
-          <v-col col="8">
-            <v-container class="max-width">
-              <v-pagination
-                v-model="page"
-                :length="totalPages"
-                @input="getInventories"
-                class="my-4"
-              ></v-pagination>
-            </v-container>
-          </v-col>
-        </v-row>
-      </v-container>
-    </div>
-
-    <v-dialog class="dialog" v-model="showEditDialog">
-      <v-card>
-        <h1 class="dialog-title">Editar estado</h1>
-        <v-card-text>
-          <InventoryUpdate :inventory="editingInventory" @save="handleSave" />
-        </v-card-text>
-        <v-card-actions>
-          <v-btn class="cancel-button" text @click="showEditDialog = false">
-            Cancelar
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+  <div class="header-container">
+    <v-btn class="register-button" @click.prevent="registerInve">
+      Registrar Inventario
+    </v-btn>
+    <v-select
+      class="page-select"
+      v-model="pageSize"
+      :items="[5, 10, 20, 30, 40, 50, 100]"
+      label="Seleccionar datos por Página"
+      @change="getInventories"
+    >
+    </v-select>
   </div>
+
+  <div class="table-container">
+    <v-table>
+      <thead>
+        <tr>
+          <th class="text-left">
+            <v-col>
+              <v-text-field
+                style="width: 200px"
+                v-model="filters.salesId"
+                clearable
+                @input="updatePage(1)"
+                label="ventas"
+              >
+              </v-text-field>
+            </v-col>
+          </th>
+          <th class="text-left">
+            <v-col>
+              <v-text-field
+                style="width: 200px"
+                v-model="filters.productName"
+                clearable
+                @input="updatePage(1)"
+                label="Producto vendido"
+              ></v-text-field>
+            </v-col>
+          </th>
+          <th class="text-left">
+            <v-col>
+              <v-text-field
+                style="width: 200px"
+                v-model="filters.status"
+                clearable
+                @input="updatePage(1)"
+                label="Estado de producto"
+              ></v-text-field>
+            </v-col>
+          </th>
+          <th class="text-left">
+            <v-col>
+              <v-text-field
+                style="width: 200px"
+                v-model="filters.created_at"
+                clearable
+                @input="updatePage(1)"
+                label="Fecha de registro"
+              ></v-text-field>
+            </v-col>
+          </th>
+          <th class="text-left">
+            <v-col>
+              <v-text-field
+                style="width: 200px"
+                v-model="filters.updated_at"
+                clearable
+                @input="updatePage(1)"
+                label="Fecha actualización"
+              ></v-text-field>
+            </v-col>
+          </th>
+          <th class="text-left">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="inve in combinedData" :key="inve.id">
+          <td>{{ inve.salesId }}</td>
+          <td>{{ inve.productName }}</td>
+          <td>{{ inve.status }}</td>
+          <td>
+            {{
+              moment(inve.createdAt)
+                .tz("America/Bogota")
+                .format("DD/MM/YYYY/ hh:mm A")
+            }}
+          </td>
+          <td>
+            {{
+              moment(inve.updatedAt)
+                .tz("America/Bogota")
+                .format("DD/MM/YYYY/ hh:mm A")
+            }}
+          </td>
+          <v-tooltip text="Editar">
+            <template v-slot:activator="{ props }">
+              <v-icon
+                style="color: #009c8c"
+                v-bind="props"
+                @click="editInventory(inve)"
+              >
+                mdi-pencil
+              </v-icon>
+            </template>
+          </v-tooltip>
+        </tr>
+      </tbody>
+    </v-table>
+    <div v-if="noRecordsFound" style="text-align: center; margin-top: 20px">
+      <v-alert color="#009c8c" type="warning"
+        >No se encontraron registros.</v-alert
+      >
+    </div>
+  </div>
+
+  <div class="text-center">
+    <v-container>
+      <v-row justify="center">
+        <v-col col="8">
+          <v-container class="max-width">
+            <v-pagination
+              v-model="page"
+              :length="totalPages"
+              @input="getInventories"
+              class="my-4"
+            ></v-pagination>
+          </v-container>
+        </v-col>
+      </v-row>
+    </v-container>
+  </div>
+
+  <v-dialog class="dialog" v-model="showEditDialog">
+    <v-card>
+      <h1 class="dialog-title">Editar estado</h1>
+      <v-card-text>
+        <InventoryUpdate :inventory="editingInventory" @save="handleSave" />
+      </v-card-text>
+      <v-card-actions>
+        <v-btn class="cancel-button" text @click="showEditDialog = false">
+          Cancelar
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
@@ -280,27 +278,18 @@ const registerInve = () => {
 <style scoped>
 .header-container {
   display: flex;
+  justify-content: space-between;
 }
 .register-button {
-  margin-left: 13%;
-  margin-top: 3%;
   color: white;
   background: linear-gradient(to bottom, #009c8c, #00b7a2);
   font-family: "Arial", sans-serif;
 }
 .page-select {
   max-width: 300px;
-  margin-top: 3%;
-  margin-left: 45%;
-}
-.table-container {
-  max-height: 400px;
-  overflow-y: auto;
-  margin-top: 2%;
-  margin-left: 12%;
 }
 .dialog {
-  max-width: 400px;
+  max-width: 450px;
 }
 .dialog-title {
   align-self: center;
@@ -319,32 +308,22 @@ const registerInve = () => {
 }
 
 @media (max-width: 1024px) {
-  .main-container {
-    margin-top: 8%;
-    margin-right: 5%;
-  }
   .dialog {
     margin-bottom: 40%;
   }
 }
 
 @media (max-width: 540px) {
-  .main-container {
-    margin-right: 5%;
-    margin-top: 0%;
-  }
   .header-container {
     display: inline;
   }
   .register-button {
-    width: 80%;
+    width: 100%;
     font-size: 4vw;
-    margin-top: 15%;
   }
   .page-select {
     max-width: 100%;
-    margin-left: 0%;
-    padding: 2%;
+    margin-top: 3%;
   }
   .dialog-title {
     font-size: 4vw;
@@ -352,30 +331,15 @@ const registerInve = () => {
 }
 
 @media (max-width: 430px) {
-  .main-container {
-    margin-right: 0%;
-  }
   .header-container {
     display: inline;
-    padding: 1.5%;
   }
   .register-button {
-    width: 97%;
+    width: 100%;
     font-size: 5vw;
-    margin-top: 20%;
-    margin-left: 0%;
   }
   .page.select {
     max-width: 100%;
-    padding: 2%;
-  }
-  .table-container {
-    display: flex;
-    margin-left: 0%;
-    padding: 2%;
-  }
-  .dialog {
-    margin-bottom: 0%;
   }
   .dialog-title {
     margin-top: 5%;

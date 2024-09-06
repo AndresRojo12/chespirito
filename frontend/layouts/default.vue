@@ -2,17 +2,19 @@
   <div v-if="!userStore.isAuthenticated">
     <LoadingSpinner></LoadingSpinner>
   </div>
-  <div v-else class="main-container">
+  <div v-else>
     <h1 class="title">ANTIGÜEDADES CHESPIRITO</h1>
-    <v-layout>
+    <v-app>
       <v-navigation-drawer
-        class="drawer"
         v-model="drawer"
         app
         fixed
-        :rail="isLargeScreen"
+        :width="drawerWidth"
+        :rail="isRail"
         :expand-on-hover="isLargeScreen"
         :temporary="!isLargeScreen"
+        @mouseenter="handleMouseEnter"
+        @mouseleave="handleMouseLeave"
       >
         <v-list>
           <v-list-item
@@ -65,8 +67,16 @@
           >Antigüedades Chespirito</v-toolbar-title
         >
       </v-app-bar>
-    </v-layout>
-    <slot />
+      <v-main
+        :class="{ 'main-expanded': isRail, 'main-collapsed': !isRail }"
+        app
+      >
+        <v-container fluid>
+          <slot />
+        </v-container>
+      </v-main>
+    </v-app>
+
     <footer class="footer">
       <div>
         <div class="footer-bottom">
@@ -90,8 +100,19 @@ const userStore = useAuth();
 const router = useRouter();
 const route = useRoute();
 
-const drawer = ref(true);
+const drawer = ref(false);
+const isRail = ref(true);
 const isLargeScreen = ref(true);
+
+const drawerWidth = computed(() => (isRail.value ? 55 : 155));
+
+const handleMouseEnter = () => {
+  isRail.value = false;
+};
+
+const handleMouseLeave = () => {
+  isRail.value = true;
+};
 
 const showAppBar = computed(() => {
   const routesWithAppBar = [
@@ -133,8 +154,11 @@ onBeforeUnmount(() => {
 });
 
 const toggleDrawer = () => {
-  if (!isLargeScreen.value) {
-    drawer.value = !drawer.value;
+  drawer.value = !drawer.value;
+  if (drawer.value) {
+    isRail.value = false;
+  } else {
+    isRail.value = true;
   }
 };
 
@@ -175,6 +199,12 @@ const handleLogout = () => {
 </script>
 
 <style scoped>
+.main-expanded {
+  transition: margin-left 0.3s;
+}
+.main-collapsed {
+  transition: margin-left 0.3s;
+}
 .title {
   display: flex;
   margin-top: 2%;
@@ -183,11 +213,8 @@ const handleLogout = () => {
   background-image: linear-gradient(to bottom, #009c8c, #00b7a2);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   font-family: "Arial", sans-serif;
-}
-.drawer {
-  max-width: 155px;
 }
 .buttons {
   color: black;
@@ -200,13 +227,12 @@ const handleLogout = () => {
   justify-content: center;
 }
 .footer-bottom {
-  margin-top: 15%;
   background-image: linear-gradient(to bottom, #009c8c, #00b7a2);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: 10px;
   font-family: "Arial", sans-serif;
 }
+
 @media (max-width: 1024px) {
   .title {
     display: none;
@@ -215,14 +241,10 @@ const handleLogout = () => {
     display: flex;
   }
   .title-toolbar {
-    margin-left: 30%;
+    text-align: center;
   }
 }
-@media (max-width: 540px) {
-  .title-toolbar {
-    margin-left: 20%;
-  }
-}
+
 @media (max-width: 430px) {
   .title {
     display: none;
@@ -232,7 +254,6 @@ const handleLogout = () => {
   }
   .title-toolbar {
     font-size: 5vw;
-    margin-left: 13%;
   }
   .footer-bottom {
     font-size: 5vw;
