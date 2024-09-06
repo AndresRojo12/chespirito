@@ -55,7 +55,7 @@ const getVentas = async () => {
   const totalItems = metaData.value.totalItems;
 
   pageSize.value = totalItems;
-  
+
   const { data, error } = await useFetch(
     `${CONFIG.public.API_BASE_URL}sales?page=${page.value}&pageSize=${pageSize.value}`
   );
@@ -65,7 +65,6 @@ const getVentas = async () => {
       id: e.id,
       products: e.products,
     }));
-    console.log("datos", salesId);
   } else {
     throw new Error(error.value.message);
   }
