@@ -63,11 +63,19 @@ const price = ref(0);
 const image = ref(null);
 const categories = ref([]);
 const selectedCategory = ref("");
+const page = ref(1);
+const pageSize = ref(10);
 
 const fetchCategories = async () => {
   try {
+    const { data: metaData } = await useFetch(
+      `${CONFIG.public.API_BASE_URL}categories?page=1&pageSize=1`,
+    );
+    const totalItems = metaData.value.totalItems;
+
+    pageSize.value = totalItems;
     const { data, error } = await useFetch(
-      `${CONFIG.public.API_BASE_URL}/categories`,
+      `${CONFIG.public.API_BASE_URL}/categories?page=${page.value}&pageSize=${pageSize.value}`,
     );
     if (!error.value) {
       categories.value = data.value.data.map((e) => ({
