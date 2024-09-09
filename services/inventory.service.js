@@ -34,7 +34,7 @@ class InventoryService {
       where[Op.and] = [
         ...(where[Op.and] || []),
         Sequelize.where(
-          fn('TO_CHAR', col('Inventory.created_at'), 'YYYY-MM-DD'),
+          fn('TO_CHAR', col('Inventory.created_at'), 'DD/MM/YYYY'),
           { [Op.iLike]: formattedDate },
         ),
       ];
@@ -45,7 +45,7 @@ class InventoryService {
       where[Op.and] = [
         ...(where[Op.and] || []),
         Sequelize.where(
-          fn('TO_CHAR', col('Inventory.updated_at'), 'YYYY-MM-DD'),
+          fn('TO_CHAR', col('Inventory.updated_at'), 'DD/MM/YYYY'),
           { [Op.iLike]: formattedDate },
         ),
       ];
