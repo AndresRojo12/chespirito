@@ -32,10 +32,11 @@
       </div>
       <div class="product-info">
         <h4 class="title-info">
+          Nombre:
           {{ pro.name }}
         </h4>
-        <p>{{ pro.description }}</p>
-        <p>{{ pro.price }}</p>
+        <p>Descripción:{{ pro.description }}</p>
+        <p>Precio:{{ pro.price }}</p>
       </div>
       <v-tooltip text="Editar">
         <template v-slot:activator="{ props }">

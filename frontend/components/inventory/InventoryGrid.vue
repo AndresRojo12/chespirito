@@ -21,18 +21,6 @@
             <v-col>
               <v-text-field
                 style="width: 200px"
-                v-model="filters.salesId"
-                clearable
-                @input="updatePage(1)"
-                label="ventas"
-              >
-              </v-text-field>
-            </v-col>
-          </th>
-          <th class="text-left">
-            <v-col>
-              <v-text-field
-                style="width: 200px"
                 v-model="filters.productName"
                 clearable
                 @input="updatePage(1)"
@@ -78,7 +66,6 @@
       </thead>
       <tbody>
         <tr v-for="inve in combinedData" :key="inve.id">
-          <td>{{ inve.salesId }}</td>
           <td>{{ inve.productName }}</td>
           <td>{{ inve.status }}</td>
           <td>

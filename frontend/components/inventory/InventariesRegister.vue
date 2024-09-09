@@ -23,7 +23,7 @@
       <v-text-field class="input" v-model="status" label="Estado" required>
       </v-text-field>
       <div class="submit-buttons">
-        <v-btn class="submit">Enviar</v-btn>
+        <v-btn @click.prevent="registerInventory" class="submit">Enviar</v-btn>
         <v-btn class="clean" @click="handleReset">Limpiar</v-btn>
       </div>
     </form>

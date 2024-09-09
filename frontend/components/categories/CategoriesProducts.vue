@@ -16,9 +16,9 @@
         <div>
           <img class="product-image" :src="getImageUrl(product.imagePath)" />
         </div>
-        <h3 class="text">{{ product.name }}</h3>
-        <p class="text">{{ product.description }}</p>
-        <p class="text"><h4>Precio:</h4> {{ product.price }}</p>
+        <h3 class="text">Nombre:{{ product.name }}</h3>
+        <p class="text">Descripción{{ product.description }}</p>
+        <p class="text">Precio:{{ product.price }}</p>
       </div>
     </div>
   </div>

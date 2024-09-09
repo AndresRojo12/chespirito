@@ -61,6 +61,8 @@ const selectedCategory = ref("");
 const selectedProduct = ref("");
 const categories = ref([]);
 const products = ref([]);
+const page = ref(1);
+const pageSize = ref(10);
 
 const registerSale = async () => {
   if (
@@ -114,9 +116,16 @@ const registerSale = async () => {
 };
 
 const fetchCategories = async () => {
+  const { data: metaData } = await useFetch(
+    `${CONFIG.public.API_BASE_URL}categories?page=1&pageSize=1`,
+  );
+
+  const totalItems = metaData.value.totalItems;
+
+  pageSize.value = totalItems;
   try {
     const { data, error } = await useFetch(
-      `${CONFIG.public.API_BASE_URL}categories`,
+      `${CONFIG.public.API_BASE_URL}categories?page=${page.value}&pageSize=${pageSize.value}`,
     );
     if (!error.value) {
       categories.value = data.value.data.map((e) => ({
@@ -138,9 +147,16 @@ const fetchCategories = async () => {
 };
 
 const fetchProducts = async () => {
+  const { data: metaData } = await useFetch(
+    `${CONFIG.public.API_BASE_URL}products?page=1&pageSize=1`,
+  );
+
+  const totalItems = metaData.value.totalItems;
+
+  pageSize.value = totalItems;
   try {
     const { data, error } = await useFetch(
-      `${CONFIG.public.API_BASE_URL}products`,
+      `${CONFIG.public.API_BASE_URL}products?page=${page.value}&pageSize=${pageSize.value}`,
     );
     if (!error.value) {
       products.value = data.value.data.map((e) => ({
