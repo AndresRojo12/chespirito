@@ -11,8 +11,31 @@ const service = new SalesServices();
 
 router.get('/', async (req, res, next) => {
   try {
-    const { page, pageSize } = req.query;
-    res.json(await service.find({ page, pageSize }));
+    const {
+      page = 1,
+      pageSize = 10,
+      categoryName,
+      productName,
+      categoryId,
+      productId,
+      quantitySold,
+      salePrice,
+      createdAt,
+    } = req.query;
+    const sale = await service.find({
+      page: parseInt(page, 10),
+      pageSize: parseInt(pageSize, 10),
+      filters: {
+        categoryName: categoryName || undefined,
+        productName: productName || undefined,
+        categoryId: categoryId || undefined,
+        productId: productId || undefined,
+        quantitySold: quantitySold || undefined,
+        salePrice: salePrice || undefined,
+        createdAt: createdAt || undefined,
+      },
+    });
+    res.json(sale);
   } catch (error) {
     next(error);
   }

@@ -20,6 +20,8 @@
               v-model="filters.categoryName"
               label="Categoría"
               clearable
+              @input="updatePage(1)"
+              @click:clear="clearFilter('categoryName')"
             ></v-text-field>
           </th>
           <th class="text-left">
@@ -27,6 +29,8 @@
               v-model="filters.productName"
               label="Producto"
               clearable
+              @input="updatePage(1)"
+              @click:clear="clearFilter('productName')"
             ></v-text-field>
           </th>
           <th class="text-left">
@@ -34,6 +38,8 @@
               v-model="filters.quantitySold"
               label="Cantidad"
               clearable
+              @input="updatePage(1)"
+              @click:clear="clearFilter('quantitySold')"
             ></v-text-field>
           </th>
           <th class="text-left">
@@ -41,19 +47,23 @@
               v-model="filters.salePrice"
               label="Total"
               clearable
+              @input="updatePage(1)"
+              @click:clear="clearFilter('salePrice')"
             ></v-text-field>
           </th>
           <th class="text-left">
             <v-text-field
-              v-model="filters.date"
+              v-model="filters.created_at"
               label="Fecha"
               clearable
+              @input="updatePage(1)"
+              @click:clear="clearFilter('created_at')"
             ></v-text-field>
           </th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="sal in filteredData" :key="sal.id">
+        <tr v-for="sal in combinedData" :key="sal.id">
           <td>{{ sal.categoryName }}</td>
           <td>{{ sal.productName }}</td>
           <td>{{ sal.quantitySold }}</td>
@@ -68,7 +78,7 @@
         </tr>
       </tbody>
     </v-table>
-    <div v-if="filteredData.length === 0" style="text-align: center">
+    <div v-if="noRecordsFound" style="text-align: center">
       <v-alert color="#009c8c" type="warning"
         >No se encontraron registros.</v-alert
       >
@@ -81,9 +91,9 @@
           <v-container class="max-width">
             <v-pagination
               v-model="page"
-              :length="filteredSales.totalPages || 1"
-              class="my-4"
+              :length="totalPages"
               @input="getSales"
+              class="my-4"
             ></v-pagination>
           </v-container>
         </v-col>
@@ -101,74 +111,47 @@ const router = useRouter();
 
 const page = ref(1);
 const pageSize = ref(10);
-const filteredSales = ref({ data: [], totalPages: 1 });
+const totalPages = ref(10);
 const sales = ref([]);
 const categories = ref([]);
 const products = ref([]);
 const combinedData = ref([]);
 const filters = ref({
+  categoryId: "",
   categoryName: "",
+  productId: "",
   productName: "",
   quantitySold: "",
   salePrice: "",
-  date: "",
+  created_at: "",
 });
 
-const filteredData = computed(() => {
-  return combinedData.value.filter((sal) => {
-    const matchesCategoryId = filters.value.categoryName
-      ? sal.categoryName
-          .toString()
-          .toLowerCase()
-          .includes(filters.value.categoryName.toLowerCase())
-      : true;
-    const matchesProductId = filters.value.productName
-      ? sal.productName
-          .toString()
-          .toLowerCase()
-          .includes(filters.value.productName.toLowerCase())
-      : true;
-    const matchesQuantitySold = filters.value.quantitySold
-      ? sal.quantitySold
-          .toString()
-          .includes(filters.value.quantitySold.toString())
-      : true;
-    const matchesSalePrice = filters.value.salePrice
-      ? sal.salePrice.toString().includes(filters.value.salePrice.toString())
-      : true;
-    let matchesDate = true;
-    if (filters.value.date) {
-      const filterDate = moment(filters.value.date, "DD/MM/YYYY");
-      const saleDate = moment(sal.createdAt).tz("America/Bogota");
-      matchesDate = saleDate.isSame(filterDate, "day");
-    }
-    return (
-      matchesCategoryId &&
-      matchesProductId &&
-      matchesQuantitySold &&
-      matchesSalePrice &&
-      matchesDate
-    );
-  });
-});
+const noRecordsFound = ref(false);
 
 const getSales = async () => {
+  noRecordsFound.value = false;
   try {
-    const { data } = await useFetch(
-      `${CONFIG.public.API_BASE_URL}sales?page=${page.value}&pageSize=${pageSize.value}`,
+    const { data, error } = await useFetch(
+      `${CONFIG.public.API_BASE_URL}sales?page=${page.value}
+      &pageSize=${pageSize.value}&categoryId=${filters.value.categoryId}&categoryName=${filters.value.categoryName}&productId=${filters.value.productId}&productName=${filters.value.productName}&quantitySold=${filters.value.quantitySold}&salePrice=${filters.value.salePrice}&createdAt=${filters.value.created_at}`,
       {
         method: "GET",
       },
     );
 
+    if (error.value || !data.value) {
+      noRecordsFound.value = true;
+      sales.value = [];
+      combinedData.value = [];
+      return;
+    }
+
     sales.value = data.value.data;
-    filteredSales.value = {
-      data: data.value.data,
-      totalPages: data.value.totalPages,
-    };
+    totalPages.value = data.value.totalPages;
     combineData();
   } catch (error) {
-    filteredSales.value = { data: [], totalPages: 1 };
+    console.log(error);
+    noRecordsFound.value = true;
   }
 };
 
@@ -204,16 +187,16 @@ const combineData = () => {
   ) {
     combinedData.value = sales.value.map((sale) => {
       const category = categories.value.find(
-        (category) => category.id === (sale ? sale.categoryId : ""),
+        (category) => category.id === sale.categoryId,
       );
       const product = products.value.find(
-        (product) => product.id === (sale ? sale.productId : ""),
+        (product) => product.id === sale.productId,
       );
 
       return {
         ...sale,
+        categoryName: category ? category.name : sale.products.category.name,
         productName: product ? product.name : sale.products.name,
-        categoryName: category ? category.name : "Desconocido",
       };
     });
   }
@@ -226,9 +209,20 @@ onMounted(async () => {
   await getProducts();
 });
 
+const updatePage = (newPage) => {
+  page.value = newPage;
+  getSales();
+};
+
 watch([page, pageSize, filters], () => {
   getSales();
 });
+
+const clearFilter = (filterName) => {
+  filters.value[filterName] = "";
+  updatePage(1);
+  getSales();
+};
 
 const salesRegister = () => {
   router.push("/sales/register");

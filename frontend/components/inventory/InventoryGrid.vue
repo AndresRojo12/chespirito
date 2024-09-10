@@ -22,9 +22,10 @@
               <v-text-field
                 style="width: 200px"
                 v-model="filters.productName"
+                label="Producto vendido"
                 clearable
                 @input="updatePage(1)"
-                label="Producto vendido"
+                @click:clear="clearFilter('productName')"
               ></v-text-field>
             </v-col>
           </th>
@@ -33,9 +34,10 @@
               <v-text-field
                 style="width: 200px"
                 v-model="filters.status"
+                label="Estado de producto"
                 clearable
                 @input="updatePage(1)"
-                label="Estado de producto"
+                @click:clear="clearFilter('status')"
               ></v-text-field>
             </v-col>
           </th>
@@ -44,9 +46,10 @@
               <v-text-field
                 style="width: 200px"
                 v-model="filters.created_at"
+                label="Fecha de registro"
                 clearable
                 @input="updatePage(1)"
-                label="Fecha de registro"
+                @click:clear="clearFilter('created_at')"
               ></v-text-field>
             </v-col>
           </th>
@@ -55,9 +58,10 @@
               <v-text-field
                 style="width: 200px"
                 v-model="filters.updated_at"
+                label="Fecha actualización"
                 clearable
                 @input="updatePage(1)"
-                label="Fecha actualización"
+                @click:clear="clearFilter('updated_at')"
               ></v-text-field>
             </v-col>
           </th>
@@ -234,6 +238,12 @@ const updatePage = (newPage) => {
 watch([page, pageSize, filters], () => {
   getInventories();
 });
+
+const clearFilter = (filterName) => {
+  filters.value[filterName] = "";
+  updatePage(1);
+  getInventories();
+};
 
 const editInventory = (inve) => {
   if (inve && inve.id) {
