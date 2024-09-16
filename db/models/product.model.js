@@ -24,7 +24,6 @@ const ProductSchema = {
   name: {
     allowNull: false,
     type: DataTypes.STRING,
-    unique: true,
   },
   description: {
     allowNull: false,
@@ -33,7 +32,7 @@ const ProductSchema = {
   imagePath: {
     type: DataTypes.STRING,
     allowNull: false,
-    field: 'image_path'
+    field: 'image_path',
   },
   price: {
     allowNull: false,
@@ -101,8 +100,8 @@ class Product extends Model {
     });
 
     this.belongsTo(models.Category, {
-      as: 'category'
-    })
+      as: 'category',
+    });
   }
   static config(sequelize) {
     return {

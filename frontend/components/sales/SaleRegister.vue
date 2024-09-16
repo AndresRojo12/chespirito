@@ -3,7 +3,7 @@
     <v-list-item
       prepend-icon="mdi-arrow-left"
       class="exit-icon"
-      @click="back"
+      @click="router.back()"
     ></v-list-item>
   </div>
   <v-container class="form-container">
@@ -11,24 +11,29 @@
     <form style="margin-top: 5%" @submit.prevent="registerSale">
       <v-text-field
         class="input"
-        v-model="quantitySold"
+        v-model.number="quantitySold"
         label="Cantidad"
-        required
+        :error-messages="errors.quantitySold"
+        @input="clearErrors('quantitySold')"
+        :rules="[(v) => !isNaN(v) || 'La cantidad debe ser un número']"
       ></v-text-field>
       <v-text-field
         class="input"
-        v-model="salePrice"
+        v-model.number="salePrice"
         label="Total"
-        required
+        :error-messages="errors.salePrice"
+        @input="clearErrors('salePrice')"
+        :rules="[(v) => !isNaN(v) || 'El precio debe ser un número válido']"
       ></v-text-field>
       <v-autocomplete
         class="select"
-        v-model="selectedCategory"
+        v-model.number="selectedCategory"
         :items="categories"
         item-title="name"
         item-value="id"
         label="Seleccionar Categoría"
-        required
+        :error-messages="errors.selectedCategory"
+        @update:model-value="clearErrors('selectedCategory')"
       ></v-autocomplete>
       <v-autocomplete
         class="select"
@@ -37,7 +42,8 @@
         item-title="name"
         item-value="id"
         label="Seleccionar Producto"
-        required
+        :error-messages="errors.selectedProduct"
+        @update:model-value="clearErrors('selectedProduct')"
       ></v-autocomplete>
       <div class="submit-buttons">
         <v-btn class="submit" type="submit">Enviar</v-btn>
@@ -48,15 +54,16 @@
 </template>
 
 <script setup>
-import { onMounted, nextTick, ref } from "vue";
+import { onMounted, nextTick, ref, reactive } from "vue";
 import { useRouter } from "vue-router";
+import { z } from "zod";
 import Swal from "sweetalert2";
 
 const CONFIG = useRuntimeConfig();
 const router = useRouter();
 
-const quantitySold = ref(0);
-const salePrice = ref(0);
+const quantitySold = ref();
+const salePrice = ref();
 const selectedCategory = ref("");
 const selectedProduct = ref("");
 const categories = ref([]);
@@ -64,18 +71,54 @@ const products = ref([]);
 const page = ref(1);
 const pageSize = ref(10);
 
+const errors = reactive({
+  quantitySold: [],
+  salePrice: [],
+  selectedCategory: [],
+  selectedProduct: [],
+});
+
+const schema = z.object({
+  quantitySold: z.number().min(1, "La cantidad es requerida"),
+  salePrice: z
+    .number()
+    .min(1, "El total es requerido")
+    .max("El total no debe superar los 30.000.000"),
+  selectedCategory: z.number().min(1, "La categoría es requerida"),
+  selectedProduct: z.number().min(1, "Los productos son requeridos"),
+});
+
+const validateForm = () => {
+  errors.quantitySold = [];
+  errors.salePrice = [];
+  errors.selectedCategory = [];
+  errors.selectedProduct = [];
+  try {
+    const formData = {
+      quantitySold: quantitySold.value,
+      salePrice: salePrice.value,
+      selectedCategory: selectedCategory.value,
+      selectedProduct: selectedProduct.value,
+    };
+    schema.parse(formData);
+    return true;
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      error.errors.forEach((err) => {
+        const field = err.path[0];
+        if (field === "quantitySold") errors.quantitySold = [err.message];
+        if (field === "salePrice") errors.salePrice = [err.message];
+        if (field === "selectedCategory")
+          errors.selectedCategory = [err.message];
+        if (field === "selectedProduct") errors.selectedProduct = [err.message];
+      });
+    }
+    return false;
+  }
+};
+
 const registerSale = async () => {
-  if (
-    !quantitySold.value ||
-    !salePrice.value ||
-    !selectedCategory.value ||
-    !selectedProduct.value
-  ) {
-    Swal.fire({
-      text: "Todos los campos deben ser completados",
-      icon: "warning",
-      confirmButtonText: "Aceptar",
-    });
+  if (!validateForm()) {
     return;
   }
   const data = {
@@ -101,6 +144,7 @@ const registerSale = async () => {
         icon: "success",
         confirmButtonText: "Aceptar",
       });
+      handleReset();
     } else {
       const errorData = await response.text();
       throw new Error(errorData || "Error al registrar la venta");
@@ -184,13 +228,17 @@ onMounted(async () => {
 });
 
 const handleReset = () => {
-  quantitySold.value = 0;
-  salePrice.value = 0;
-  selectedCategory.value = "";
-  selectedProduct.value = "";
+  for (const key of Object.keys(errors)) {
+    if (key === "quantitySold") quantitySold.value = 0;
+    else if (key === "salePrice") salePrice.value = 0;
+    else if (key === "selectedCategory") selectedCategory.value = "";
+    else if (key === "selectedProduct") selectedProduct.value = "";
+    errors[key] = [];
+  }
 };
-const back = () => {
-  router.back();
+
+const clearErrors = (field) => {
+  errors[field] = [];
 };
 </script>
 

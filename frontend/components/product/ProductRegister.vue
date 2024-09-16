@@ -4,33 +4,43 @@
       <v-list-item
         prepend-icon="mdi-arrow-left"
         class="exit-icon"
-        @click="back"
+        @click="router.back()"
       ></v-list-item>
     </div>
     <v-container class="form-container">
       <h1 class="title">Registro de productos</h1>
 
       <form @submit.prevent="registerProduct">
-        <v-text-field class="input" v-model="name" label="Nombre" required>
+        <v-text-field
+          class="input"
+          v-model="name"
+          label="Nombre"
+          :error-messages="errors.name"
+          @input="clearErrors('name')"
+        >
         </v-text-field>
         <v-textarea
           class="text-area"
           v-model="description"
           label="Descripción"
-          required
+          :error-messages="errors.description"
+          @input="clearErrors('description')"
         ></v-textarea>
         <v-text-field
           class="input"
-          v-model="price"
+          v-model.number="price"
           label="Precio"
-          required
+          :error-messages="errors.price"
+          @input="clearErrors('price')"
+          :rules="[(v) => !isNaN(v) || 'El precio debe ser un número válido']"
         ></v-text-field>
         <v-file-input
           class="file-input"
           v-model="image"
           label="Seleccionar Imagen"
           accept="image/*"
-          required
+          :error-messages="errors.image"
+          @change="clearErrors('image')"
         ></v-file-input>
         <v-autocomplete
           class="select"
@@ -39,7 +49,8 @@
           item-title="name"
           item-value="id"
           label="Seleccionar Categoría"
-          required
+          :error-messages="errors.selectedCategory"
+          @update:model-value="clearErrors('selectedCategory')"
         ></v-autocomplete>
         <div class="submit-buttons">
           <v-btn class="submit" type="submit">Enviar</v-btn>
@@ -52,19 +63,74 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from "vue";
+import { number, z } from "zod";
 import Swal from "sweetalert2";
 
 const CONFIG = useRuntimeConfig();
 const router = useRouter();
 
-const name = ref("");
-const description = ref("");
-const price = ref(0);
-const image = ref(null);
-const categories = ref([]);
-const selectedCategory = ref("");
 const page = ref(1);
 const pageSize = ref(10);
+
+const name = ref("");
+const description = ref("");
+const price = ref();
+const image = ref(null);
+const selectedCategory = ref("");
+const categories = ref([]);
+
+const errors = reactive({
+  name: [],
+  description: [],
+  price: [],
+  image: [],
+  selectedCategory: [],
+});
+
+const schema = z.object({
+  name: z.string().min(1, "El nombre es requerido"),
+  description: z.string().min(1, "La descripción es obligatoria"),
+  price: z
+    .number()
+    .min(1, "El precio debe ser un número positivo")
+    .max(15000000, "El precio no puede ser mayor de 15,000.000"),
+  image: z.any().refine((value) => value instanceof File, {
+    message: "Debes seleccionar una imagen",
+  }),
+  selectedCategory: z.number().min(1, "La categoría es requerida"),
+});
+
+const validateForm = () => {
+  errors.value = [];
+  errors.description = [];
+  errors.price = [];
+  errors.image = [];
+  errors.selectedCategory = [];
+  try {
+    const formData = {
+      name: name.value,
+      description: description.value,
+      price: price.value,
+      image: image.value,
+      selectedCategory: selectedCategory.value,
+    };
+    schema.parse(formData);
+    return true;
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      error.errors.forEach((err) => {
+        const field = err.path[0];
+        if (field === "name") errors.name = [err.message];
+        if (field === "description") errors.description = [err.message];
+        if (field === "price") errors.price = [err.message];
+        if (field === "image") errors.image = [err.message];
+        if (field === "selectedCategory")
+          errors.selectedCategory = [err.message];
+      });
+    }
+    return false;
+  }
+};
 
 const fetchCategories = async () => {
   try {
@@ -102,17 +168,7 @@ onMounted(async () => {
 });
 
 const registerProduct = async () => {
-  if (
-    !name.value ||
-    !description.value ||
-    !image.value ||
-    !selectedCategory.value
-  ) {
-    Swal.fire(
-      "Error",
-      "Por favor complete todos los campos y suba una imagen.",
-      "error",
-    );
+  if (!validateForm()) {
     return;
   }
 
@@ -138,7 +194,7 @@ const registerProduct = async () => {
         icon: "success",
         confirmButtonText: "Aceptar",
       });
-      console.log("Respuesta del servidor:", response);
+      handleReset();
     } else {
       const errorData = await response.text();
       throw new Error(errorData || "Error al registrar el producto.");
@@ -155,15 +211,18 @@ const registerProduct = async () => {
 };
 
 const handleReset = () => {
-  name.value = "";
-  description.value = "";
-  price.value = 0;
-  image.value = null;
-  selectedCategory.value = "";
+  for (const key of Object.keys(errors)) {
+    if (key === "name") name.value = "";
+    else if (key === "description") description.value = "";
+    else if (key === "price") price.value = 0;
+    else if (key === "image") image.value = "";
+    else if (key === "selectedCategory") selectedCategory.value = "";
+    errors[key] = [];
+  }
 };
 
-const back = () => {
-  router.back();
+const clearErrors = (field) => {
+  errors[field] = [];
 };
 </script>
 

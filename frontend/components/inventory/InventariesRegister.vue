@@ -3,7 +3,7 @@
     <v-list-item
       class="exit-icon"
       prepend-icon="mdi-arrow-left"
-      @click="back"
+      @click="router.back()"
     ></v-list-item>
   </div>
 
@@ -17,10 +17,17 @@
         item-title="products.name"
         item-value="id"
         label="Seleccionar producto vendido"
-        required
+        :error-messages="errors.sales"
+        @update:model-value="clearErrors('sales')"
       >
       </v-autocomplete>
-      <v-text-field class="input" v-model="status" label="Estado" required>
+      <v-text-field
+        class="input"
+        v-model="status"
+        label="Estado"
+        :error-messages="errors.status"
+        @input="clearErrors('status')"
+      >
       </v-text-field>
       <div class="submit-buttons">
         <v-btn @click.prevent="registerInventory" class="submit">Enviar</v-btn>
@@ -33,6 +40,7 @@
 <script setup>
 import { ref, onMounted, nextTick } from "vue";
 import { useRouter } from "vue-router";
+import { z } from "zod";
 import Swal from "sweetalert2";
 
 const CONFIG = useRuntimeConfig();
@@ -43,6 +51,35 @@ const status = ref("");
 const salesId = ref([]);
 const page = ref(1);
 const pageSize = ref(10);
+
+const errors = reactive({ sales: [], status: [] });
+
+const schema = z.object({
+  sales: z.number().min(1, "Elige un producto"),
+  status: z.string().min(1, "El estado es requerido"),
+});
+
+const validateForm = () => {
+  errors.sales = [];
+  errors.status = [];
+  try {
+    const formData = {
+      sales: sales.value,
+      status: status.value,
+    };
+    schema.parse(formData);
+    return true;
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      error.errors.forEach((err) => {
+        const field = err.path[0];
+        if (field === "sales") errors.sales = [err.message];
+        if (field === "status") errors.status = [err.message];
+      });
+    }
+    return false;
+  }
+};
 
 const getVentas = async () => {
   const { data: metaData } = await useFetch(
@@ -73,6 +110,9 @@ onMounted(async () => {
 });
 
 const registerInventory = async () => {
+  if (!validateForm()) {
+    return;
+  }
   const { data, error } = await useFetch(
     `${CONFIG.public.API_BASE_URL}inventories`,
     {
@@ -93,9 +133,11 @@ const registerInventory = async () => {
       icon: "success",
       confirmButtonText: "Aceptar",
     });
+    handleReset();
   } else {
     Swal.fire({
       title: "No se pudo registrar inventario",
+      text: "Este producto ya ha sido registrado pon un producto y un estado diferentes",
       icon: "error",
       confirmButtonText: "Aceptar",
     });
@@ -103,12 +145,15 @@ const registerInventory = async () => {
 };
 
 const handleReset = () => {
-  sales.value = "";
-  status.value = "";
+  for (const key of Object.keys(errors)) {
+    if (key === "sales") sales.value = "";
+    if (key === "status") status.value = "";
+    errors[key] = [];
+  }
 };
 
-const back = () => {
-  router.back();
+const clearErrors = (field) => {
+  errors[field] = [];
 };
 </script>
 

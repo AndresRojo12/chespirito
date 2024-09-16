@@ -4,20 +4,26 @@
       class="input"
       v-model="localProduct.name"
       label="Nombre"
-      required
+      :rules="[(v) => !!v || 'El nombre es requerido']"
     />
     <v-textarea
       class="input"
       v-model="localProduct.description"
       label="Descripción"
       rows="3"
-      required
+      :rules="[
+        (v) =>
+          v.length > 5 || 'La descripción debe contener al menos 5 caracteres',
+      ]"
     />
     <v-text-field
       class="input"
       v-model="localProduct.price"
       label="Precio"
-      required
+      :rules="[
+        (v) => !!v || 'Este campo es obligatorio',
+        (v) => !isNaN(v) || 'El precio debe ser un número válido',
+      ]"
     />
     <v-file-input
       class="file-input"
@@ -74,21 +80,18 @@ const updateProduct = async () => {
       },
     );
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    if (response.ok) {
+      Swal.fire({
+        title: "Se actualizó",
+        text: "Actualizada correctamente",
+        icon: "success",
+        confirmButtonText: "Aceptar",
+      });
+      emit("save", true, localProduct.value.id, localProduct.value.name);
     }
-
-    Swal.fire({
-      title: "Se actualizó",
-      text: "Actualizada correctamente",
-      icon: "success",
-      confirmButtonText: "Aceptar",
-    });
-    emit("save", true, localProduct.value.id, localProduct.value.name);
   } catch (error) {
-    console.error("Error:", error);
     Swal.fire({
-      title: "Error",
+      title: "Error interno",
       text: "No se pudo actualizar",
       icon: "error",
       confirmButtonText: "Aceptar",

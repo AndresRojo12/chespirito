@@ -3,7 +3,7 @@
     <v-list-item
       class="exit-icon"
       prepend-icon="mdi-arrow-left"
-      @click="back"
+      @click="router.back()"
     ></v-list-item>
   </div>
 
@@ -14,20 +14,23 @@
         class="input"
         v-model="name"
         label="Nombre"
-        required
+        :error-messages="errors.name"
+        @input="clearErrors('name')"
       ></v-text-field>
       <v-textarea
         class="text-area"
         v-model="description"
         label="Descripción"
-        required
+        :error-messages="errors.description"
+        @input="clearErrors('description')"
       ></v-textarea>
       <v-file-input
         class="file-input"
         v-model="image"
         label="Seleccionar imagen"
         accept="image/*"
-        required
+        :error-messages="errors.image"
+        @change="clearErrors('image')"
       ></v-file-input>
       <div class="submit-buttons">
         <v-btn class="submit" type="submit">Enviar</v-btn>
@@ -38,7 +41,8 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, reactive } from "vue";
+import { z } from "zod";
 import Swal from "sweetalert2";
 
 const CONFIG = useRuntimeConfig();
@@ -46,19 +50,50 @@ const router = useRouter();
 
 const name = ref("");
 const description = ref("");
-const price = ref(0);
 const image = ref(null);
 
-const registerCategory = async () => {
-  if (!name.value || !description.value || !image.value) {
-    Swal.fire({
-      title: "Error",
-      text: "Por favor complete todos los campos",
-      icon: "warning",
-      confirmButtonText: "Aceptar",
-    });
-    return;
+const errors = reactive({
+  name: [],
+  description: [],
+  image: [],
+});
+
+const schema = z.object({
+  name: z.string().min(1, "Ingresa un nombre"),
+  description: z.string().min(1, "La descripción es requerida"),
+  image: z.any().refine((value) => value instanceof File, {
+    message: "Debes seleccionar una imagen",
+  }),
+});
+
+const validateForm = () => {
+  errors.name = [];
+  errors.description = [];
+  errors.image = [];
+
+  try {
+    const formData = {
+      name: name.value,
+      description: description.value,
+      image: image.value,
+    };
+    schema.parse(formData);
+    return true;
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      error.errors.forEach((err) => {
+        const field = err.path[0];
+        if (field === "name") errors.name = [err.message];
+        if (field === "description") errors.description = [err.message];
+        if (field === "image") errors.image = [err.message];
+      });
+    }
+    return false;
   }
+};
+
+const registerCategory = async () => {
+  if (!validateForm()) return;
 
   const formData = new FormData();
   formData.append("name", name.value);
@@ -80,6 +115,12 @@ const registerCategory = async () => {
         icon: "success",
         confirmButtonText: "Aceptar",
       });
+      handleReset();
+    } else if (response.status === 409) {
+      errors.name = "Esta categoría ya existe";
+    } else if (response.status === 400) {
+      errors.description =
+        "La descripción debe contener por lo menos 5 caracteres";
     } else {
       const errorData = await response.text();
       throw new Error(errorData || "Error al registrar la categoría");
@@ -95,14 +136,16 @@ const registerCategory = async () => {
 };
 
 const handleReset = () => {
-  name.value = "";
-  description.value = "";
-  price.value = 0;
-  image.value = null;
+  for (const key of Object.keys(errors)) {
+    if (key === "image") image.value = "";
+    else if (key === "name") name.value = "";
+    else if (key === "description") description.value = "";
+    errors[key] = [];
+  }
 };
 
-const back = () => {
-  router.back();
+const clearErrors = (field) => {
+  errors[field] = [];
 };
 </script>
 

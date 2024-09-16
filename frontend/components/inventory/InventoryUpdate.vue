@@ -4,6 +4,7 @@
       class="input"
       v-model="localInventory.status"
       label="Estado de producto"
+      :rules="[(v) => !!v || 'El estado es requerido']"
     >
     </v-text-field>
     <v-btn class="save-button" @click.prevent="updateInventory">Guardar</v-btn>
@@ -63,9 +64,8 @@ const updateInventory = async () => {
     });
     emit("save", true, data);
   } catch (error) {
-    console.error("Error:", error);
     Swal.fire({
-      title: "Error",
+      title: "Error interno",
       text: "No se pudo actualizar",
       icon: "error",
       confirmButtonText: "Aceptar",
