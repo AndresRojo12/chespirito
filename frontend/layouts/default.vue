@@ -3,6 +3,12 @@
     <LoadingSpinner></LoadingSpinner>
   </div>
   <div v-else>
+    <v-app-bar-nav-icon
+      class="icon-navbar"
+      @click="toggleDrawer"
+      v-if="showAppBar"
+      app
+    ></v-app-bar-nav-icon>
     <h1 class="title">ANTIGÜEDADES CHESPIRITO</h1>
     <v-app>
       <v-navigation-drawer
@@ -61,12 +67,7 @@
           </v-list-item>
         </v-list>
       </v-navigation-drawer>
-      <v-app-bar v-if="showAppBar" app class="app-bar">
-        <v-app-bar-nav-icon @click="toggleDrawer"></v-app-bar-nav-icon>
-        <v-toolbar-title class="title-toolbar"
-          >Antigüedades Chespirito</v-toolbar-title
-        >
-      </v-app-bar>
+
       <v-main
         :class="{ 'main-expanded': isRail, 'main-collapsed': !isRail }"
         app
@@ -207,19 +208,19 @@ const handleLogout = () => {
 }
 .title {
   display: flex;
-  margin-top: 2%;
+  margin-top: 1%;
+  margin-bottom: 2%;
   justify-content: center;
   font-size: 2rem;
   background-image: linear-gradient(to bottom, #009c8c, #00b7a2);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: 5px;
   font-family: "Arial", sans-serif;
 }
 .buttons {
   color: black;
 }
-.app-bar {
+.icon-navbar {
   display: none;
 }
 .footer {
@@ -235,13 +236,25 @@ const handleLogout = () => {
 
 @media (max-width: 1024px) {
   .title {
-    display: none;
+    display: flex;
+    margin-top: 0%;
+    font-size: 4vw;
   }
-  .app-bar {
+  .main-navbar {
     display: flex;
   }
-  .title-toolbar {
-    text-align: center;
+  .icon-navbar {
+    display: flex;
+    font-size: 2vw;
+  }
+}
+
+@media (max-width: 540px) {
+  .title {
+    display: none;
+  }
+  .icon-navbar {
+    font-size: 3vw;
   }
 }
 
@@ -249,10 +262,8 @@ const handleLogout = () => {
   .title {
     display: none;
   }
-  .app-bar {
+  .icon-navbar {
     display: flex;
-  }
-  .title-toolbar {
     font-size: 5vw;
   }
   .footer-bottom {

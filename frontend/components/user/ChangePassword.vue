@@ -1,17 +1,17 @@
 <template>
-  <div>
-    <h1 style="display: flex; color: #009c8c; justify-content: center; margin-top: 2%">
-      Cambiar Contraseña
-    </h1>
+  <div class="card">
+    <h1 class="title">Cambiar Contraseña</h1>
     <v-card
       class="mx-auto pa-12 pb-8"
       elevation="8"
-      max-width="350"
+      max-width="390"
       rounded="lg"
     >
-      <div style="color:#009c8c ;">Nueva Contraseña</div>
+      <div class="text-subtitle-1 text-medium-emphasis color-#009c8c">
+        <p class="form-text">Nueva contraseña</p>
+      </div>
       <v-text-field
-      style="color:#009c8c ;"
+        class="input"
         v-model="newPassword"
         :type="visible ? 'text' : 'password'"
         placeholder="Inserta tu nueva contraseña"
@@ -22,8 +22,7 @@
       ></v-text-field>
 
       <v-btn
-        class="mb-8"
-        color="#009c8c"
+        class="button mb-8"
         size="large"
         variant="tonal"
         block
@@ -36,50 +35,54 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import Swal from 'sweetalert2';
-import { useRouter } from 'vue-router';
-import { useAuth } from '~/store/auth';
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useAuth } from "~/store/auth";
+import Swal from "sweetalert2";
 
 const CONFIG = useRuntimeConfig();
 const router = useRouter();
-const newPassword = ref('');
-const visible = ref(false);
 const auth = useAuth();
+
+const newPassword = ref("");
+const visible = ref(false);
 
 const changePassword = async () => {
   try {
-    const response = await fetch(`${CONFIG.public.API_BASE_URL}auth/change-password`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${auth.token}`,
+    const response = await fetch(
+      `${CONFIG.public.API_BASE_URL}auth/change-password`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${auth.token}`,
+        },
+        body: JSON.stringify({
+          newPassword: newPassword.value,
+        }),
       },
-      body: JSON.stringify({
-        newPassword: newPassword.value,
-      }),
-    });
+    );
     const data = await response.json();
     if (response.ok) {
       Swal.fire({
-        icon: 'success',
-        title: 'Éxito',
+        icon: "success",
+        title: "Éxito",
         text: data.message,
       });
-      router.push('/');
+      router.push("/");
     } else {
       Swal.fire({
-        icon: 'error',
-        title: 'Error',
+        icon: "error",
+        title: "Error",
         text: data.message,
       });
     }
   } catch (error) {
-    console.error('Error changing password', error);
+    console.error("Error changing password", error);
     Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'Hubo un problema al cambiar la contraseña. Inténtalo de nuevo.',
+      icon: "error",
+      title: "Error",
+      text: "Hubo un problema al cambiar la contraseña. Inténtalo de nuevo.",
     });
   }
 };
@@ -88,3 +91,41 @@ const togglePasswordVisibility = () => {
   visible.value = !visible.value;
 };
 </script>
+
+<style scoped>
+.title {
+  font-family: "Arial", sans-serif;
+  text-align: center;
+  color: #009c8c;
+  margin-bottom: 1%;
+}
+.card {
+  margin-top: 9%;
+}
+.form-text {
+  font-family: "Arial", sans-serif;
+}
+.input {
+  font-family: "Arial", sans-serif;
+  color: #009c8c;
+}
+.button {
+  color: white;
+  background: linear-gradient(to bottom, #009c8c, #00b7a2);
+  font-family: "Arial", sans-serif;
+}
+@media (max-width: 430px) {
+  .title {
+    font-size: 7vw;
+    margin-bottom: 5%;
+  }
+  .card {
+    margin: 3%;
+    margin-top: 20%;
+  }
+  .form-text,
+  button {
+    font-size: 4vw;
+  }
+}
+</style>

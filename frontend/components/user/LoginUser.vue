@@ -1,21 +1,18 @@
 <template>
-  <div>
-    <h1 style="display: flex; justify-content: center;
-      color:#009c8c; margin-top: 2%">
-      Iniciar sesión
-    </h1>
-  </div>
-  <div style="margin-top:2%;">
+  <div class="card">
+    <h1 class="title">Iniciar sesión</h1>
     <v-card
       class="mx-auto pa-12 pb-8"
       elevation="8"
       max-width="350"
       rounded="lg"
     >
-      <div class="text-subtitle-1 text-medium-emphasis color-#009c8c">Correo electronico</div>
+      <div class="text-subtitle-1 text-medium-emphasis color-#009c8c">
+        <p class="form-text">Correo electrónico</p>
+      </div>
 
       <v-text-field
-        style="color:#009c8c"
+        class="input"
         v-model="email"
         density="compact"
         placeholder="Dirección de correo"
@@ -29,26 +26,25 @@
       <div
         class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between"
       >
-        Contraseña
-
+        <p class="form-text">Contraseña</p>
         <a
-          style="color:#009c8c ;"
-          class="text-caption text-decoration-none"
+          class="password-text text-caption text-decoration-none"
           href="#"
           rel="noopener noreferrer"
-          target="_blank" @click.prevent="changePassword"
+          target="blank"
+          @click.prevent="changePassword"
         >
-          olvido su contraseña?</a
-        >
+          <p class="password-text">¿Olvidó su contraseña?</p>
+        </a>
       </div>
 
       <v-text-field
-        style="color:#009c8c ;"
+        class="input"
         v-model="password"
         :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
         :type="visible ? 'text' : 'password'"
         density="compact"
-        placeholder="Inserta tu contraseña"
+        placeholder="Ingrese su contraseña"
         prepend-inner-icon="mdi-lock-outline"
         variant="outlined"
         @click:append-inner="togglePasswordVisibility"
@@ -57,7 +53,13 @@
         id="password"
       ></v-text-field>
 
-      <v-btn style="color:#009c8c ;" class="mb-8" size="large" variant="tonal" block @click.prevent="login">
+      <v-btn
+        class="button mb-8"
+        size="large"
+        variant="tonal"
+        block
+        @click.prevent="login"
+      >
         Iniciar
       </v-btn>
     </v-card>
@@ -65,24 +67,25 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import Swal from 'sweetalert2';
-import { useRouter } from 'vue-router';
-import { useAuth } from '~/store/auth';
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useAuth } from "~/store/auth";
+import Swal from "sweetalert2";
 
 const CONFIG = useRuntimeConfig();
 const router = useRouter();
-const email = ref('');
-const password = ref('');
-const visible = ref(false);
 const auth = useAuth();
+
+const email = ref("");
+const password = ref("");
+const visible = ref(false);
 
 const login = async () => {
   try {
     const response = await fetch(`${CONFIG.public.API_BASE_URL}auth/login`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         email: email.value,
@@ -92,20 +95,20 @@ const login = async () => {
     const data = await response.json();
     if (response.ok) {
       auth.login(data.token, data.user);
-      router.push('/user/gestion');
+      router.push("/user/gestion");
     } else {
       Swal.fire({
-        icon: 'error',
-        title: 'Error',
+        icon: "error",
+        title: "Error",
         text: data.message,
       });
     }
   } catch (error) {
-    console.error('Error logging in', error);
+    console.error("Error logging in", error);
     Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'Hubo un problema al iniciar sesión. Inténtalo de nuevo.',
+      icon: "error",
+      title: "Error",
+      text: "Hubo un problema al iniciar sesión. Inténtalo de nuevo.",
     });
   }
 };
@@ -115,7 +118,52 @@ const togglePasswordVisibility = () => {
 };
 
 const changePassword = () => {
-  router.push('/user/change-password');
+  router.push("/user/change-password");
 };
-
 </script>
+
+<style scoped>
+.title {
+  font-family: "Arial", sans-serif;
+  text-align: center;
+  color: #009c8c;
+  margin-bottom: 1%;
+}
+.card {
+  margin-top: 6%;
+}
+.input {
+  color: #009c8c;
+  font-family: "Arial", sans-serif;
+}
+.form-text {
+  font-family: "Arial", sans-serif;
+}
+.password-text {
+  font-family: "Arial", sans-serif;
+  text-align: end;
+  color: #009c8c;
+}
+.button {
+  color: white;
+  background: linear-gradient(to bottom, #009c8c, #00b7a2);
+  font-family: "Arial", sans-serif;
+}
+@media (max-width: 430px) {
+  .title {
+    font-size: 8vw;
+    margin-bottom: 4%;
+  }
+  .card {
+    margin: 3%;
+    margin-top: 15%;
+  }
+  .form-text,
+  button {
+    font-size: 4vw;
+  }
+  .password-text {
+    font-size: 3vw;
+  }
+}
+</style>
