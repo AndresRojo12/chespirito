@@ -1,11 +1,5 @@
 <template>
-  <div class="header-container">
-    <v-list-item
-      class="exit-icon"
-      prepend-icon="mdi-arrow-left"
-      @click="router.back()"
-    ></v-list-item>
-  </div>
+  <v-icon class="exit-icon" @click="router.back()">mdi-arrow-left</v-icon>
 
   <v-container class="form-container">
     <h1 class="form-title">Registrar categoría</h1>

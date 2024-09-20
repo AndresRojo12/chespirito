@@ -1,12 +1,6 @@
 <template>
   <div class="main-container">
-    <div class="header-container">
-      <v-list-item
-        prepend-icon="mdi-arrow-left"
-        class="exit-icon"
-        @click="router.back()"
-      ></v-list-item>
-    </div>
+    <v-icon class="exit-icon" @click="router.back()">mdi-arrow-left</v-icon>
     <v-container class="form-container">
       <h1 class="title">Registro de productos</h1>
 
@@ -19,6 +13,15 @@
           @input="clearErrors('name')"
         >
         </v-text-field>
+        <v-text-field
+          class="input"
+          v-model="status"
+          label="Estado"
+          :error-messages="errors.status"
+          @input="clearErrors('status')"
+          :rules="[(v) => !isNaN(v) || 'El estado debe ser un número válido']"
+        >
+        </v-text-field>
         <v-textarea
           class="text-area"
           v-model="description"
@@ -28,11 +31,11 @@
         ></v-textarea>
         <v-text-field
           class="input"
-          v-model.number="price"
+          v-model="price"
           label="Precio"
           :error-messages="errors.price"
           @input="clearErrors('price')"
-          :rules="[(v) => !isNaN(v) || 'El precio debe ser un número válido']"
+          :rules="[(v) => !isNaN(v) || 'El estado debe ser un número válido']"
         ></v-text-field>
         <v-file-input
           class="file-input"
@@ -63,7 +66,7 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from "vue";
-import { number, z } from "zod";
+import { z } from "zod";
 import Swal from "sweetalert2";
 
 const CONFIG = useRuntimeConfig();
@@ -73,6 +76,7 @@ const page = ref(1);
 const pageSize = ref(10);
 
 const name = ref("");
+const status = ref();
 const description = ref("");
 const price = ref();
 const image = ref(null);
@@ -81,6 +85,7 @@ const categories = ref([]);
 
 const errors = reactive({
   name: [],
+  status: [],
   description: [],
   price: [],
   image: [],
@@ -89,11 +94,9 @@ const errors = reactive({
 
 const schema = z.object({
   name: z.string().min(1, "El nombre es requerido"),
-  description: z.string().min(1, "La descripción es obligatoria"),
-  price: z
-    .number()
-    .min(1, "El precio debe ser un número positivo")
-    .max(15000000, "El precio no puede ser mayor de 15,000.000"),
+  status: z.number().min(1, "El estado es requerido").max(10, 'El estado debe ser menor a 10 puntos'),
+  description: z.string().min(1, "La descripción es requerida"),
+  price: z.number().min(1000, "Ingresa un valor mayor o igual a 1.000"),
   image: z.any().refine((value) => value instanceof File, {
     message: "Debes seleccionar una imagen",
   }),
@@ -102,6 +105,7 @@ const schema = z.object({
 
 const validateForm = () => {
   errors.value = [];
+  errors.status = [];
   errors.description = [];
   errors.price = [];
   errors.image = [];
@@ -109,8 +113,9 @@ const validateForm = () => {
   try {
     const formData = {
       name: name.value,
+      status: parseFloat(status.value),
       description: description.value,
-      price: price.value,
+      price: parseFloat(price.value),
       image: image.value,
       selectedCategory: selectedCategory.value,
     };
@@ -121,6 +126,7 @@ const validateForm = () => {
       error.errors.forEach((err) => {
         const field = err.path[0];
         if (field === "name") errors.name = [err.message];
+        if (field === "status") errors.status = [err.message];
         if (field === "description") errors.description = [err.message];
         if (field === "price") errors.price = [err.message];
         if (field === "image") errors.image = [err.message];
@@ -174,6 +180,7 @@ const registerProduct = async () => {
 
   const formData = new FormData();
   formData.append("name", name.value);
+  formData.append("status", status.value);
   formData.append("description", description.value);
   formData.append("price", price.value);
   formData.append("image", image.value);
@@ -213,6 +220,7 @@ const registerProduct = async () => {
 const handleReset = () => {
   for (const key of Object.keys(errors)) {
     if (key === "name") name.value = "";
+    else if (key === "status") status.value = 0;
     else if (key === "description") description.value = "";
     else if (key === "price") price.value = 0;
     else if (key === "image") image.value = "";

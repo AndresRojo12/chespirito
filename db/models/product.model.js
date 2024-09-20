@@ -25,6 +25,10 @@ const ProductSchema = {
     allowNull: false,
     type: DataTypes.STRING,
   },
+  status: {
+    allowNull: false,
+    type: DataTypes.DECIMAL,
+  },
   description: {
     allowNull: false,
     type: DataTypes.STRING,
@@ -36,7 +40,7 @@ const ProductSchema = {
   },
   price: {
     allowNull: false,
-    type: DataTypes.INTEGER,
+    type: DataTypes.DECIMAL,
   },
   createdAt: {
     allowNull: false,

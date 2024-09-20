@@ -1,11 +1,5 @@
 <template>
-  <div>
-    <v-list-item
-      prepend-icon="mdi-arrow-left"
-      class="exit-icon"
-      @click="router.back()"
-    ></v-list-item>
-  </div>
+  <v-icon class="exit-icon" @click="router.back()">mdi-arrow-left</v-icon>
   <v-container class="form-container">
     <h1 class="form-title">Registro de ventas</h1>
     <form style="margin-top: 5%" @submit.prevent="registerSale">

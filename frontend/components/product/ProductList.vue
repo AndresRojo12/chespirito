@@ -31,12 +31,12 @@
         <img class="product-image" :src="getImageUrl(pro.imagePath)" />
       </div>
       <div class="product-info">
-        <h4 class="title-info">
-          Nombre:
+        <h1 class="info">
           {{ pro.name }}
-        </h4>
-        <p>Descripción:{{ pro.description }}</p>
-        <p>Precio:{{ pro.price }}</p>
+        </h1>
+        <p class="info">Estado {{ pro.status }}</p>
+        <p class="info">{{ pro.description }}</p>
+        <p class="info">{{ formatPrice(pro.price) }}</p>
       </div>
       <v-tooltip text="Editar">
         <template v-slot:activator="{ props }">
@@ -98,7 +98,7 @@
           <ProductDelete :product="productToDelete" @deleted="handleDelete" />
         </v-card-text>
         <v-card-actions>
-          <v-btn style="color: #009c8c" text @click="showDeleteDialog = false">
+          <v-btn class="cancel-button" text @click="showDeleteDialog = false">
             Cancelar
           </v-btn>
         </v-card-actions>
@@ -218,13 +218,22 @@ const handleDelete = async (productId) => {
   showDeleteDialog.value = false;
 };
 
-const product = () => {
-  router.push("/product/register");
+const formatPrice = (price) => {
+  return new Intl.NumberFormat('es-MX', {
+    style: 'currency',
+    currency: 'MXN',
+    minimumFractionDigits: 0,
+  }).format(price);
 };
+
 
 const confirmDelete = (product) => {
   showDeleteDialog.value = true;
   productToDelete.value = product;
+};
+
+const product = () => {
+  router.push("/product/register");
 };
 </script>
 
@@ -269,8 +278,8 @@ const confirmDelete = (product) => {
   border: none;
   border-radius: 2px;
 }
-.title-info {
-  color: black;
+.info {
+  color: white;
   text-align: center;
   font-size: 1vw;
   margin-bottom: 3%;

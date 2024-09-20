@@ -1,6 +1,6 @@
 <template>
   <div v-if="category">
-    <v-list-item class="exit-icon" prepend-icon="mdi-arrow-left" @click="back"></v-list-item>
+    <v-icon class="exit-icon" @click="router.back()">mdi-arrow-left</v-icon>
     <v-card>
       <h1 class="title">{{ category.name }}</h1>
     </v-card>
@@ -16,25 +16,28 @@
         <div>
           <img class="product-image" :src="getImageUrl(product.imagePath)" />
         </div>
-        <h3 class="text">Nombre:{{ product.name }}</h3>
-        <p class="text">Descripción{{ product.description }}</p>
-        <p class="text">Precio:{{ product.price }}</p>
+        <h1 class="name-text">{{ product.name }}</h1>
+        <p class="status-text">Estado {{ product.status }}</p>
+        <p class="description-text">{{ product.description }}</p>
+        <p class="price-text">{{ product.price }}</p>
       </div>
     </div>
   </div>
   <v-container v-else>
-    <p>Loading...</p>
+    <LoadingSpinner />
   </v-container>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRoute,useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+
+import LoadingSpinner from "../LoadingSpinner.vue";
 
 const CONFIG = useRuntimeConfig();
 
 const route = useRoute();
-const router = useRouter()
+const router = useRouter();
 const { id } = route.params;
 const category = ref(null);
 const error = ref(null);
@@ -44,7 +47,7 @@ const fetchCategory = async () => {
     const { data } = await useFetch(
       `${CONFIG.public.API_BASE_URL}/categories/${id}`,
     );
-    console.log("dta:", data);
+
     category.value = data.value;
   } catch (err) {
     error.value = err;
@@ -60,12 +63,12 @@ onMounted(async () => {
 });
 
 const back = () => {
-  router.back()
-}
+  router.back();
+};
 </script>
 
 <style scoped>
-.exit-icon{
+.exit-icon {
   display: none;
 }
 .title {
@@ -94,28 +97,39 @@ const back = () => {
 .product-image {
   width: 100%;
 }
-.text {
+.name-text {
   margin-top: 1%;
   font-family: "Arial", sans-serif;
+  text-align: center;
+  font-size: 15px;
 }
-
-@media (max-width:540px){
-  .exit-icon{
+.status-text,
+.description-text {
+  font-size: 13px;
+  text-align: center;
+  color: #b0b0b0;
+}
+.price-text {
+  font-size: 13px;
+  text-align: center;
+}
+@media (max-width: 540px) {
+  .exit-icon {
     display: flex;
     font-size: 4vw;
     margin-bottom: 4%;
   }
-  .product-container{
+  .product-container {
     display: inline;
     max-width: 100%;
   }
-  .product-item{
+  .product-item {
     display: inline;
   }
 }
 
 @media (max-width: 430px) {
-  .exit-icon{
+  .exit-icon {
     display: flex;
     font-size: 5vw;
     margin-bottom: 3%;

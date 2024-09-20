@@ -1,6 +1,6 @@
 <template>
   <div class="header-container">
-    <v-btn class="register-button" @click.prevent="registerInve">
+    <v-btn class="register-button" @click.prevent="inventoryRegister">
       Registrar Inventario
     </v-btn>
     <v-select
@@ -13,7 +13,7 @@
     </v-select>
   </div>
 
-  <div class="table-container">
+  <div>
     <v-table>
       <thead>
         <tr>
@@ -267,7 +267,7 @@ const handleSave = async (updatedInventory) => {
   showEditDialog.value = false;
 };
 
-const registerInve = () => {
+const inventoryRegister = () => {
   router.push("/inventory/register");
 };
 </script>
