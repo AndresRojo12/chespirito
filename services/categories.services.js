@@ -5,9 +5,21 @@ const path = require('path');
 const { Op } = require('sequelize');
 const { config } = require('../config/config')
 const { models } = require('../libs/sequelize');
+const {
+  createCategorySchema,
+  updateCategorySchema,
+  getCategorySchema,
+  deleteCategorySchema,
+} = require('../schemas/category.schema');
 
 class CategoryService {
   async create(data, file) {
+
+    const { error, value } = createCategorySchema.validate(data);
+    if(error) {
+      throw boom.badRequest(error.details[0].message);
+    }
+
     const { name, description } = data;
     const imagenOriginal = file.buffer;
 
@@ -22,9 +34,20 @@ class CategoryService {
       imagePath: `${config.imagesPath}${file.originalname}`,
     };
 
-    const category = await models.Category.create(categoryData);
+    try {
 
-    return category;
+      const category = await models.Category.create(categoryData);
+
+      return category;
+    } catch (error) {
+
+      if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
+        const messages = error.errors.map(e => e.message);
+        throw boom.badRequest(messages.join(', '));
+      }
+      throw error;
+    }
+
   }
 
 

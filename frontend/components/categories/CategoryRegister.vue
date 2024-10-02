@@ -36,7 +36,6 @@
 
 <script setup>
 import { ref, reactive } from "vue";
-import { z } from "zod";
 import Swal from "sweetalert2";
 
 const CONFIG = useRuntimeConfig();
@@ -52,38 +51,80 @@ const errors = reactive({
   image: [],
 });
 
-const schema = z.object({
-  name: z.string().min(1, "Ingresa un nombre"),
-  description: z.string().min(1, "La descripción es requerida"),
-  image: z.any().refine((value) => value instanceof File, {
-    message: "Debes seleccionar una imagen",
-  }),
-});
+
+const validateName = (value) => {
+  const errors = [];
+  if (!value || !value.trim()) {
+    errors.push("Debe ingresar un nombre");
+  }
+  if (value.length < 8) {
+    errors.push("El nombre debe tener al menos 8 caracteres");
+  }
+  if (value.length > 255) {
+    errors.push("El nombre no puede exceder los 255 caracteres");
+  }
+  return errors;
+};
+
+const validateDescription = (value) => {
+  const errors = [];
+  if (!value || !value.trim()) {
+    errors.push("La descripción no puede estar vacía");
+  }
+  if (value.length < 10) {
+    errors.push("La descripción debe tener entre 10 y 500 caracteres");
+  }
+  if (value.length > 500) {
+    errors.push("La descripción no puede exceder los 500 caracteres");
+  }
+  return errors;
+};
+
+const validateImage = (file) => {
+  const errors = [];
+  if (!file) {
+    errors.push("Debes seleccionar una imagen");
+    return errors;
+  }
+  const validTypes = ["image/jpeg", "image/png", "image/gif"];
+  if (!validTypes.includes(file.type)) {
+    errors.push("El archivo debe ser una imagen (jpeg, png, gif)");
+  }
+
+  const maxSize = 5 * 1024 * 1024;
+  if (file.size > maxSize) {
+    errors.push("La imagen no puede exceder los 5MB");
+  }
+  return errors;
+};
 
 const validateForm = () => {
   errors.name = [];
   errors.description = [];
   errors.image = [];
 
-  try {
-    const formData = {
-      name: name.value,
-      description: description.value,
-      image: image.value,
-    };
-    schema.parse(formData);
-    return true;
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      error.errors.forEach((err) => {
-        const field = err.path[0];
-        if (field === "name") errors.name = [err.message];
-        if (field === "description") errors.description = [err.message];
-        if (field === "image") errors.image = [err.message];
-      });
-    }
-    return false;
+  let isValid = true;
+
+  const nameErrors = validateName(name.value);
+  if (nameErrors.length > 0) {
+    errors.name = nameErrors;
+    isValid = false;
   }
+
+
+  const descriptionErrors = validateDescription(description.value);
+  if (descriptionErrors.length > 0) {
+    errors.description = descriptionErrors;
+    isValid = false;
+  }
+
+  const imageErrors = validateImage(image.value);
+  if (imageErrors.length > 0) {
+    errors.image = imageErrors;
+    isValid = false;
+  }
+
+  return isValid;
 };
 
 const registerCategory = async () => {
@@ -111,10 +152,21 @@ const registerCategory = async () => {
       });
       handleReset();
     } else if (response.status === 409) {
-      errors.name = "Esta categoría ya existe";
+      errors.name = ["Esta categoría ya existe"];
     } else if (response.status === 400) {
-      errors.description =
-        "La descripción debe contener por lo menos 5 caracteres";
+      const errorData = await response.json();
+     
+      if (errorData.errors) {
+        errorData.errors.forEach((err) => {
+          const field = err.field;
+          const message = err.message;
+          if (field === "name") errors.name.push(message);
+          if (field === "description") errors.description.push(message);
+          if (field === "image") errors.image.push(message);
+        });
+      } else {
+        errors.description = ["La descripción debe contener por lo menos 10 caracteres"];
+      }
     } else {
       const errorData = await response.text();
       throw new Error(errorData || "Error al registrar la categoría");
@@ -123,7 +175,7 @@ const registerCategory = async () => {
     Swal.fire({
       title: "Error al registrar la categoría",
       icon: "error",
-      text: "No se pudo registrar la categoría",
+      text: error.message || "No se pudo registrar la categoría",
       confirmButtonText: "Aceptar",
     });
   }
@@ -131,7 +183,7 @@ const registerCategory = async () => {
 
 const handleReset = () => {
   for (const key of Object.keys(errors)) {
-    if (key === "image") image.value = "";
+    if (key === "image") image.value = null;
     else if (key === "name") name.value = "";
     else if (key === "description") description.value = "";
     errors[key] = [];

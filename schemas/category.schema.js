@@ -2,7 +2,7 @@ const joi = require('joi');
 
 const id = joi.number().integer();
 const name = joi.string().min(8).max(255);
-const description = joi.string().min(50).max(500);
+const description = joi.string().min(10).max(500);
 
 const getCategorySchema = joi.object({
   id: id.required(),
@@ -19,7 +19,7 @@ const createCategorySchema = joi.object({
   description: description.required().messages({
     'string.base': 'La descripción debe ser un texto',
     'string.empty': 'La descripción no puede estar vacía',
-    'string.min': 'La descripción debe tener al menos 50 caracteres',
+    'string.min': 'La descripción debe tener al menos entre 10 y 50 caracteres',
     'string.max': 'La descripción no puede exceder los 500 caracteres',
     'any.required': 'La descripción es obligatoria',
   }),

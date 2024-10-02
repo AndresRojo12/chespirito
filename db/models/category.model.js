@@ -32,8 +32,8 @@ const CategorySchema = {
         msg:"La descripción no puede estar vacia",
       },
       len: {
-        args: [50,500],
-        msg: "La descripción debe tener entre 50 y 500 caracteres"
+        args: [10,500],
+        msg: "La descripción debe tener entre 10 y 500 caracteres"
       }
     }
   },
