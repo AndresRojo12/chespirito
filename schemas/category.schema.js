@@ -9,8 +9,20 @@ const getCategorySchema = joi.object({
 });
 
 const createCategorySchema = joi.object({
-  name: name.required(),
-  description: description.required(),
+  name: name.required().messages({
+    'string.base': 'El nombre debe ser de tipo texto',
+    'string.empty': 'Debe ingresar un nombre',
+    'string.min': 'El nombe debe tener al menos 8 caracteres',
+    'string.max': 'El nombre no puede exceder los 255 caracteres',
+    'any.required': 'El nombre es obligatorio',
+  }),
+  description: description.required().messages({
+    'string.base': 'La descripción debe ser un texto',
+    'string.empty': 'La descripción no puede estar vacía',
+    'string.min': 'La descripción debe tener al menos 50 caracteres',
+    'string.max': 'La descripción no puede exceder los 500 caracteres',
+    'any.required': 'La descripción es obligatoria',
+  }),
 });
 
 const updateCategorySchema = joi.object({
