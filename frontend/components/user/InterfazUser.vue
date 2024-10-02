@@ -160,6 +160,7 @@ onMounted(async () => {
 });
 
 watch(search, async (newSearch) => {
+  await getCategories();
   if (!newSearch.trim()) {
     filteredCategories.value = {
       data: categories.value,
