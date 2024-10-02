@@ -12,16 +12,39 @@ const CategorySchema = {
   },
   name: {
     allowNull: false,
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(255),
     unique: true,
+    validate: {
+      notEmpty: {
+        msg:"Debe ingresar un nombre",
+      },
+      len: {
+        args: [8,255],
+        msg: "El nombre debe tener entre 8 y 200 caracteres",
+      },
+    }
   },
   description: {
     allowNull: false,
     type: DataTypes.STRING,
+    validate: {
+      notEmpty: {
+        msg:"La descripción no puede estar vacia",
+      },
+      len: {
+        args: [50,500],
+        msg: "La descripción debe tener entre 50 y 500 caracteres"
+      }
+    }
   },
   imagePath: {
     type: DataTypes.STRING,
     allowNull: false,
+    validate: {
+      notEmpty:{
+        msg:"Debe proporcionar una imagen"
+      }
+    }
   },
   createdAt: {
     allowNull: false,

@@ -1,8 +1,8 @@
 const joi = require('joi');
 
 const id = joi.number().integer();
-const name = joi.string().min(5).max(255);
-const description = joi.string().min(5).max(500);
+const name = joi.string().min(8).max(255);
+const description = joi.string().min(50).max(500);
 
 const getCategorySchema = joi.object({
   id: id.required(),
