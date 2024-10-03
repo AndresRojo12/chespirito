@@ -61,13 +61,13 @@ router.get(
 
 router.post(
   '/',
-  upload.single('image'),
+  upload.fields([{ name: 'anverso' }, { name: 'reverso' }]),
   passport.authenticate('jwt', { session: false }),
   checkAdmindRole,
   validatorHandler(createProductSchema, 'body'),
   async (req, res, next) => {
     try {
-      const products = await service.create(req.body, req.file);
+      const products = await service.create(req.body, req.files);
       res.json(products);
     } catch (error) {
       next(error);

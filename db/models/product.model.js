@@ -33,10 +33,15 @@ const ProductSchema = {
     allowNull: false,
     type: DataTypes.STRING,
   },
-  imagePath: {
+  imagePath1: {
     type: DataTypes.STRING,
     allowNull: false,
-    field: 'image_path',
+    field: 'anverso',
+  },
+  imagePath2: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    field: 'reverso',
   },
   price: {
     allowNull: false,

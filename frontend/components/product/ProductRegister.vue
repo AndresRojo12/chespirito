@@ -35,15 +35,23 @@
           label="Precio"
           :error-messages="errors.price"
           @input="clearErrors('price')"
-          :rules="[(v) => !isNaN(v) || 'El estado debe ser un número válido']"
+          :rules="[(v) => !isNaN(v) || 'El precio debe ser un número válido']"
         ></v-text-field>
         <v-file-input
           class="file-input"
-          v-model="image"
-          label="Seleccionar Imagen"
+          v-model="anverso"
+          label="Anverso"
           accept="image/*"
-          :error-messages="errors.image"
-          @change="clearErrors('image')"
+          :error-messages="errors.anverso"
+          @change="clearErrors('anverso')"
+        ></v-file-input>
+        <v-file-input
+          class="file-input"
+          v-model="reverso"
+          label="Reverso"
+          accept="image/*"
+          :error-messages="errors.reverso"
+          @change="clearErrors('reverso')"
         ></v-file-input>
         <v-autocomplete
           class="select"
@@ -79,7 +87,8 @@ const name = ref("");
 const status = ref();
 const description = ref("");
 const price = ref();
-const image = ref(null);
+const anverso = ref("");
+const reverso = ref("");
 const selectedCategory = ref("");
 const categories = ref([]);
 
@@ -88,17 +97,27 @@ const errors = reactive({
   status: [],
   description: [],
   price: [],
-  image: [],
+  anverso: [],
+  reverso: [],
   selectedCategory: [],
 });
 
 const schema = z.object({
   name: z.string().min(1, "El nombre es requerido"),
-  status: z.number().min(1, "El estado es requerido").max(10, 'El estado debe ser menor a 10 puntos'),
+  status: z
+    .number()
+    .min(1, "El estado es requerido")
+    .max(10, "El estado no puede ser meyor a 10"),
   description: z.string().min(1, "La descripción es requerida"),
-  price: z.number().min(1000, "Ingresa un valor mayor o igual a 1.000"),
-  image: z.any().refine((value) => value instanceof File, {
-    message: "Debes seleccionar una imagen",
+  price: z
+    .number()
+    .min(1000, { message: "El precio debe ser mayor a 1000." })
+    .max(20000000, { message: "El precio no debe superar 20000000." }),
+  anverso: z.any().refine((value) => value instanceof File, {
+    message: "Selecciona una imagen",
+  }),
+  reverso: z.any().refine((value) => value instanceof File, {
+    message: "Selecciona una imagen",
   }),
   selectedCategory: z.number().min(1, "La categoría es requerida"),
 });
@@ -108,7 +127,8 @@ const validateForm = () => {
   errors.status = [];
   errors.description = [];
   errors.price = [];
-  errors.image = [];
+  errors.anverso = [];
+  errors.reverso = [];
   errors.selectedCategory = [];
   try {
     const formData = {
@@ -116,7 +136,8 @@ const validateForm = () => {
       status: parseFloat(status.value),
       description: description.value,
       price: parseFloat(price.value),
-      image: image.value,
+      anverso: anverso.value,
+      reverso: reverso.value,
       selectedCategory: selectedCategory.value,
     };
     schema.parse(formData);
@@ -129,7 +150,8 @@ const validateForm = () => {
         if (field === "status") errors.status = [err.message];
         if (field === "description") errors.description = [err.message];
         if (field === "price") errors.price = [err.message];
-        if (field === "image") errors.image = [err.message];
+        if (field === "anverso") errors.anverso = [err.message];
+        if (field === "reverso") errors.reverso = [err.message];
         if (field === "selectedCategory")
           errors.selectedCategory = [err.message];
       });
@@ -183,7 +205,8 @@ const registerProduct = async () => {
   formData.append("status", status.value);
   formData.append("description", description.value);
   formData.append("price", price.value);
-  formData.append("image", image.value);
+  formData.append("anverso", anverso.value);
+  formData.append("reverso", reverso.value);
   formData.append("categoryId", selectedCategory.value);
 
   try {
@@ -223,7 +246,8 @@ const handleReset = () => {
     else if (key === "status") status.value = 0;
     else if (key === "description") description.value = "";
     else if (key === "price") price.value = 0;
-    else if (key === "image") image.value = "";
+    else if (key === "anverso") anverso.value = "";
+    else if (key === "reverso") reverso.value = "";
     else if (key === "selectedCategory") selectedCategory.value = "";
     errors[key] = [];
   }

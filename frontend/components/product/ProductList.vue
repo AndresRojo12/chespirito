@@ -28,7 +28,7 @@
       :key="pro.id"
     >
       <div>
-        <img class="product-image" :src="getImageUrl(pro.imagePath)" />
+        <img class="product-image" :src="getImageUrl(pro.imagePath1)" />
       </div>
       <div class="product-info">
         <h1 class="info">
@@ -141,7 +141,6 @@ const getProducts = async () => {
       totalPages: data.value.totalPages,
     };
   } catch (error) {
-    console.error("Error fetching products:", error);
     filteredProducts.value = { data: [], totalPages: 1 };
   }
 };

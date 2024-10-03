@@ -51,11 +51,10 @@ const errors = reactive({
   image: [],
 });
 
-
 const validateName = (value) => {
   const errors = [];
   if (!value || !value.trim()) {
-    errors.push("Debe ingresar un nombre");
+    errors.push("El nombre es requerido");
   }
   if (value.length < 8) {
     errors.push("El nombre debe tener al menos 8 caracteres");
@@ -69,7 +68,7 @@ const validateName = (value) => {
 const validateDescription = (value) => {
   const errors = [];
   if (!value || !value.trim()) {
-    errors.push("La descripción no puede estar vacía");
+    errors.push("La descripción es requerida");
   }
   if (value.length < 10) {
     errors.push("La descripción debe tener entre 10 y 500 caracteres");
@@ -110,7 +109,6 @@ const validateForm = () => {
     errors.name = nameErrors;
     isValid = false;
   }
-
 
   const descriptionErrors = validateDescription(description.value);
   if (descriptionErrors.length > 0) {
@@ -155,7 +153,7 @@ const registerCategory = async () => {
       errors.name = ["Esta categoría ya existe"];
     } else if (response.status === 400) {
       const errorData = await response.json();
-     
+
       if (errorData.errors) {
         errorData.errors.forEach((err) => {
           const field = err.field;
@@ -165,7 +163,9 @@ const registerCategory = async () => {
           if (field === "image") errors.image.push(message);
         });
       } else {
-        errors.description = ["La descripción debe contener por lo menos 10 caracteres"];
+        errors.description = [
+          "La descripción debe contener por lo menos 10 caracteres",
+        ];
       }
     } else {
       const errorData = await response.text();

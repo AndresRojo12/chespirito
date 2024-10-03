@@ -5,9 +5,8 @@ const cors = require('cors');
 const { logError, errorHandler, boomErrorHandler, ormErrorHandler } = require('./middlewares/errorHandler');
 
 const routerApi = require('./routes');
-//const { checkApiKey } = require('./middlewares/auth.handler');
 
-require('./utils/auth'); // Asegúrate de que este archivo existe y se carga correctamente
+require('./utils/auth'); 
 dotenv.config();
 const app = express();
 
