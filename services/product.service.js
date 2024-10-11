@@ -9,19 +9,23 @@ const { models } = require('../libs/sequelize');
 class ProductService {
   async create(data, files) {
     const { categoryId, name, status, description, price } = data;
-  
+
+    if (!files.anverso || !files.reverso) {
+      throw boom.badRequest('Las imágenes anverso y reverso son requeridas');
+    }
+
     const image1Path = files.anverso[0].buffer;
     const image2Path = files.reverso[0].buffer;
-  
+
     const optimizedImage1 = await sharp(image1Path).resize(800).toBuffer();
     const optimizedImage2 = await sharp(image2Path).resize(800).toBuffer();
-  
+
     const image1FullPath = path.join(__dirname, '..', 'uploads', files.anverso[0].originalname);
     const image2FullPath = path.join(__dirname, '..', 'uploads', files.reverso[0].originalname);
-  
+
     fs.writeFileSync(image1FullPath, optimizedImage1);
     fs.writeFileSync(image2FullPath, optimizedImage2);
-  
+
     const productData = {
       categoryId,
       name,
@@ -31,7 +35,7 @@ class ProductService {
       imagePath1: `${config.imagesPath}${files.anverso[0].originalname}`,
       imagePath2: `${config.imagesPath}${files.reverso[0].originalname}`,
     };
-  
+
     const product = await models.Product.create(productData);
     return product;
   }

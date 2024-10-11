@@ -24,14 +24,45 @@ const ProductSchema = {
   name: {
     allowNull: false,
     type: DataTypes.STRING,
+    validate: {
+      notEmpty: {
+        msg:"Debe insertar un nombre"
+      },
+      len:{
+        args:[8,50],
+        msg: "El nombre debe terner como minimo 8 caracteres"
+      }
+    }
   },
   status: {
     allowNull: false,
     type: DataTypes.DECIMAL,
+    validate: {
+      isDecimal: {
+        msg: "El estado debe ser un número decimal",
+      },
+      min: {
+        args: [1],
+        msg: "El estado debe ser al menos 1",
+      },
+      max: {
+        args: [10],
+        msg: "El estado no puede ser mayor a 10",
+      },
+    },
   },
   description: {
     allowNull: false,
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(500),
+    validate: {
+      notEmpty: {
+        msg: "La descripción es requerida",
+      },
+      len: {
+        args: [10, 500],
+        msg: "La descripción debe tener entre 10 y 500 caracteres",
+      },
+    },
   },
   imagePath1: {
     type: DataTypes.STRING,
@@ -46,6 +77,19 @@ const ProductSchema = {
   price: {
     allowNull: false,
     type: DataTypes.DECIMAL,
+    validate: {
+      isDecimal: {
+        msg: "El precio debe ser un número decimal",
+      },
+      min: {
+        args: [1000],
+        msg: "El precio debe ser al menos 1000",
+      },
+      max: {
+        args: [20000000],
+        msg: "El precio no puede exceder 20000000",
+      },
+    },
   },
   createdAt: {
     allowNull: false,
