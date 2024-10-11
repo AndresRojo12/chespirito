@@ -72,6 +72,7 @@ class ProductService {
         name: {
           [Op.iLike]: `%${query}%`,
         },
+        deleted:false,
       },
     });
     return products;

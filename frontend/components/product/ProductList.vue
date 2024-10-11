@@ -109,7 +109,7 @@
 
 <script setup>
 import { ref, watch, onMounted, nextTick } from "vue";
-import { useRouter } from "vue-router";
+//import { useRouter } from "vue-router";
 
 import ProductUpdate from "./ProductUpdate.vue";
 import ProductDelete from "./ProductDelete.vue";

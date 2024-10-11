@@ -10,11 +10,11 @@
     <div class="product-container">
       <div
         class="product-item"
-        v-for="product in category.products"
+        v-for="product in filteredProducts"
         :key="product.id"
       >
         <div>
-          <img class="product-image" :src="getImageUrl(product.imagePath)" />
+          <img class="product-image" :src="getImageUrl(product.imagePath1)" />
         </div>
         <h1 class="name-text">{{ product.name }}</h1>
         <p class="status-text">Estado {{ product.status }}</p>
@@ -29,9 +29,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-
 import LoadingSpinner from "../LoadingSpinner.vue";
 
 const CONFIG = useRuntimeConfig();
@@ -42,10 +41,11 @@ const { id } = route.params;
 const category = ref(null);
 const error = ref(null);
 
+// Método para buscar la categoría
 const fetchCategory = async () => {
   try {
     const { data } = await useFetch(
-      `${CONFIG.public.API_BASE_URL}/categories/${id}`,
+      `${CONFIG.public.API_BASE_URL}/categories/${id}`
     );
 
     category.value = data.value;
@@ -53,6 +53,10 @@ const fetchCategory = async () => {
     error.value = err;
   }
 };
+
+const filteredProducts = computed(() => {
+  return category.value?.products.filter(product => !product.deleted) || [];
+});
 
 const getImageUrl = (imagePath) => {
   return imagePath;
@@ -76,7 +80,6 @@ const back = () => {
   color: white;
   font-family: "Arial", sans-serif;
   text-align: center;
-  background-color: #009c8c;
 }
 .subtitle {
   font-family: "Arial", sans-serif;

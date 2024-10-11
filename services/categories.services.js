@@ -92,7 +92,8 @@ class CategoryService {
       where: {
         name: {
           [Op.iLike]: `%${query}%`
-        }
+        },
+        deleted: false,
       }
     });
     return categories;

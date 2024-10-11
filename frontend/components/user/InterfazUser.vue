@@ -115,7 +115,6 @@
 </template>
 
 <script setup>
-import { useRouter } from "vue-router";
 import { ref, onMounted, watch, nextTick } from "vue";
 
 import CategoriesProductUpdate from "../categories/CategoriesProductUpdate.vue";
@@ -137,18 +136,21 @@ const search = ref("");
 const getCategories = async () => {
   try {
     const { data } = await useFetch(
-      `${CONFIG.public.API_BASE_URL}categories?page=${page.value}&pageSize=${pageSize.value}`,
-      {
-        method: "GET",
-      },
+      `${CONFIG.public.API_BASE_URL}categories?page=${page.value}&pageSize=${pageSize.value}`
     );
-    categories.value = data.value.data;
-    filteredCategories.value = data.value;
+
+    if (data.value) {
+      categories.value = data.value.data;
+      filteredCategories.value = data.value;
+    } else {
+      throw new Error("No se recibieron datos válidos");
+    }
   } catch (error) {
     console.error("Error fetching categories:", error);
     filteredCategories.value = { data: [], totalPages: 1 };
   }
 };
+
 
 const getImageUrl = (imagePath) => {
   return imagePath;
@@ -225,8 +227,9 @@ const handleDelete = async (categoryId) => {
   showDeleteDialog.value = false;
 };
 
-const category = () => {
-  router.push("/categories/register");
+const category = async () => {
+  await nextTick();
+ await router.push("/categories/register");
 };
 
 const confirmDelete = async (category) => {

@@ -92,7 +92,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import { useAuth } from "~/store/auth";
-import { useRouter, useRoute } from "vue-router";
+//import { useRouter, useRoute } from "vue-router";
 import Swal from "sweetalert2";
 
 import LoadingSpinner from "~/components/LoadingSpinner.vue";
