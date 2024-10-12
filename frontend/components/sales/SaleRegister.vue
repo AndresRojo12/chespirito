@@ -9,7 +9,7 @@
         label="Cantidad"
         :error-messages="errors.quantitySold"
         @input="clearErrors('quantitySold')"
-        :rules="[(v) => !isNaN(v) || 'La cantidad debe ser un número']"
+        type="number"
       ></v-text-field>
       <v-text-field
         class="input"
@@ -17,7 +17,7 @@
         label="Total"
         :error-messages="errors.salePrice"
         @input="clearErrors('salePrice')"
-        :rules="[(v) => !isNaN(v) || 'El precio debe ser un número válido']"
+        type="number"
       ></v-text-field>
       <v-autocomplete
         class="select"
@@ -72,43 +72,77 @@ const errors = reactive({
   selectedProduct: [],
 });
 
-const schema = z.object({
-  quantitySold: z.number().min(1, "La cantidad es requerida"),
-  salePrice: z
-    .number()
-    .min(1, "El total es requerido")
-    .max("El total no debe superar los 30.000.000"),
-  selectedCategory: z.number().min(1, "La categoría es requerida"),
-  selectedProduct: z.number().min(1, "Los productos son requeridos"),
-});
-
-const validateForm = () => {
-  errors.quantitySold = [];
-  errors.salePrice = [];
-  errors.selectedCategory = [];
-  errors.selectedProduct = [];
-  try {
-    const formData = {
-      quantitySold: quantitySold.value,
-      salePrice: salePrice.value,
-      selectedCategory: selectedCategory.value,
-      selectedProduct: selectedProduct.value,
-    };
-    schema.parse(formData);
-    return true;
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      error.errors.forEach((err) => {
-        const field = err.path[0];
-        if (field === "quantitySold") errors.quantitySold = [err.message];
-        if (field === "salePrice") errors.salePrice = [err.message];
-        if (field === "selectedCategory")
-          errors.selectedCategory = [err.message];
-        if (field === "selectedProduct") errors.selectedProduct = [err.message];
-      });
-    }
+const validateQuantitySold = () => {
+  const quantitySoldNum = parseInt(quantitySold.value);
+  if (isNaN(quantitySoldNum)) {
+    errors.quantitySold = ["La cantidad debe ser un número entero válido"];
     return false;
   }
+  if (quantitySoldNum < 1) {
+    errors.quantitySold = ["La cantidad debe ser mayor a 1"];
+    return false;
+  }
+  if (quantitySoldNum > 20000000) {
+    errors.quantitySold = ["La cantidad no debe superar 20000000"];
+    return false;
+  }
+  return true;
+};
+
+const validateSalePrice = () => {
+  const salePriceNum = parseInt(salePrice.value);
+  if (isNaN(salePriceNum)) {
+    errors.salePrice = ["El precio debe ser un número entero válido"];
+    return false;
+  }
+  if (salePriceNum < 1000) {
+    errors.salePrice = ["El precio total debe ser mayor a 1000"];
+    return false;
+  }
+  if (salePriceNum > 20000000) {
+    errors.salePrice = ["El precio no debe superar 20000000"];
+    return false;
+  }
+  return true;
+};
+
+const validateSelectedCategory = () => {
+  const categoryId = parseInt(selectedCategory.value);
+  if (isNaN(categoryId) || categoryId < 1) {
+    errors.selectedCategory = ["La categoría es requerida"];
+    return false;
+  }
+  return true;
+};
+
+const validateSelectedProduct = () => {
+  const productId = parseInt(selectedProduct.value);
+  if (isNaN(productId) || productId < 1) {
+    errors.selectedProduct = ["El producto es requerido"];
+    return false;
+  }
+  return true;
+};
+
+const validateForm = () => {
+  for (const key in errors) {
+    if (errors.hasOwnProperty(key)) {
+      errors[key] = [];
+    }
+  }
+
+  const isCategoryValid = validateSelectedCategory();
+  const isProductValid = validateSelectedProduct();
+  const isQuantitySoldValid = validateQuantitySold();
+  const isSalePriceValid = validateSalePrice();
+
+  return (
+    isCategoryValid &&
+    isProductValid &&
+    isQuantitySoldValid &&
+    isSalePriceValid
+  );
+
 };
 
 const registerSale = async () => {
