@@ -3,10 +3,25 @@ const { config } = require('../config/config');
 const { models } = require('../libs/sequelize');
 const { Sequelize, Op, fn, col } = require('sequelize');
 
+const { createInventorySchema } = require('../schemas/inventory.schema');
+
 class InventoryService {
   async create(data) {
-    const inventory = await models.Inventory.create(data);
-    return inventory;
+
+    const { error, value } = createInventorySchema.validate(data);
+    if(error) {
+      throw boom.badRequest(error.details[0].message);
+    }
+    try {
+      const inventory = await models.Inventory.create(data);
+      return inventory;
+    } catch (error) {
+      if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
+        const messages = error.errors.map(e => e.message);
+        throw boom.badRequest(messages.join(', '));
+      }
+      throw error;
+    }
   }
 
   async find({ page = 1, pageSize = 10, filters = {} } = {}) {

@@ -24,6 +24,15 @@ const InventorySchema = {
   status: {
     allowNull: false,
     type: DataTypes.STRING,
+    validate: {
+      notEmpty:{
+        msg:"Debe indicar un estado de inventario"
+      },
+      len: {
+        args: [8,500],
+        msg: "El debe tener entre 8 y 500 caracteres"
+      }
+    }
   },
   createdAt: {
     allowNull: false,

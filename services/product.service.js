@@ -5,9 +5,14 @@ const path = require('path');
 const { Op } = require('sequelize');
 const { config } = require('../config/config');
 const { models } = require('../libs/sequelize');
+const { createProductSchema } = require('../schemas/product.schema');
 
 class ProductService {
   async create(data, files) {
+    const { error, value } = createProductSchema.validate(data);
+    if(error) {
+      throw boom.badRequest(error.details[0].message);
+    }
     const { categoryId, name, status, description, price } = data;
 
     if (!files.anverso || !files.reverso) {
@@ -36,8 +41,16 @@ class ProductService {
       imagePath2: `${config.imagesPath}${files.reverso[0].originalname}`,
     };
 
-    const product = await models.Product.create(productData);
-    return product;
+    try {
+      const product = await models.Product.create(productData);
+      return product;
+    } catch (error) {
+      if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
+        const messages = error.errors.map(e => e.message);
+        throw boom.badRequest(messages.join(', '));
+      }
+      throw error;
+    }
   }
 
   async find({ page = 1, pageSize = 10 } = {}) {

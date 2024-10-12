@@ -1,0 +1,9 @@
+#GET http://localhost:3001/api/v1/inventories
+
+POST http://localhost:3001/api/v1/inventories
+Content-Type: application/json
+
+{
+  "status": "bar",
+  "salesId": 1
+}

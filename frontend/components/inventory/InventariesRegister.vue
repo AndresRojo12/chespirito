@@ -33,7 +33,7 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from "vue";
-import { useRouter } from "vue-router";
+//import { useRouter } from "vue-router";
 import { z } from "zod";
 import Swal from "sweetalert2";
 
@@ -46,33 +46,52 @@ const salesId = ref([]);
 const page = ref(1);
 const pageSize = ref(10);
 
-const errors = reactive({ sales: [], status: [] });
-
-const schema = z.object({
-  sales: z.number().min(1, "Elige un producto"),
-  status: z.string().min(1, "El estado es requerido"),
+const errors = reactive({
+  sales: [],
+  status: []
 });
 
-const validateForm = () => {
-  errors.sales = [];
-  errors.status = [];
-  try {
-    const formData = {
-      sales: sales.value,
-      status: status.value,
-    };
-    schema.parse(formData);
-    return true;
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      error.errors.forEach((err) => {
-        const field = err.path[0];
-        if (field === "sales") errors.sales = [err.message];
-        if (field === "status") errors.status = [err.message];
-      });
-    }
+const validateSelectedProduct = () => {
+  const productId = parseInt(sales.value);
+  if (isNaN(productId) || productId < 1) {
+    errors.sales = ["El producto es requerido, selecciona el correspondiente"];
     return false;
   }
+  return true;
+};
+
+const validateStatus = () => {
+  const trimmedStatus = status.value.trim();
+  if (!trimmedStatus) {
+    errors.status = ["El estado es requerido, por favor indique estado de inventario"];
+    return false;
+  }
+  if (trimmedStatus.length < 8) {
+    errors.status = ["El estado debe tener por lo menos 8 caracteres"];
+    return false;
+  }
+  if (trimmedStatus.length > 50) {
+    errors.status = ["El estado no puede exceder los 50 caracteres"];
+    return false;
+  }
+  return true;
+};
+
+const validateForm = () => {
+  for (const key in errors) {
+    if (errors.hasOwnProperty(key)) {
+      errors[key] = [];
+    }
+  }
+
+  const isProductValid = validateSelectedProduct();
+  const isStatusValid = validateStatus();
+  return (
+    isProductValid &&
+    isStatusValid
+
+  );
+
 };
 
 const getVentas = async () => {
