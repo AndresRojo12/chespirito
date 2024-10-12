@@ -27,8 +27,15 @@
     />
     <v-file-input
       class="file-input"
-      v-model="image"
-      label="Seleccionar imagen"
+      v-model="anverso"
+      label="Anverso"
+      accept="image/*"
+      prepend-icon="mdi-image"
+    />
+    <v-file-input
+      class="file-input"
+      v-model="reverso"
+      label="Reverso"
       accept="image/*"
       prepend-icon="mdi-image"
     />
@@ -42,7 +49,8 @@ import { defineProps, defineEmits } from "vue";
 import Swal from "sweetalert2";
 
 const CONFIG = useRuntimeConfig();
-const image = ref(null);
+const anverso = ref("");
+const reverso = ref("");
 
 const props = defineProps({
   product: Object,
@@ -65,8 +73,12 @@ const updateProduct = async () => {
     formData.append("description", localProduct.value.description);
     formData.append("price", localProduct.value.price);
 
-    if (image.value) {
-      formData.append("image", image.value);
+    if (anverso.value) {
+      formData.append("anverso", anverso.value);
+    }
+
+    if (reverso.value) {
+      formData.append("reverso", reverso.value);
     }
 
     const response = await fetch(

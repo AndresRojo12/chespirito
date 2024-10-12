@@ -99,38 +99,54 @@ class ProductService {
     return products;
   }
 
-  async update(id, changes, file) {
-    const products = await this.findOne(id);
+  async update(id, changes, files) {
+    const product = await this.findOne(id);
 
-    if (file) {
-      if (products.imagePath) {
-        const oldImagePath = path.join(
-          __dirname,
-          '..',
-          'uploads',
-          path.basename(products.imagePath),
-        );
-        if (fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath);
+    
+    if (files && files.anverso) {
+
+      if (product.imagePath1) {
+        const oldImageAnversoPath = path.join(__dirname, '..', 'uploads', path.basename(product.imagePath1));
+        if (fs.existsSync(oldImageAnversoPath)) {
+          fs.unlinkSync(oldImageAnversoPath);
         }
       }
-      const imagenOriginal = file.buffer;
-      const imagenOptimizada = await sharp(imagenOriginal)
-        .resize(800)
-        .toBuffer();
-      const imagePath = path.join(
-        __dirname,
-        '..',
-        'uploads',
-        file.originalname,
-      );
-      fs.writeFileSync(imagePath, imagenOptimizada);
 
-      changes.imagePath = `${config.imagesPath}${file.originalname}`;
+
+      const anversoImageOriginal = files.anverso[0].buffer;
+      const anversoImageOptimizada = await sharp(anversoImageOriginal).resize(800).toBuffer();
+      const anversoImagePath = path.join(__dirname, '..', 'uploads', files.anverso[0].originalname);
+      fs.writeFileSync(anversoImagePath, anversoImageOptimizada);
+
+
+      changes.imagePath1 = `${config.imagesPath}${files.anverso[0].originalname}`;
     }
-    await products.update(changes);
-    return products;
+
+
+    if (files && files.reverso) {
+
+      if (product.imagePath2) {
+        const oldImageReversoPath = path.join(__dirname, '..', 'uploads', path.basename(product.imagePath2));
+        if (fs.existsSync(oldImageReversoPath)) {
+          fs.unlinkSync(oldImageReversoPath);
+        }
+      }
+
+
+      const reversoImageOriginal = files.reverso[0].buffer;
+      const reversoImageOptimizada = await sharp(reversoImageOriginal).resize(800).toBuffer();
+      const reversoImagePath = path.join(__dirname, '..', 'uploads', files.reverso[0].originalname);
+      fs.writeFileSync(reversoImagePath, reversoImageOptimizada);
+
+
+      changes.imagePath2 = `${config.imagesPath}${files.reverso[0].originalname}`;
+    }
+
+
+    await product.update(changes);
+    return product;
   }
+
 
   async delete(id) {
     const product = await this.findOne(id);

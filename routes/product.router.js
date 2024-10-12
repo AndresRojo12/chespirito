@@ -77,15 +77,16 @@ router.post(
 
 router.patch(
   '/:id',
-  upload.single('image'),
+  upload.fields([{ name: 'anverso' }, { name: 'reverso' }]),
   validatorHandler(getProductSchema, 'params'),
   validatorHandler(updateProductSchema, 'body'),
   async (req, res, next) => {
     try {
       const { id } = req.params;
       const body = req.body;
-      const file = req.file;
-      res.json(await service.update(id, body, file));
+      const files = req.files;
+      const updatedProduct = await service.update(id, body, files);
+      res.json(updatedProduct);
     } catch (error) {
       next(error);
     }
