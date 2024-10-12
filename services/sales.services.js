@@ -1,11 +1,26 @@
 const boom = require('@hapi/boom');
 const { models } = require('../libs/sequelize');
 const { Op, fn, col, Sequelize } = require('sequelize');
+const { createSaleSchema } = require('../schemas/sales.schema');
 
 class SalesServices {
   async create(data) {
-    const newSale = await models.Sales.create(data);
-    return newSale;
+    const { error, value } = createSaleSchema.validate(data);
+    if(error){
+      throw boom.badRequest(error.details[0].message);
+    }
+
+    try {
+      const newSale = await models.Sales.create(data);
+      return newSale;
+
+    } catch (error) {
+      if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
+        const messages = error.errors.map(e => e.message);
+        throw boom.badRequest(messages.join(', '));
+      }
+      throw error;
+    }
   }
 
   async find({ page = 1, pageSize = 10, filters = {} } = {}) {

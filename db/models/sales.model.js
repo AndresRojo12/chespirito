@@ -16,11 +16,27 @@ const SalesSchema = {
     allowNull: false,
     type: DataTypes.INTEGER,
     field: 'quantity_sold',
+    validate: {
+      notEmpty: {
+        msg:"Este campo no puede estar vacio"
+      },
+      isInt: {
+        msg:"Debe ser un numero"
+      }
+    }
   },
   salePrice: {
     allowNull: false,
     type: DataTypes.INTEGER,
     field: 'sale_price',
+    validate: {
+      notEmpty: {
+        msg:"Este campo no puede estar vacio"
+      },
+      isInt: {
+        msg:"Debe ser un numero"
+      }
+    }
   },
   categoryId: {
     allowNull: false,
