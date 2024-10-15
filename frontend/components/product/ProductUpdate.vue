@@ -6,6 +6,15 @@
       label="Nombre"
       :rules="[(v) => !!v || 'El nombre es requerido']"
     />
+    <v-text-field
+      class="input"
+      v-model="localProduct.status"
+      label="Estado"
+      :rules="[
+        (v) => !!v || 'Este campo es obligatorio',
+        (v) => !isNaN(v) || 'El estado debe ser un número válido',
+      ]"
+    />
     <v-textarea
       class="input"
       v-model="localProduct.description"
@@ -70,6 +79,7 @@ const updateProduct = async () => {
   try {
     const formData = new FormData();
     formData.append("name", localProduct.value.name);
+    formData.append("status", localProduct.value.status);
     formData.append("description", localProduct.value.description);
     formData.append("price", localProduct.value.price);
 
