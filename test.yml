@@ -1,0 +1,31 @@
+config:
+  target: "http://localhost:3001"
+  phases:
+    - duration: 60
+      arrivalRate: 5
+  http:
+    debug: true
+
+scenarios:
+  - flow:
+      - post:
+          url: "/api/v1/auth/login"
+          json:
+            email: "Julianmesa123@hotmail.com"
+            password: "admin18855"
+          capture:
+            - json: "$.token"
+              as: "authToken" 
+
+      - post:
+          url: "/api/v1/categories"
+          json:
+            name: "Producto de Prueba"
+            #status: 8
+            description: "Descripción del producto"
+            #price: 290000
+            #categoryId: 1
+            image:
+              file: "./uploads/image.jpg"
+          headers:
+            Authorization: "Bearer {{ authToken }}"

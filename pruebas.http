@@ -1,9 +1,25 @@
 #GET http://localhost:3001/api/v1/inventories
 
-POST http://localhost:3001/api/v1/inventories
+# POST http://localhost:3001/api/v1/auth/login
+# Content-Type: application/json
+
+# {
+#   "email": "Julianmesa123@hotmail.com",
+#   "password": "admin18855"
+# }
+
+
+
+POST http://localhost:3001/api/v1/products
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInJvbGUiOiJBZG1pbiIsImlhdCI6MTcyODc3OTkwMywiZXhwIjoxNzI4OTUyNzAzfQ.iqavYzg5SgNvNxx4Zwuqj1ggLaxZ4of9imM1PlRFbO0
 
 {
-  "status": "bar",
-  "salesId": 1
+  "name": "Producto de Prueba",
+  "status": 10,
+  "description": "Descripción del producto",
+  "price": 290000,
+  "categoryId": 1,
+  "anverso": { "files": "./uploads/BILLE.jpg" },
+  "reverso": { "files": "./uploads/billete-20000-colombia.webp" }
 }

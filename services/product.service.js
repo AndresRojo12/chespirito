@@ -102,7 +102,7 @@ class ProductService {
   async update(id, changes, files) {
     const product = await this.findOne(id);
 
-    
+
     if (files && files.anverso) {
 
       if (product.imagePath1) {
