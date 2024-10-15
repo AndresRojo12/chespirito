@@ -20,7 +20,6 @@
           label="Estado"
           :error-messages="errors.status"
           @input="clearErrors('status')"
-          type="number"
           required
         ></v-text-field>
 
