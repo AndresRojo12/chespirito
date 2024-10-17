@@ -21,7 +21,7 @@ export const useAuth = defineStore('auth', {
   actions: {
     login(token, user) {
       storeToken(token);
-      storeUser(user);
+      storeUser(user.role);
       this.token = token;
       this.user = user;
       this.isAuthenticated = true;
