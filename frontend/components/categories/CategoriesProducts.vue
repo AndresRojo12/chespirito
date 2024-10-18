@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import LoadingSpinner from "../LoadingSpinner.vue";
 
@@ -41,11 +41,10 @@ const { id } = route.params;
 const category = ref(null);
 const error = ref(null);
 
-// Método para buscar la categoría
 const fetchCategory = async () => {
   try {
     const { data } = await useFetch(
-      `${CONFIG.public.API_BASE_URL}/categories/${id}`
+      `${CONFIG.public.API_BASE_URL}/categories/${id}`,
     );
 
     category.value = data.value;
@@ -55,7 +54,7 @@ const fetchCategory = async () => {
 };
 
 const filteredProducts = computed(() => {
-  return category.value?.products.filter(product => !product.deleted) || [];
+  return category.value?.products.filter((product) => !product.deleted) || [];
 });
 
 const getImageUrl = (imagePath) => {
@@ -63,12 +62,9 @@ const getImageUrl = (imagePath) => {
 };
 
 onMounted(async () => {
+  await nextTick();
   await fetchCategory();
 });
-
-const back = () => {
-  router.back();
-};
 </script>
 
 <style scoped>

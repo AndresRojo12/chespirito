@@ -1,98 +1,101 @@
 <template>
-  <div v-if="!userStore.isAuthenticated">
-    <LoadingSpinner></LoadingSpinner>
+  <div v-if="userStore.loading">
+    <LoadingSpinner />
   </div>
-  <div v-else>
-    <v-app-bar-nav-icon
-      class="icon-navbar"
-      @click="toggleDrawer"
-      v-if="showAppBar"
-      app
-    ></v-app-bar-nav-icon>
-    <h1 class="title">ANTIGÜEDADES CHESPIRITO</h1>
-    <v-app>
-      <v-navigation-drawer
-        v-model="drawer"
+  <div v-if="userStore.isAuthenticated">
+    <div>
+      <v-app-bar-nav-icon
+        class="icon-navbar"
+        @click="toggleDrawer"
+        v-if="showAppBar"
         app
-        fixed
-        :width="drawerWidth"
-        :rail="isRail"
-        :expand-on-hover="isLargeScreen"
-        :temporary="!isLargeScreen"
-        @mouseenter="handleMouseEnter"
-        @mouseleave="handleMouseLeave"
-      >
-        <v-list>
-          <v-list-item
-            class="buttons"
-            :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
-            prepend-icon="mdi-account-circle"
-          ></v-list-item>
-        </v-list>
-        <v-divider></v-divider>
-        <v-list density="compact" nav>
-          <v-list-item
-            class="buttons"
-            title="Inicio"
-            prepend-icon="mdi-home-city"
-            @click.prevent="goHome"
-          >
-          </v-list-item>
-          <v-list-item
-            class="buttons"
-            title="Productos"
-            prepend-icon="mdi-cash"
-            @click.prevent="productsPage"
-          >
-          </v-list-item>
-          <v-list-item
-            class="buttons"
-            title="Ventas"
-            prepend-icon="mdi-elevation-rise"
-            @click.prevent="ventasPage"
-          >
-          </v-list-item>
-          <v-list-item
-            class="buttons"
-            title="Inventarios"
-            prepend-icon="mdi-clipboard-text"
-            @click.prevent="inventoriesPage"
-          ></v-list-item>
-          <v-list-item
-            class="buttons"
-            title="Salir"
-            prepend-icon="mdi-logout"
-            @click.prevent="confirmLogout"
-          >
-          </v-list-item>
-        </v-list>
-      </v-navigation-drawer>
+      ></v-app-bar-nav-icon>
+      <h1 class="title">ANTIGÜEDADES CHESPIRITO</h1>
+      <v-app>
+        <v-navigation-drawer
+          v-model="drawer"
+          app
+          fixed
+          :width="drawerWidth"
+          :rail="isRail"
+          :expand-on-hover="isLargeScreen"
+          :temporary="!isLargeScreen"
+          @mouseenter="handleMouseEnter"
+          @mouseleave="handleMouseLeave"
+        >
+          <v-list>
+            <v-list-item
+              class="buttons"
+              :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
+              prepend-icon="mdi-account-circle"
+            ></v-list-item>
+          </v-list>
+          <v-divider></v-divider>
+          <v-list density="compact" nav>
+            <v-list-item
+              class="buttons"
+              title="Inicio"
+              prepend-icon="mdi-home-city"
+              @click.prevent="goHome"
+            >
+            </v-list-item>
+            <v-list-item
+              class="buttons"
+              title="Productos"
+              prepend-icon="mdi-cash"
+              @click.prevent="productsPage"
+            >
+            </v-list-item>
+            <v-list-item
+              class="buttons"
+              title="Ventas"
+              prepend-icon="mdi-elevation-rise"
+              @click.prevent="ventasPage"
+            >
+            </v-list-item>
+            <v-list-item
+              class="buttons"
+              title="Inventarios"
+              prepend-icon="mdi-clipboard-text"
+              @click.prevent="inventoriesPage"
+            ></v-list-item>
+            <v-list-item
+              class="buttons"
+              title="Salir"
+              prepend-icon="mdi-logout"
+              @click.prevent="confirmLogout"
+            >
+            </v-list-item>
+          </v-list>
+        </v-navigation-drawer>
 
-      <v-main
-        :class="{ 'main-expanded': isRail, 'main-collapsed': !isRail }"
-        app
-      >
-        <v-container fluid>
-          <slot />
-        </v-container>
-      </v-main>
-    </v-app>
+        <v-main
+          :class="{ 'main-expanded': isRail, 'main-collapsed': !isRail }"
+          app
+        >
+          <v-container fluid>
+            <slot />
+          </v-container>
+        </v-main>
+      </v-app>
 
-    <footer class="footer">
-      <div>
-        <div class="footer-bottom">
-          {{ new Date().getFullYear() }} —
-          <strong>Antigüedades Chespirito</strong>
+      <footer class="footer">
+        <div>
+          <div class="footer-bottom">
+            {{ new Date().getFullYear() }} —
+            <strong>Antigüedades Chespirito</strong>
+          </div>
         </div>
-      </div>
-    </footer>
+      </footer>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useAuth } from "~/store/auth";
-//import { useRouter, useRoute } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
+import { useDisplay } from "vuetify";
 import Swal from "sweetalert2";
 
 import LoadingSpinner from "~/components/LoadingSpinner.vue";
@@ -100,12 +103,17 @@ import LoadingSpinner from "~/components/LoadingSpinner.vue";
 const userStore = useAuth();
 const router = useRouter();
 const route = useRoute();
+const { mdAndUp } = useDisplay();
 
 const drawer = ref(false);
 const isRail = ref(true);
-const isLargeScreen = ref(true);
-
+const isLargeScreen = computed(() => mdAndUp.value);
 const drawerWidth = computed(() => (isRail.value ? 55 : 155));
+
+onMounted(() => {
+  userStore.loadUserFromStorage();
+  drawer.value = isLargeScreen.value && userStore.isAuthenticated;
+});
 
 const handleMouseEnter = () => {
   isRail.value = false;
@@ -125,42 +133,9 @@ const showAppBar = computed(() => {
   return routesWithAppBar.includes(route.path);
 });
 
-const checkScreenSize = () => {
-  if (typeof window !== "undefined") {
-    isLargeScreen.value = window.innerWidth > 1024;
-    drawer.value = !isLargeScreen.value;
-  }
-};
-
-const updateDrawerState = () => {
-  if (window.innerWidth <= 1024) {
-    drawer.value = false;
-  } else {
-    drawer.value = true;
-  }
-};
-
-onMounted(() => {
-  checkScreenSize();
-  window.addEventListener("resize", checkScreenSize);
-});
-
-onMounted(() => {
-  updateDrawerState();
-  window.addEventListener("resize", updateDrawerState);
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener("resize", checkScreenSize);
-});
-
 const toggleDrawer = () => {
   drawer.value = !drawer.value;
-  if (drawer.value) {
-    isRail.value = false;
-  } else {
-    isRail.value = true;
-  }
+  isRail.value = !drawer.value;
 };
 
 const goHome = () => {
