@@ -1,0 +1,7 @@
+Resources:
+  AWSEBAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      LaunchTemplate:
+        LaunchTemplateId: lt-0a1e0f111f7b86bc7
+      # Otras configuraciones aquí
