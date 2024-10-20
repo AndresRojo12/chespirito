@@ -18,7 +18,7 @@ Resources:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
       LaunchTemplate:
-        LaunchTemplateId: !Ref lt-0a1e0f111f7b86bc7 # Referencia al Launch Template
+        LaunchTemplateId: !Ref MyLaunchTemplate # Referencia al Launch Template
         Version: $Latest # O puede ser una versión específica
       MinSize: 1
       MaxSize: 3
