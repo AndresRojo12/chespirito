@@ -9,8 +9,8 @@ const { createProductSchema } = require('../schemas/product.schema');
 
 class ProductService {
   async create(data, files) {
-    const { error, value } = createProductSchema.validate(data);
-    if(error) {
+    const { error } = createProductSchema.validate(data);
+    if (error) {
       throw boom.badRequest(error.details[0].message);
     }
     const { categoryId, name, status, description, price } = data;
@@ -22,11 +22,28 @@ class ProductService {
     const image1Path = files.anverso[0].buffer;
     const image2Path = files.reverso[0].buffer;
 
-    const optimizedImage1 = await sharp(image1Path).resize(800).toBuffer();
-    const optimizedImage2 = await sharp(image2Path).resize(800).toBuffer();
+    const optimizedImage1 = await sharp(image1Path)
+      .resize(800)
+      .webp({ quality: 80 })
+      .toBuffer();
 
-    const image1FullPath = path.join(__dirname, '..', 'uploads', files.anverso[0].originalname);
-    const image2FullPath = path.join(__dirname, '..', 'uploads', files.reverso[0].originalname);
+    const optimizedImage2 = await sharp(image2Path)
+      .resize(800)
+      .webp({ quality: 80 })
+      .toBuffer();
+
+    const image1FullPath = path.join(
+      __dirname,
+      '..',
+      'uploads',
+      `${path.parse(files.anverso[0].originalname).name}.webp`,
+    );
+    const image2FullPath = path.join(
+      __dirname,
+      '..',
+      'uploads',
+      `${path.parse(files.reverso[0].originalname).name}.webp`,
+    );
 
     fs.writeFileSync(image1FullPath, optimizedImage1);
     fs.writeFileSync(image2FullPath, optimizedImage2);
@@ -37,16 +54,19 @@ class ProductService {
       status,
       description,
       price,
-      imagePath1: `${config.imagesPath}${files.anverso[0].originalname}`,
-      imagePath2: `${config.imagesPath}${files.reverso[0].originalname}`,
+      imagePath1: `${config.imagesPath}${path.parse(files.anverso[0].originalname).name}.webp`,
+      imagePath2: `${config.imagesPath}${path.parse(files.reverso[0].originalname).name}.webp`,
     };
 
     try {
       const product = await models.Product.create(productData);
       return product;
     } catch (error) {
-      if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
-        const messages = error.errors.map(e => e.message);
+      if (
+        error.name === 'SequelizeValidationError' ||
+        error.name === 'SequelizeUniqueConstraintError'
+      ) {
+        const messages = error.errors.map((e) => e.message);
         throw boom.badRequest(messages.join(', '));
       }
       throw error;
@@ -85,7 +105,7 @@ class ProductService {
         name: {
           [Op.iLike]: `%${query}%`,
         },
-        deleted:false,
+        deleted: false,
       },
     });
     return products;
@@ -102,51 +122,65 @@ class ProductService {
   async update(id, changes, files) {
     const product = await this.findOne(id);
 
-
     if (files && files.anverso) {
-
       if (product.imagePath1) {
-        const oldImageAnversoPath = path.join(__dirname, '..', 'uploads', path.basename(product.imagePath1));
+        const oldImageAnversoPath = path.join(
+          __dirname,
+          '..',
+          'uploads',
+          path.basename(product.imagePath1),
+        );
         if (fs.existsSync(oldImageAnversoPath)) {
           fs.unlinkSync(oldImageAnversoPath);
         }
       }
 
-
       const anversoImageOriginal = files.anverso[0].buffer;
-      const anversoImageOptimizada = await sharp(anversoImageOriginal).resize(800).toBuffer();
-      const anversoImagePath = path.join(__dirname, '..', 'uploads', files.anverso[0].originalname);
+      const anversoImageOptimizada = await sharp(anversoImageOriginal)
+        .resize(800)
+        .toBuffer();
+      const anversoImagePath = path.join(
+        __dirname,
+        '..',
+        'uploads',
+        files.anverso[0].originalname,
+      );
       fs.writeFileSync(anversoImagePath, anversoImageOptimizada);
-
 
       changes.imagePath1 = `${config.imagesPath}${files.anverso[0].originalname}`;
     }
 
-
     if (files && files.reverso) {
-
       if (product.imagePath2) {
-        const oldImageReversoPath = path.join(__dirname, '..', 'uploads', path.basename(product.imagePath2));
+        const oldImageReversoPath = path.join(
+          __dirname,
+          '..',
+          'uploads',
+          path.basename(product.imagePath2),
+        );
         if (fs.existsSync(oldImageReversoPath)) {
           fs.unlinkSync(oldImageReversoPath);
         }
       }
 
-
       const reversoImageOriginal = files.reverso[0].buffer;
-      const reversoImageOptimizada = await sharp(reversoImageOriginal).resize(800).toBuffer();
-      const reversoImagePath = path.join(__dirname, '..', 'uploads', files.reverso[0].originalname);
+      const reversoImageOptimizada = await sharp(reversoImageOriginal)
+        .resize(800)
+        .toBuffer();
+      const reversoImagePath = path.join(
+        __dirname,
+        '..',
+        'uploads',
+        files.reverso[0].originalname,
+      );
       fs.writeFileSync(reversoImagePath, reversoImageOptimizada);
-
 
       changes.imagePath2 = `${config.imagesPath}${files.reverso[0].originalname}`;
     }
 
-
     await product.update(changes);
     return product;
   }
-
 
   async delete(id) {
     const product = await this.findOne(id);
