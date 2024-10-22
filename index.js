@@ -21,11 +21,11 @@ const optionCors = {
 
 app.use(cors(optionCors));
 
-app.use(express.static(path.join(__dirname, 'frontend', 'build'))); // Cambia 'frontend/build' según sea necesario
+app.use(express.static(path.join(__dirname, 'frontend', 'dist'))); // Cambia 'frontend/build' según sea necesario
 
 // Ruta para el archivo index.html
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend', 'build', 'index.html')); // Asegúrate de que esta ruta sea correcta
+    res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html')); // Asegúrate de que esta ruta sea correcta
 });
 
 app.get('/',(req, res) => {
