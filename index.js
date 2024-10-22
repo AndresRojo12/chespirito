@@ -6,7 +6,7 @@ const { logError, errorHandler, boomErrorHandler, ormErrorHandler } = require('.
 
 const routerApi = require('./routes');
 
-require('./utils/auth'); 
+require('./utils/auth');
 dotenv.config();
 const app = express();
 
@@ -20,6 +20,13 @@ const optionCors = {
 };
 
 app.use(cors(optionCors));
+
+app.use(express.static(path.join(__dirname, 'frontend', 'build'))); // Cambia 'frontend/build' según sea necesario
+
+// Ruta para el archivo index.html
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'build', 'index.html')); // Asegúrate de que esta ruta sea correcta
+});
 
 app.get('/',(req, res) => {
     res.send('Hola servidor');
