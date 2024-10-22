@@ -21,12 +21,15 @@ const optionCors = {
 
 app.use(cors(optionCors));
 
-app.use(express.static(path.join(__dirname, 'frontend', 'dist'))); // Cambia 'frontend/build' según sea necesario
+// Servir archivos estáticos de la aplicación frontend (Nuxt.js)
+const nuxtDistPath = path.join(__dirname, './frontend/dist');
+app.use(express.static(nuxtDistPath));
 
-// Ruta para el archivo index.html
+// Ruta para servir el archivo HTML principal de la aplicación frontend
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html')); // Asegúrate de que esta ruta sea correcta
+  res.sendFile(path.join(nuxtDistPath, 'index.html'));
 });
+
 
 app.get('/',(req, res) => {
     res.send('Hola servidor');
