@@ -5,6 +5,7 @@ export default defineNuxtConfig({
       { name: "viewport", content: "width=device-width, initial-scale=1" },
     ],
   },
+  target: 'static',
   devtools: { enabled: true },
   css: [
     "vuetify/lib/styles/main.sass",
