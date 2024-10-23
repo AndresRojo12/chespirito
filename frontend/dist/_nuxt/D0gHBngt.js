@@ -1,0 +1,1 @@
+import{_ as o}from"./BDATS6wy.js";import{n as t,o as r}from"./DX0_N7Ks.js";import"./DOYwHpwi.js";import"./DCbp3Bu8.js";const i={__name:"delete",setup(_){return(c,n)=>{const e=o;return r(),t(e)}}};export{i as default};
