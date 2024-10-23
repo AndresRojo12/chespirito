@@ -15,19 +15,11 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// const optionCors = {
-//   origin: '*',
-// };
-
-const corsOptions = {
-  origin: 'http://chespirito-dev.us-east-1.elasticbeanstalk.com/', // Cambia esto por tu dominio o usa '*' para permitir todos
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
-  optionsSuccessStatus: 204, // Para navegadores antiguos
+const optionCors = {
+  origin: '*',
 };
 
-
-app.use(cors(corsOptions));
+app.use(cors(optionCors));
 
 // Servir archivos estáticos de la aplicación frontend (Nuxt.js)
 const nuxtDistPath = path.join(__dirname, './frontend/dist');
