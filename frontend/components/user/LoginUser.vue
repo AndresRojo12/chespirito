@@ -82,7 +82,7 @@ const visible = ref(false);
 
 const login = async () => {
   try {
-    const response = await fetch('http://chespirito-dev.us-east-1.elasticbeanstalk.com/api/v1/auth/login', {
+    const response = await fetch(`${CONFIG.public.API_BASE_URL}auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
