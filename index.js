@@ -15,22 +15,11 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// const optionCors = {
-//   origin: '*',
-// };
-
-const whitelist = ['http://localhost:3001', 'http://chespirito-dev.us-east-1.elasticbeanstalk.com/'];
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || whitelist.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('No permitido por CORS'));
-    }
-  },
-  credentials: true, // Permite incluir cookies y encabezados de autenticación en las solicitudes
+const optionCors = {
+  origin: '*',
 };
-app.use(cors(corsOptions));
+
+app.use(cors(optionCors));
 
 // Servir archivos estáticos de la aplicación frontend (Nuxt.js)
 const nuxtDistPath = path.join(__dirname, './frontend/dist');
