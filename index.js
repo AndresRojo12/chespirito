@@ -19,17 +19,13 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 //   origin: '*',
 // };
 
-const whitelist = ['http://localhost:3001', 'http://chespirito-dev.us-east-1.elasticbeanstalk.com/'];
 const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || whitelist.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('No permitido por CORS'));
-    }
-  },
-  credentials: true, // Permite incluir cookies y encabezados de autenticación en las solicitudes
+  origin: 'http://chespirito-dev.us-east-1.elasticbeanstalk.com/', // Cambia esto por tu dominio o usa '*' para permitir todos
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204, // Para navegadores antiguos
 };
+
 
 app.use(cors(corsOptions));
 
