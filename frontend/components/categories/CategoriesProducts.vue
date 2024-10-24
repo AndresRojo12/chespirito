@@ -38,6 +38,7 @@ const CONFIG = useRuntimeConfig();
 const route = useRoute();
 const router = useRouter();
 const { id } = route.params;
+
 const category = ref(null);
 const error = ref(null);
 

@@ -1,10 +1,6 @@
 const express = require('express');
-const sharp = require('sharp');
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 const passport = require('passport');
-
 
 const ProductService = require('../services/product.service');
 const validatorHandler = require('../middlewares/validator.handler');
@@ -12,7 +8,7 @@ const { checkAdmindRole } = require('../middlewares/auth.handler');
 const {
   getProductSchema,
   createProductSchema,
-  updateProductSchema
+  updateProductSchema,
 } = require('../schemas/product.schema');
 
 const router = express.Router();
@@ -23,27 +19,26 @@ const upload = multer({ storage });
 
 router.get('/', async (req, res, next) => {
   try {
-    const { page, pageSize } = req.query
-    const products= await service.find({ page, pageSize })
+    const { page, pageSize } = req.query;
+    const products = await service.find({ page, pageSize });
     res.json(products);
   } catch (error) {
     next(error);
   }
 });
 
-router.get('/search',
-  async (req, res, next) => {
-    try {
-      const query = req.query.query;
-      if(!query) {
-        return res.json([])
-      }
-      const products = await service.search(query);
-      res.json(products);
-    } catch (error) {
-      next(error);
+router.get('/search', async (req, res, next) => {
+  try {
+    const query = req.query.query;
+    if (!query) {
+      return res.json([]);
     }
-  });
+    const products = await service.search(query);
+    res.json(products);
+  } catch (error) {
+    next(error);
+  }
+});
 
 router.get(
   '/:id',
@@ -57,7 +52,6 @@ router.get(
     }
   },
 );
-
 
 router.post(
   '/',
@@ -93,19 +87,13 @@ router.patch(
   },
 );
 
-router.delete(
-  '/:id',
-  async (req, res, next) => {
-    try {
-      const { id } = req.params;
-      res.json(await service.delete(id));
-    } catch (error) {
-      next(error);
-    }
-  },
-);
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    res.json(await service.delete(id));
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;
-
-
-

@@ -3,53 +3,60 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 const { Op } = require('sequelize');
-const { config } = require('../config/config')
+const { config } = require('../config/config');
 const { models } = require('../libs/sequelize');
-const {
-  createCategorySchema,
-  updateCategorySchema,
-  getCategorySchema,
-  deleteCategorySchema,
-} = require('../schemas/category.schema');
+const { createCategorySchema } = require('../schemas/category.schema');
 
 class CategoryService {
   async create(data, file) {
-
-    const { error, value } = createCategorySchema.validate(data);
-    if(error) {
+    const { error } = createCategorySchema.validate(data);
+    if (error) {
       throw boom.badRequest(error.details[0].message);
     }
 
     const { name, description } = data;
-    const imagenOriginal = file.buffer;
 
-    const imagenOptimizada = await sharp(imagenOriginal).resize(800).toBuffer();
+    if (!file) {
+      throw boom.badRequest('La imagen requerida');
+    }
 
-    const imagePath = path.join(__dirname, '..', 'uploads', file.originalname);
-    fs.writeFileSync(imagePath, imagenOptimizada);
+    const OriginalImage = file.buffer;
+
+    const optimizedImage = await sharp(OriginalImage)
+      .resize(800)
+      .webp({ quality: 80 })
+      .toBuffer();
+
+    const imagePath = path.join(
+      __dirname,
+      '..',
+      'uploads',
+      `${path.parse(file.originalname).name}.webp`,
+    );
+
+    fs.writeFileSync(imagePath, optimizedImage);
 
     const categoryData = {
       name,
       description,
-      imagePath: `${config.imagesPath}${file.originalname}`,
+      imagePath: `${config.imagesPath}${path.parse(file.originalname).name}.webp`,
     };
 
     try {
-
       const category = await models.Category.create(categoryData);
 
       return category;
     } catch (error) {
-
-      if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
-        const messages = error.errors.map(e => e.message);
+      if (
+        error.name === 'SequelizeValidationError' ||
+        error.name === 'SequelizeUniqueConstraintError'
+      ) {
+        const messages = error.errors.map((e) => e.message);
         throw boom.badRequest(messages.join(', '));
       }
       throw error;
     }
-
   }
-
 
   async find({ page = 1, pageSize = 10, paginated = true } = {}) {
     if (!paginated) {
@@ -67,7 +74,7 @@ class CategoryService {
 
     const { count, rows } = await models.Category.findAndCountAll({
       where: {
-        deleted:false
+        deleted: false,
       },
       limit,
       offset,
@@ -86,15 +93,14 @@ class CategoryService {
     return categories;
   }
 
-
   async search(query) {
     const categories = await models.Category.findAll({
       where: {
         name: {
-          [Op.iLike]: `%${query}%`
+          [Op.iLike]: `%${query}%`,
         },
         deleted: false,
-      }
+      },
     });
     return categories;
   }
@@ -112,19 +118,35 @@ class CategoryService {
   async update(id, changes, file) {
     const category = await this.findOne(id);
 
-    if(file) {
-      if(category.imagePath) {
-        const oldImagePath = path.join(__dirname, '..', 'uploads', path.basename(category.imagePath));
+    if (file) {
+      if (category.imagePath) {
+        const oldImagePath = path.join(
+          __dirname,
+          '..',
+          'uploads',
+          path.basename(category.imagePath),
+        );
         if (fs.existsSync(oldImagePath)) {
           fs.unlinkSync(oldImagePath);
         }
       }
-      const imagenOriginal = file.buffer;
-      const imagenOptimizada = await sharp(imagenOriginal).resize(800).toBuffer();
-      const imagePath = path.join(__dirname, '..', 'uploads', file.originalname);
-      fs.writeFileSync(imagePath, imagenOptimizada);
+      const OriginalImage = file.buffer;
 
-      changes.imagePath = `${config.imagesPath}${file.originalname}`;
+      const optimizedImage = await sharp(OriginalImage)
+        .resize(800)
+        .webp({ quality: 80 })
+        .toBuffer();
+
+      const imagePath = path.join(
+        __dirname,
+        '..',
+        'uploads',
+        `${path.parse(file.originalname).name}.webp`,
+      );
+
+      fs.writeFileSync(imagePath, optimizedImage);
+
+      changes.imagePath = `${config.imagesPath}${path.parse(file.originalname).name}.webp`;
     }
     await category.update(changes);
     return category;
@@ -132,7 +154,7 @@ class CategoryService {
 
   async delete(id) {
     const category = await this.findOne(id);
-    if(!category) {
+    if (!category) {
       throw boom.notFound('Category not found');
     }
     await category.update({ deleted: true, deletedAt: new Date() });

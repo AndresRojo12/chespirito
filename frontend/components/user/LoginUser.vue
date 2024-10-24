@@ -40,9 +40,9 @@
 
       <v-text-field
         class="input"
+        type="password"
         v-model="password"
         :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-        :type="visible ? 'text' : 'password'"
         density="compact"
         placeholder="Ingrese su contraseña"
         prepend-inner-icon="mdi-lock-outline"
@@ -94,7 +94,7 @@ const login = async () => {
     });
     const data = await response.json();
     if (response.ok) {
-      auth.login(data.token, data.user);
+      auth.login(data.token);
       router.push("/user/gestion");
     } else {
       Swal.fire({
@@ -111,10 +111,6 @@ const login = async () => {
       text: "Hubo un problema al iniciar sesión. Inténtalo de nuevo.",
     });
   }
-};
-
-const togglePasswordVisibility = () => {
-  visible.value = !visible.value;
 };
 
 const changePassword = () => {

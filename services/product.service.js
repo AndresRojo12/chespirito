@@ -38,6 +38,7 @@ class ProductService {
       'uploads',
       `${path.parse(files.anverso[0].originalname).name}.webp`,
     );
+
     const image2FullPath = path.join(
       __dirname,
       '..',
@@ -135,19 +136,23 @@ class ProductService {
         }
       }
 
-      const anversoImageOriginal = files.anverso[0].buffer;
-      const anversoImageOptimizada = await sharp(anversoImageOriginal)
+      const image1Path = files.anverso[0].buffer;
+
+      const optimizedImage1 = await sharp(image1Path)
         .resize(800)
+        .webp({ quality: 80 })
         .toBuffer();
-      const anversoImagePath = path.join(
+
+      const image1FullPath = path.join(
         __dirname,
         '..',
         'uploads',
-        files.anverso[0].originalname,
+        `${path.parse(files.anverso[0].originalname).name}.webp`,
       );
-      fs.writeFileSync(anversoImagePath, anversoImageOptimizada);
 
-      changes.imagePath1 = `${config.imagesPath}${files.anverso[0].originalname}`;
+      fs.writeFileSync(image1FullPath, optimizedImage1);
+
+      changes.imagePath1 = `${config.imagesPath}${path.parse(files.anverso[0].originalname).name}.webp`;
     }
 
     if (files && files.reverso) {
@@ -163,19 +168,23 @@ class ProductService {
         }
       }
 
-      const reversoImageOriginal = files.reverso[0].buffer;
-      const reversoImageOptimizada = await sharp(reversoImageOriginal)
+      const image2Path = files.reverso[0].buffer;
+
+      const optimizedImage2 = await sharp(image2Path)
         .resize(800)
+        .webp({ quality: 80 })
         .toBuffer();
-      const reversoImagePath = path.join(
+
+      const image2FullPath = path.join(
         __dirname,
         '..',
         'uploads',
-        files.reverso[0].originalname,
+        `${path.parse(files.reverso[0].originalname).name}.webp`,
       );
-      fs.writeFileSync(reversoImagePath, reversoImageOptimizada);
 
-      changes.imagePath2 = `${config.imagesPath}${files.reverso[0].originalname}`;
+      fs.writeFileSync(image2FullPath, optimizedImage2);
+
+      changes.imagePath2 = `${config.imagesPath}${path.parse(files.reverso[0].originalname).name}.webp`;
     }
 
     await product.update(changes);

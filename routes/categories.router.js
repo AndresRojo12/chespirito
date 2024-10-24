@@ -1,8 +1,5 @@
 const express = require('express');
-const sharp = require('sharp');
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 const passport = require('passport');
 
 

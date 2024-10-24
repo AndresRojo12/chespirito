@@ -37,6 +37,16 @@ class User {
     await user.save();
     return { message: 'Password updated successfully' };
   }
+
+  async getProfile(userId) {
+    const user = await models.User.findByPk(userId, {
+      attributes: ['id', 'email', 'role'],
+    });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return user;
+  }
 }
 
 module.exports = User;

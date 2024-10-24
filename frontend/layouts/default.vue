@@ -26,7 +26,7 @@
           <v-list>
             <v-list-item
               class="buttons"
-              :title="`${userStore.user ? userStore.user.role : 'Usuario'}`"
+              :title="`${user ? user.role : 'Usuario'}`"
               prepend-icon="mdi-account-circle"
             ></v-list-item>
           </v-list>
@@ -100,7 +100,9 @@ import Swal from "sweetalert2";
 
 import LoadingSpinner from "~/components/LoadingSpinner.vue";
 
+const CONFIG = useRuntimeConfig();
 const userStore = useAuth();
+const user = ref(null);
 const router = useRouter();
 const route = useRoute();
 const { mdAndUp } = useDisplay();
@@ -113,6 +115,25 @@ const drawerWidth = computed(() => (isRail.value ? 55 : 155));
 onMounted(() => {
   userStore.loadUserFromStorage();
   drawer.value = isLargeScreen.value && userStore.isAuthenticated;
+});
+
+const fetchUserData = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${CONFIG.public.API_BASE_URL}auth/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+    user.value = data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+onMounted(async () => {
+  await fetchUserData();
 });
 
 const handleMouseEnter = () => {
