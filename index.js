@@ -7,7 +7,7 @@ const { logError, errorHandler, boomErrorHandler, ormErrorHandler } = require('.
 const routerApi = require('./routes');
 
 require('./utils/auth');
-dotenv.config();
+console.log(process.env);
 const app = express();
 
 const port = process.env.PORT || 3000;
@@ -21,6 +21,7 @@ const optionCors = {
 
 app.use(cors(optionCors));
 
+routerApi(app);
 // Servir archivos estáticos de la aplicación frontend (Nuxt.js)
 const nuxtDistPath = path.join(__dirname, './frontend/dist');
 app.use(express.static(nuxtDistPath));
@@ -35,7 +36,6 @@ app.get('/',(req, res) => {
     res.send('Hola servidor');
 })
 
-routerApi(app);
 
 app.use(logError);
 app.use(ormErrorHandler);
