@@ -5,8 +5,6 @@ const productsRouter = require('./product.router');
 const salesRouter = require('./sales.router');
 const inventoryRouter = require('./inventory.router');
 
-
-
 const routerApi = (app) => {
   const router = express.Router();
   app.use('/api/v1', router);

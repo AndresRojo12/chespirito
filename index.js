@@ -1,13 +1,17 @@
 const express = require('express');
-const dotenv = require('dotenv');
-const path = require('path')
+const path = require('path');
 const cors = require('cors');
-const { logError, errorHandler, boomErrorHandler, ormErrorHandler } = require('./middlewares/errorHandler');
+const {
+  logError,
+  errorHandler,
+  boomErrorHandler,
+  ormErrorHandler,
+} = require('./middlewares/errorHandler');
 
 const routerApi = require('./routes');
 
 require('./utils/auth');
-console.log(process.env);
+
 const app = express();
 
 const port = process.env.PORT || 3000;
@@ -31,17 +35,15 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(nuxtDistPath, 'index.html'));
 });
 
-
-app.get('/',(req, res) => {
-    res.send('Hola servidor');
-})
-
+app.get('/', (req, res) => {
+  res.send('Hola servidor');
+});
 
 app.use(logError);
 app.use(ormErrorHandler);
 app.use(boomErrorHandler);
 app.use(errorHandler);
 
-app.listen(port , () => {
-    console.log(`La app se escucha por el puerto ${port}`);
-})
+app.listen(port, () => {
+  console.log(`La app se escucha por el puerto ${port}`);
+});
