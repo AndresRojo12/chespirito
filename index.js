@@ -13,7 +13,7 @@ const routerApi = require('./routes');
 require('./utils/auth');
 const app = express();
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
