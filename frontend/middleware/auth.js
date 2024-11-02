@@ -1,11 +1,11 @@
 import { useAuth } from '@/store/auth';
 
-export default defineNuxtRouteMiddleware(async () => {
+export default defineNuxtRouteMiddleware(() => {
   const authStore = useAuth();
 
   if (!authStore.isAuthenticated) {
-    setTimeout(() => {
+    if (process.client) {
       return navigateTo('/auth-required');
-    }, 1000);
+    }
   }
 });
