@@ -7,7 +7,6 @@ const { logError, errorHandler, boomErrorHandler, ormErrorHandler } = require('.
 const routerApi = require('./routes');
 
 require('./utils/auth');
-console.log(process.env);
 const app = express();
 
 const port = process.env.PORT || 3000;
