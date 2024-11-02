@@ -19,8 +19,9 @@ app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const optionCors = {
-  origin: '*',
+  origin: 'https://gestion.antiguedadeschespirito.com',
 };
+
 
 app.use(cors(optionCors));
 
