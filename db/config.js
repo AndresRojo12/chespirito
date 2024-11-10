@@ -15,10 +15,10 @@ module.exports = {
     url: URI,
     dialect: 'postgres',
     dialectOptions: {
-      ssl: {
+      ssl: config.DB_SSL == 'true' ?{
         require: true,
-        rejectUnauthorized: false,
-      },
+        rejectUnauthorized: false
+      }: undefined,
     },
   },
 };
