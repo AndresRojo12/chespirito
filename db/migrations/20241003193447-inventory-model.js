@@ -10,6 +10,6 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    await queryInterface.drop(INVENTORY_TABLE);
+    await queryInterface.dropTable(INVENTORY_TABLE);
   },
 };
