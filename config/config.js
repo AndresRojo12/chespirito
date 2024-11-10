@@ -12,7 +12,7 @@ const config = {
   emailAdmin: process.env.EMAIL_ADMIN,
   passwordAdmin: process.env.PASSWORD_ADMIN,
   imagesPath: process.env.IMAGESPATH,
-  databaseUrl: process.env.DATABASE_URL
+  //databaseUrl: process.env.DATABASE_URL
 };
 
 module.exports = { config };
