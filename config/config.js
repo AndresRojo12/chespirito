@@ -12,6 +12,7 @@ const config = {
   emailAdmin: process.env.EMAIL_ADMIN,
   passwordAdmin: process.env.PASSWORD_ADMIN,
   imagesPath: process.env.IMAGESPATH,
+  DB_SSL: process.env.DB_SSL || 'false',
   //databaseUrl: process.env.DATABASE_URL
 };
 
