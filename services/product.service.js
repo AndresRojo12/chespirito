@@ -3,11 +3,34 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 const { Op } = require('sequelize');
+const AWS = require('aws-sdk');
 const { config } = require('../config/config');
 const { models } = require('../libs/sequelize');
 const { createProductSchema } = require('../schemas/product.schema');
 
 class ProductService {
+  constructor() {
+    if (config.imagesPath === 's3') {
+      this.s3 = new AWS.S3({
+        accessKeyId: config.s3AccessKeyId,
+        secretAccessKey: config.s3SecretAccessKey,
+        region: config.s3Region,
+      });
+    }
+  }
+
+  async uploadToS3(buffer, filename) {
+    const params = {
+      Bucket: config.s3Bucket,
+      Key: `products/${filename}`,
+      Body: buffer,
+      ContentType: 'image/webp',
+      ACL: 'public-read', // Permitir acceso público
+    };
+
+    return this.s3.upload(params).promise();
+  }
+
   async create(data, files) {
     const { error } = createProductSchema.validate(data);
     if (error) {
@@ -32,22 +55,26 @@ class ProductService {
       .webp({ quality: 80 })
       .toBuffer();
 
-    const image1FullPath = path.join(
-      __dirname,
-      '..',
-      'uploads',
-      `${path.parse(files.anverso[0].originalname).name}.webp`,
-    );
+    let image1PathToSave, image2PathToSave;
 
-    const image2FullPath = path.join(
-      __dirname,
-      '..',
-      'uploads',
-      `${path.parse(files.reverso[0].originalname).name}.webp`,
-    );
+    if (config.imagesPath === 's3') {
+      // Subir imágenes a S3 en producción
+      const uploadResult1 = await this.uploadToS3(optimizedImage1, `${path.parse(files.anverso[0].originalname).name}.webp`);
+      const uploadResult2 = await this.uploadToS3(optimizedImage2, `${path.parse(files.reverso[0].originalname).name}.webp`);
 
-    fs.writeFileSync(image1FullPath, optimizedImage1);
-    fs.writeFileSync(image2FullPath, optimizedImage2);
+      image1PathToSave = uploadResult1.Location;
+      image2PathToSave = uploadResult2.Location;
+    } else {
+      // Guardar imágenes localmente
+      const image1FullPath = path.join(__dirname, '..', 'uploads', `${path.parse(files.anverso[0].originalname).name}.webp`);
+      const image2FullPath = path.join(__dirname, '..', 'uploads', `${path.parse(files.reverso[0].originalname).name}.webp`);
+
+      fs.writeFileSync(image1FullPath, optimizedImage1);
+      fs.writeFileSync(image2FullPath, optimizedImage2);
+
+      image1PathToSave = `${config.imagesPath}${path.parse(files.anverso[0].originalname).name}.webp`;
+      image2PathToSave = `${config.imagesPath}${path.parse(files.reverso[0].originalname).name}.webp`;
+    }
 
     const productData = {
       categoryId,
@@ -55,8 +82,8 @@ class ProductService {
       status,
       description,
       price,
-      imagePath1: `${config.imagesPath}${path.parse(files.anverso[0].originalname).name}.webp`,
-      imagePath2: `${config.imagesPath}${path.parse(files.reverso[0].originalname).name}.webp`,
+      imagePath1: image1PathToSave,
+      imagePath2: image2PathToSave,
     };
 
     try {
@@ -74,66 +101,18 @@ class ProductService {
     }
   }
 
-  async find({ page = 1, pageSize = 10 } = {}) {
-    const limit = parseInt(pageSize) || 10;
-    const offset = ((parseInt(page) || 1) - 1) * limit;
-
-    const { count, rows } = await models.Product.findAndCountAll({
-      where: {
-        deleted: false,
-      },
-      include: ['category'],
-      limit,
-      offset,
-    });
-
-    return {
-      totalItems: count,
-      totalPages: Math.ceil(count / limit),
-      currentPage: parseInt(page) || 1,
-      data: rows,
-    };
-  }
-
-  async findAll() {
-    const products = await models.Product.findAll();
-    return products;
-  }
-
-  async search(query) {
-    const products = await models.Product.findAll({
-      where: {
-        name: {
-          [Op.iLike]: `%${query}%`,
-        },
-        deleted: false,
-      },
-    });
-    return products;
-  }
-
-  async findOne(id) {
-    const products = await models.Product.findByPk(id, {});
-    if (!products) {
-      throw boom.notFound('Product not found');
-    }
-    return products;
-  }
-
   async update(id, changes, files) {
     const product = await this.findOne(id);
 
     if (files && files.anverso) {
-      if (product.imagePath1) {
-        const oldImageAnversoPath = path.join(
-          __dirname,
-          '..',
-          'uploads',
-          path.basename(product.imagePath1),
-        );
-        if (fs.existsSync(oldImageAnversoPath)) {
-          fs.unlinkSync(oldImageAnversoPath);
-        }
+      if (product.imagePath1 && config.imagesPath === 's3') {
+        // Eliminar imagen de S3 si existe
+        const s3Key = product.imagePath1.split(config.s3BucketUrl)[1];
+        const deleteParams = {
+          Bucket: config.s3Bucket,
+          Key: s3Key,
+        };
+        await this.s3.deleteObject(deleteParams).promise();
       }
 
       const image1Path = files.anverso[0].buffer;
@@ -143,29 +122,24 @@ class ProductService {
         .webp({ quality: 80 })
         .toBuffer();
 
-      const image1FullPath = path.join(
-        __dirname,
-        '..',
-        'uploads',
-        `${path.parse(files.anverso[0].originalname).name}.webp`,
-      );
-
-      fs.writeFileSync(image1FullPath, optimizedImage1);
-
-      changes.imagePath1 = `${config.imagesPath}${path.parse(files.anverso[0].originalname).name}.webp`;
+      if (config.imagesPath === 's3') {
+        const uploadResult1 = await this.uploadToS3(optimizedImage1, `${path.parse(files.anverso[0].originalname).name}.webp`);
+        changes.imagePath1 = uploadResult1.Location;
+      } else {
+        const image1FullPath = path.join(__dirname, '..', 'uploads', `${path.parse(files.anverso[0].originalname).name}.webp`);
+        fs.writeFileSync(image1FullPath, optimizedImage1);
+        changes.imagePath1 = `${config.imagesPath}${path.parse(files.anverso[0].originalname).name}.webp`;
+      }
     }
 
     if (files && files.reverso) {
-      if (product.imagePath2) {
-        const oldImageReversoPath = path.join(
-          __dirname,
-          '..',
-          'uploads',
-          path.basename(product.imagePath2),
-        );
-        if (fs.existsSync(oldImageReversoPath)) {
-          fs.unlinkSync(oldImageReversoPath);
-        }
+      if (product.imagePath2 && config.imagesPath === 's3') {
+        const s3Key = product.imagePath2.split(config.s3BucketUrl)[1];
+        const deleteParams = {
+          Bucket: config.s3Bucket,
+          Key: s3Key,
+        };
+        await this.s3.deleteObject(deleteParams).promise();
       }
 
       const image2Path = files.reverso[0].buffer;
@@ -175,16 +149,14 @@ class ProductService {
         .webp({ quality: 80 })
         .toBuffer();
 
-      const image2FullPath = path.join(
-        __dirname,
-        '..',
-        'uploads',
-        `${path.parse(files.reverso[0].originalname).name}.webp`,
-      );
-
-      fs.writeFileSync(image2FullPath, optimizedImage2);
-
-      changes.imagePath2 = `${config.imagesPath}${path.parse(files.reverso[0].originalname).name}.webp`;
+      if (config.imagesPath === 's3') {
+        const uploadResult2 = await this.uploadToS3(optimizedImage2, `${path.parse(files.reverso[0].originalname).name}.webp`);
+        changes.imagePath2 = uploadResult2.Location;
+      } else {
+        const image2FullPath = path.join(__dirname, '..', 'uploads', `${path.parse(files.reverso[0].originalname).name}.webp`);
+        fs.writeFileSync(image2FullPath, optimizedImage2);
+        changes.imagePath2 = `${config.imagesPath}${path.parse(files.reverso[0].originalname).name}.webp`;
+      }
     }
 
     await product.update(changes);
