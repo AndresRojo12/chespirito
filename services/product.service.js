@@ -101,6 +101,52 @@ class ProductService {
     }
   }
 
+  async find({ page = 1, pageSize = 10 } = {}) {
+    const limit = parseInt(pageSize) || 10;
+    const offset = ((parseInt(page) || 1) - 1) * limit;
+
+    const { count, rows } = await models.Product.findAndCountAll({
+      where: {
+        deleted: false,
+      },
+      include: ['category'],
+      limit,
+      offset,
+    });
+
+    return {
+      totalItems: count,
+      totalPages: Math.ceil(count / limit),
+      currentPage: parseInt(page) || 1,
+      data: rows,
+    };
+  }
+
+  async findAll() {
+    const products = await models.Product.findAll();
+    return products;
+  }
+
+  async search(query) {
+    const products = await models.Product.findAll({
+      where: {
+        name: {
+          [Op.iLike]: `%${query}%`,
+        },
+        deleted: false,
+      },
+    });
+    return products;
+  }
+
+  async findOne(id) {
+    const products = await models.Product.findByPk(id, {});
+    if (!products) {
+      throw boom.notFound('Product not found');
+    }
+    return products;
+  }
+
   async update(id, changes, files) {
     const product = await this.findOne(id);
 
