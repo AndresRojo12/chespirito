@@ -37,7 +37,7 @@ class ProductService {
   async uploadImageToS3(optimizedImage, originalName, mimetype) {
     const params = {
       Bucket: BUCKET_NAME,
-      Key: `images/${path.parse(originalName).name}.webp`,
+      Key: `products/${path.parse(originalName).name}.webp`,
       Body: optimizedImage,
       ContentType: mimetype,
       ACL: 'public-read',
