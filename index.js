@@ -15,18 +15,13 @@ const app = express();
 
 const port = process.env.PORT || 3000;
 
-const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? [process.env.FRONTEND_URL]  // En producción, solo permite el origen del frontend
-  : ['*'];  // En desarrollo, permite todos los orígenes
-
-const optionCors = {
-  origin: allowedOrigins,
-  credentials: true, // Si necesitas enviar cookies o encabezados de autorización
-};
 
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+const optionCors = {
+  origin: '*',
+};
 
 app.use(cors(optionCors));
 
