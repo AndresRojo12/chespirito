@@ -46,6 +46,9 @@ const fetchCategory = async () => {
   try {
     const { data } = await useFetch(
       `${CONFIG.public.API_BASE_URL}/categories/${id}`,
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      }
     );
 
     category.value = data.value;
