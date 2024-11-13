@@ -11,8 +11,75 @@
       @change="getSales"
     ></v-select>
   </div>
-  <div>
-    <v-table style="width: 100%">
+  <v-container>
+    <v-responsive v-if="!isMdAndUp">
+      <v-table style="width: 100%">
+        <thead>
+          <th class="text-left">
+            <v-text-field
+              v-model="filters.categoryName"
+              label="Categoría"
+              clearable
+              @input="updatePage(1)"
+              @click:clear="clearFilter('categoryName')"
+            ></v-text-field>
+            <tr v-for="sal in combinedData" :key="sal.id">
+              <v-list-item>{{ sal.categoryName }}</v-list-item>
+            </tr>
+          </th>
+          <th class="text-left">
+            <v-text-field
+              v-model="filters.productName"
+              label="Producto"
+              clearable
+              @input="updatePage(1)"
+              @click:clear="clearFilter('productName')"
+            ></v-text-field>
+            <tr v-for="sal in combinedData" :key="sal.id">
+              <v-list-item>{{ sal.productName }}</v-list-item>
+            </tr>
+          </th>
+          <th class="text-left">
+            <v-text-field
+              v-model="filters.quantitySold"
+              label="Cantidad"
+              clearable
+              @input="updatePage(1)"
+              @click:clear="clearFilter('quantitySold')"
+            ></v-text-field>
+            <tr v-for="sal in combinedData" :key="sal.id">
+              <v-list-item>{{ sal.quantitySold }}</v-list-item>
+            </tr>
+          </th>
+          <th class="text-left">
+            <v-text-field
+              v-model="filters.salePrice"
+              label="Total"
+              clearable
+              @input="updatePage(1)"
+              @click:clear="clearFilter('salePrice')"
+            ></v-text-field>
+            <tr v-for="sal in combinedData" :key="sal.id">
+              <v-list-item>{{ sal.salePrice }}</v-list-item>
+            </tr>
+          </th>
+          <th class="text-left">
+            <v-text-field
+              v-model="filters.created_at"
+              label="Fecha"
+              clearable
+              @input="updatePage(1)"
+              @click:clear="clearFilter('created_at')"
+            ></v-text-field>
+            <tr v-for="sal in combinedData" :key="sal.id">
+              <v-list-item>{{ sal.createdAt }}</v-list-item>
+            </tr>
+          </th>
+        </thead>
+      </v-table>
+    </v-responsive>
+
+    <v-table v-if="isMdAndUp">
       <thead>
         <tr>
           <th class="text-left">
@@ -78,12 +145,13 @@
         </tr>
       </tbody>
     </v-table>
+
     <div v-if="noRecordsFound" style="text-align: center">
-      <v-alert color="#009c8c" type="warning"
-        >No se encontraron registros.</v-alert
-      >
+      <v-alert color="#009c8c" type="warning">
+        No se encontraron registros.
+      </v-alert>
     </div>
-  </div>
+  </v-container>
   <div class="text-center">
     <v-container>
       <v-row justify="center">
@@ -104,10 +172,13 @@
 
 <script setup>
 import { onMounted, watch, nextTick } from "vue";
+import { useDisplay } from "vuetify";
 import moment from "moment-timezone";
 
 const CONFIG = useRuntimeConfig();
 const router = useRouter();
+const { mdAndUp } = useDisplay();
+const isMdAndUp = mdAndUp;
 
 const page = ref(1);
 const pageSize = ref(10);
@@ -241,6 +312,20 @@ const salesRegister = () => {
 }
 .page-select {
   max-width: 300px;
+}
+
+@media (max-width: 600px) {
+  .v-table th,
+  .v-table td {
+    display: block;
+    width: 100%;
+  }
+  .v-table td {
+    padding: 8px 0;
+  }
+  .v-text-field {
+    width: 100%;
+  }
 }
 
 @media (max-width: 540px) {
