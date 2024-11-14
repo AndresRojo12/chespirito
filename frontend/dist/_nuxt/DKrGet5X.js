@@ -1,1 +1,0 @@
-import{_ as n,o as s,c as o,a}from"./Bi-YAAcS.js";const r={},c={class:"loading-spinner"};function t(i,e){return s(),o("div",c,e[0]||(e[0]=[a("div",{class:"spinner"},null,-1)]))}const d=n(r,[["render",t],["__scopeId","data-v-1fba8025"]]);export{d as L};
