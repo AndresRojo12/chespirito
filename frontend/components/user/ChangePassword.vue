@@ -7,7 +7,7 @@
       max-width="390"
       rounded="lg"
     >
-
+    
       <div class="text-subtitle-1 text-medium-emphasis color-#009c8c">
         <p class="form-text">Contraseña Actual</p>
       </div>
@@ -66,7 +66,7 @@ const visible = ref(false);
 const changePassword = async () => {
   try {
     const response = await fetch(
-      `${CONFIG.public.API_BASE_URL}change-password`,
+      `${CONFIG.public.API_BASE_URL}auth/change-password`,
       {
         method: "POST",
         headers: {

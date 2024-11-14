@@ -17,15 +17,15 @@ router.post(
   },
 );
 
-router.post('/change-password',passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+router.post('/change-password', async (req, res, next) => {
   try {
     const { currentPassword, newPassword } = req.body;
     if (!currentPassword || !newPassword) {
       return res
         .status(400)
-        .json({ message: 'La contraseña actual y la nueva son necesarias' });
+        .json({ message: 'Las contraseñas no pueden estar vacías' });
     }
-    const response = await service.changeDefaultPassword(req.user.id, currentPassword, newPassword);
+    const response = await service.changeDefaultPassword(currentPassword, newPassword);
     res.json(response);
   } catch (error) {
     next(error);
