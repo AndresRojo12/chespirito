@@ -66,7 +66,7 @@ const visible = ref(false);
 const changePassword = async () => {
   try {
     const response = await fetch(
-      `${CONFIG.public.API_BASE_URL}auth/change-password`,
+      `${CONFIG.public.API_BASE_URL}change-password`,
       {
         method: "POST",
         headers: {
