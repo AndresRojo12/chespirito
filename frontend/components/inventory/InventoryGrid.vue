@@ -14,6 +14,9 @@
   </div>
 
   <v-table v-if="!isMdAndUp">
+    <v-container v-if="isLoading">
+      <LoadingSpinner />
+    </v-container>
     <v-text-field
       v-model="filters.productName"
       label="Producto vendido"
@@ -177,6 +180,9 @@
       </tr>
     </thead>
     <tbody>
+      <v-container v-if="isLoading">
+        <LoadingSpinner />
+      </v-container>
       <tr v-for="inve in combinedData" :key="inve.id">
         <td>{{ inve.productName }}</td>
         <td>{{ inve.status }}</td>
@@ -248,9 +254,6 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-  <v-container v-if="isLoading">
-    <LoadingSpinner />
-  </v-container>
 </template>
 
 <script setup>
@@ -259,6 +262,7 @@ import moment from "moment-timezone";
 import { useDisplay } from "vuetify";
 
 import InventoryUpdate from "./InventoryUpdate.vue";
+import LoadingSpinner from "../LoadingSpinner.vue";
 
 const CONFIG = useRuntimeConfig();
 const router = useRouter();
@@ -310,22 +314,21 @@ const getInventories = async () => {
     if (combinedData.value.length === 0) {
       noRecordsFound.value = true;
     }
-    isLoading.value = false;
   } catch (error) {
     console.log(error);
     noRecordsFound.value = true;
+  } finally {
+    isLoading.value = false;
   }
 };
 
 const getSales = async () => {
-  isLoading.value = true;
   try {
     const { data } = await useFetch(`${CONFIG.public.API_BASE_URL}sales`, {
       method: "GET",
     });
     sales.value = data.value.data;
     combineData();
-    isLoading.value = false;
   } catch (error) {
     console.log(error);
   }

@@ -24,7 +24,13 @@
       @change="getCategories"
     ></v-select>
 
-    <div class="category-container">
+    <div v-if="!isLoading && noRecordsFound" style="text-align: center">
+      <v-alert color="#009c8c" type="warning">
+        No se encontraron registros.
+      </v-alert>
+    </div>
+
+    <div v-else class="category-container">
       <div
         class="category-item"
         v-for="cate in filteredCategories.data || []"
@@ -114,12 +120,14 @@
       </v-dialog>
     </div>
   </div>
+
   <v-container v-if="isLoading">
     <LoadingSpinner />
   </v-container>
 </template>
 
 <script setup>
+import debounce from "lodash/debounce";
 import { ref, onMounted, watch, nextTick } from "vue";
 
 import CategoriesProductUpdate from "../categories/CategoriesProductUpdate.vue";
@@ -129,6 +137,8 @@ import LoadingSpinner from "../LoadingSpinner.vue";
 const CONFIG = useRuntimeConfig();
 const router = useRouter();
 const isLoading = ref(false);
+const search = ref("");
+const noRecordsFound = ref(false);
 
 const page = ref(1);
 const pageSize = ref(10);
@@ -138,7 +148,6 @@ const editingCategory = ref(null);
 const categoryToDelete = ref(null);
 const categories = ref([]);
 const filteredCategories = ref({ data: [], totalPages: 1 });
-const search = ref("");
 
 const getCategories = async () => {
   isLoading.value = true;
@@ -146,17 +155,17 @@ const getCategories = async () => {
     const { data } = await useFetch(
       `${CONFIG.public.API_BASE_URL}categories?page=${page.value}&pageSize=${pageSize.value}`,
     );
-
     if (data.value) {
       categories.value = data.value.data;
       filteredCategories.value = data.value;
     } else {
       throw new Error("No se recibieron datos válidos");
     }
-    isLoading.value = false;
   } catch (error) {
     console.error("Error fetching categories:", error);
     filteredCategories.value = { data: [], totalPages: 1 };
+  } finally {
+    isLoading.value = false;
   }
 };
 
@@ -169,13 +178,15 @@ onMounted(async () => {
   await getCategories();
 });
 
-watch(search, async (newSearch) => {
+const debouncedFetchCategories = debounce(async (newSearch) => {
   await getCategories();
+
   if (!newSearch.trim()) {
     filteredCategories.value = {
       data: categories.value,
       totalPages: filteredCategories.value.totalPages,
     };
+    noRecordsFound.value = categories.value.length === 0;
     return;
   }
 
@@ -185,10 +196,16 @@ watch(search, async (newSearch) => {
     );
     const data = await response.json();
     filteredCategories.value = { data, totalPages: 1 };
+    noRecordsFound.value = data.length === 0;
   } catch (error) {
     console.error("Error fetching filtered categories:", error);
     filteredCategories.value = { data: [], totalPages: 1 };
+    noRecordsFound.value = true;
   }
+}, 500);
+
+watch(search, (newSearch) => {
+  debouncedFetchCategories(newSearch);
 });
 
 watch(page, async () => {

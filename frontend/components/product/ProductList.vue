@@ -14,6 +14,7 @@
       hide-details
     ></v-text-field>
   </div>
+
   <v-select
     v-model="pageSize"
     class="page-select"
@@ -21,7 +22,14 @@
     label="Seleccionar productos por página"
     @change="getProducts"
   ></v-select>
-  <div class="product-container">
+
+  <div v-if="!isLoading && noRecordsFound" style="text-align: center">
+    <v-alert color="#009c8c" type="warning">
+      No se encontraron registros.
+    </v-alert>
+  </div>
+
+  <div v-else class="product-container">
     <div
       class="product-item"
       v-for="pro in filteredProducts.data || []"
@@ -111,6 +119,7 @@
 </template>
 
 <script setup>
+import debounce from "lodash/debounce";
 import { ref, watch, onMounted, nextTick } from "vue";
 
 import ProductUpdate from "./ProductUpdate.vue";
@@ -129,6 +138,7 @@ const productToDelete = ref(null);
 const products = ref([]);
 const filteredProducts = ref({ data: [], totalPages: 1 });
 const search = ref("");
+const noRecordsFound = ref(false);
 
 const getProducts = async () => {
   isLoading.value = true;
@@ -144,9 +154,10 @@ const getProducts = async () => {
       data: data.value.data,
       totalPages: data.value.totalPages,
     };
-    isLoading.value = false;
   } catch (error) {
     filteredProducts.value = { data: [], totalPages: 1 };
+  } finally {
+    isLoading.value = false;
   }
 };
 
@@ -159,12 +170,15 @@ const getImageUrl = (imagePath) => {
   return imagePath;
 };
 
-watch(search, async (newSearch) => {
+const debouncedFetchProducts = debounce(async (newSearch) => {
+  await getProducts();
+
   if (!newSearch.trim()) {
     filteredProducts.value = {
       data: products.value,
       totalPages: filteredProducts.value.totalPages,
     };
+    noRecordsFound.value = categories.value.length === 0;
     return;
   }
 
@@ -174,10 +188,16 @@ watch(search, async (newSearch) => {
     );
     const data = await response.json();
     filteredProducts.value = { data, totalPages: 1 };
+    noRecordsFound.value = data.length === 0;
   } catch (error) {
     console.error("Error fetching filtered products:", error);
     filteredProducts.value = { data: [], totalPages: 1 };
+    noRecordsFound.value = true;
   }
+}, 500);
+
+watch(search, (newSearch) => {
+  debouncedFetchProducts(newSearch);
 });
 
 watch(page, async () => {

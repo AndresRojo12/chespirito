@@ -6,17 +6,19 @@ const { createSaleSchema } = require('../schemas/sales.schema');
 class SalesServices {
   async create(data) {
     const { error, value } = createSaleSchema.validate(data);
-    if(error){
+    if (error) {
       throw boom.badRequest(error.details[0].message);
     }
 
     try {
       const newSale = await models.Sales.create(data);
       return newSale;
-
     } catch (error) {
-      if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
-        const messages = error.errors.map(e => e.message);
+      if (
+        error.name === 'SequelizeValidationError' ||
+        error.name === 'SequelizeUniqueConstraintError'
+      ) {
+        const messages = error.errors.map((e) => e.message);
         throw boom.badRequest(messages.join(', '));
       }
       throw error;
@@ -50,11 +52,23 @@ class SalesServices {
     }
 
     if (filters.quantitySold) {
-      where.quantitySold = { [Op.iLike]: `%${filters.quantitySold}%` };
+      const quantity = parseInt(filters.quantitySold, 10);
+      if (!isNaN(quantity)) {
+        where.quantitySold = {
+          [Op.gte]: quantity - 10,
+          [Op.lte]: quantity + 10,
+        };
+      }
     }
-    
+
     if (filters.salePrice) {
-      where.salePrice = { [Op.iLike]: `%${filters.salePrice}%` };
+      const price = parseInt(filters.salePrice, 10);
+      if (!isNaN(price)) {
+        where.salePrice = {
+          [Op.gte]: price - 10,
+          [Op.lte]: price + 10,
+        };
+      }
     }
 
     if (filters.createdAt) {

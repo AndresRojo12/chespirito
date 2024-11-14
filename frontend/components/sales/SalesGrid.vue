@@ -13,6 +13,9 @@
   </div>
 
   <v-table v-if="!isMdAndUp">
+    <v-container v-if="isLoading">
+      <LoadingSpinner />
+    </v-container>
     <thead>
       <v-text-field
         v-model="filters.categoryName"
@@ -122,6 +125,9 @@
       </tr>
     </thead>
     <tbody>
+      <v-container v-if="isLoading">
+        <LoadingSpinner />
+      </v-container>
       <tr v-for="sal in combinedData" :key="sal.id">
         <td>{{ sal.categoryName }}</td>
         <td>{{ sal.productName }}</td>
@@ -156,19 +162,19 @@
               class="my-4"
             ></v-pagination>
           </v-container>
+          <P></P>
         </v-col>
       </v-row>
     </v-container>
   </div>
-  <v-container v-if="isLoading">
-    <LoadingSpinner />
-  </v-container>
 </template>
 
 <script setup>
 import { onMounted, watch, nextTick } from "vue";
 import { useDisplay } from "vuetify";
 import moment from "moment-timezone";
+
+import LoadingSpinner from "../LoadingSpinner.vue";
 
 const CONFIG = useRuntimeConfig();
 const router = useRouter();
@@ -213,40 +219,36 @@ const getSales = async () => {
       combinedData.value = [];
       return;
     }
-
     sales.value = data.value.data;
     totalPages.value = data.value.totalPages;
     combineData();
-    isLoading.value = true;
   } catch (error) {
     console.log(error);
     noRecordsFound.value = true;
+  } finally {
+    isLoading.value = false;
   }
 };
 
 const getCategories = async () => {
-  isLoading.value = true;
   try {
     const { data } = await useFetch(`${CONFIG.public.API_BASE_URL}categories`, {
       method: "GET",
     });
     categories.value = data.value.data;
     combineData();
-    isLoading.value = false;
   } catch (error) {
     console.log(error);
   }
 };
 
 const getProducts = async () => {
-  isLoading.value = true;
   try {
     const { data } = await useFetch(`${CONFIG.public.API_BASE_URL}products`, {
       method: "GET",
     });
     products.value = data.value.data;
     combineData();
-    isLoading.value = false;
   } catch (error) {
     console.log(error);
   }
