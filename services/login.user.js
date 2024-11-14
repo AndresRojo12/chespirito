@@ -27,15 +27,24 @@ class User {
     };
   }
 
-  async changeDefaultPassword(newPassword) {
-    const hash = await bcrypt.hash(newPassword, 10);
-    const user = await models.User.findOne({ where: { role: 'Admin' } });
+  async changeDefaultPassword(userId, currentPassword, newPassword) {
+    const user = await models.User.findByPk(userId);
     if (!user) {
-      throw new Error('Admin user not found');
+      throw new Error('Usuario no encontrado');
     }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      throw new Error('La contraseña actual es incorrecta');
+    }
+
+    if (newPassword.length < 8) {
+      throw new Error('La nueva contraseña debe tener al menos 8 caracteres');
+    }
+    const hash = await bcrypt.hash(newPassword, 10);
     user.password = hash;
     await user.save();
-    return { message: 'Password updated successfully' };
+    return { message: 'Contraseña actualizada exitosamente' };
   }
 
   async getProfile(userId) {
