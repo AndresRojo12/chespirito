@@ -13,150 +13,18 @@
     </v-select>
   </div>
 
-  <container>
-    <v-response v-if="!isMdAndUp"
-      ><v-table style="width: 100%">
-        <thead>
-          <th class="text-left">
-            <v-text-field
-              v-model="filters.productName"
-              label="Producto vendido"
-              clearable
-              @input="updatePage(1)"
-              @click:clear="clearFilter('productName')"
-            ></v-text-field>
-            <tr v-for="inve in combinedData" :key="inve.id">
-              <v-list-item>{{ inve.productName }}</v-list-item>
-            </tr>
-          </th>
-          <th class="text-left">
-            <v-text-field   
-              v-model="filters.status"
-              label="Estado de producto"
-              clearable
-              @input="updatePage(1)"
-              @click:clear="clearFilter('status')"
-            ></v-text-field>
-            <tr v-for="inve in combinedData" :key="inve.id">
-              <v-list-item>{{ inve.status }}</v-list-item>
-            </tr>
-          </th>
-          <th class="text-left">
-            <v-text-field
-              v-model="filters.created_at"
-              label="Fecha de registro"
-              clearable
-              @input="updatePage(1)"
-              @click:clear="clearFilter('created_at')"
-            ></v-text-field>
-            <tr v-for="inve in combinedData" :key="inve.id">
-              <v-list-item>
-            {{
-              moment(inve.createdAt)
-                .tz("America/Bogota")
-                .format("DD/MM/YYYY/ hh:mm A")
-            }}
-              </v-list-item>
-            </tr>
-          </th>
-          <th class="text-left">
-            <v-text-field
-              v-model="filters.updated_at"
-              label="Fecha actualización"
-              clearable
-              @input="updatePage(1)"
-              @click:clear="clearFilter('updated_at')"
-            ></v-text-field>
-            <tr v-for="inve in combinedData" :key="inve.id">
-              <v-list-item>
-            {{
-              moment(inve.updatedAt)
-                .tz("America/Bogota")
-                .format("DD/MM/YYYY/ hh:mm A")
-            }}
-              </v-list-item>
-            </tr>
-          </th>
-          <th class="text-left"><td>Acciones</td>
-            <tr v-for="inve in combinedData" :key="inve.id">
-            <v-tooltip text="Editar">
-              <template v-slot:activator="{ props }">
-                <v-icon
-                  style="color: #009c8c"
-                  v-bind="props"
-                  @click="editInventory(inve)"
-                >
-                  mdi-pencil
-                </v-icon>
-              </template>
-            </v-tooltip>
-          </tr>
-          </th>
-        </thead>
-      </v-table></v-response
-    >
-
-    <v-table v-if="isMdAndUp">
-      <thead>
-        <tr>
-          <th class="text-left">
-              <v-text-field
-                v-model="filters.productName"
-                label="Producto vendido"
-                clearable
-                @input="updatePage(1)"
-                @click:clear="clearFilter('productName')"
-              ></v-text-field>
-          </th>
-          <th class="text-left">
-              <v-text-field
-                v-model="filters.status"
-                label="Estado de producto"
-                clearable
-                @input="updatePage(1)"
-                @click:clear="clearFilter('status')"
-              ></v-text-field>
-            
-          </th>
-          <th class="text-left">  
-              <v-text-field
-                v-model="filters.created_at"
-                label="Fecha de registro"
-                clearable
-                @input="updatePage(1)"
-                @click:clear="clearFilter('created_at')"
-              ></v-text-field>
-          </th>
-          <th class="text-left">
-              <v-text-field
-                v-model="filters.updated_at"
-                label="Fecha actualización"
-                clearable
-                @input="updatePage(1)"
-                @click:clear="clearFilter('updated_at')"
-              ></v-text-field>
-          </th>
-          <th class="text-left">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="inve in combinedData" :key="inve.id">
-          <td>{{ inve.productName }}</td>
-          <td>{{ inve.status }}</td>
-          <td>
-            {{
-              moment(inve.createdAt)
-                .tz("America/Bogota")
-                .format("DD/MM/YYYY/ hh:mm A")
-            }}
-          </td>
-          <td>
-            {{
-              moment(inve.updatedAt)
-                .tz("America/Bogota")
-                .format("DD/MM/YYYY/ hh:mm A")
-            }}
-          </td>
+  <v-table v-if="!isMdAndUp">
+    <v-text-field
+      v-model="filters.productName"
+      label="Producto vendido"
+      clearable
+      @input="updatePage(1)"
+      @click:clear="clearFilter('productName')"
+    ></v-text-field>
+    <v-col v-for="inve in combinedData" :key="inve.id">
+      <v-row
+        ><v-col>{{ inve.productName }}</v-col>
+        <v-col class="d-flex justify-end">
           <v-tooltip text="Editar">
             <template v-slot:activator="{ props }">
               <v-icon
@@ -168,15 +36,187 @@
               </v-icon>
             </template>
           </v-tooltip>
-        </tr>
-      </tbody>
-    </v-table>
-    <div v-if="noRecordsFound" style="text-align: center; margin-top: 20px">
-      <v-alert color="#009c8c" type="warning"
-        >No se encontraron registros.</v-alert
+        </v-col></v-row
       >
-    </div>
-  </container>
+    </v-col>
+
+    <v-text-field
+      v-model="filters.status"
+      label="Estado de producto"
+      clearable
+      @input="updatePage(1)"
+      @click:clear="clearFilter('status')"
+    ></v-text-field>
+    <v-col v-for="inve in combinedData" :key="inve.id">
+      <v-row
+        ><v-col>{{ inve.status }}</v-col>
+        <v-col class="d-flex justify-end">
+          <v-tooltip text="Editar">
+            <template v-slot:activator="{ props }">
+              <v-icon
+                style="color: #009c8c"
+                v-bind="props"
+                @click="editInventory(inve)"
+              >
+                mdi-pencil
+              </v-icon>
+            </template>
+          </v-tooltip>
+        </v-col></v-row
+      >
+    </v-col>
+
+    <v-text-field
+      v-model="filters.created_at"
+      label="Fecha de registro"
+      clearable
+      @input="updatePage(1)"
+      @click:clear="clearFilter('created_at')"
+    ></v-text-field>
+    <v-col v-for="inve in combinedData" :key="inve.id">
+      <v-row
+        ><v-col>
+          {{
+            moment(inve.createdAt)
+              .tz("America/Bogota")
+              .format("DD/MM/YYYY/ hh:mm A")
+          }}
+        </v-col>
+
+        <v-col class="d-flex justify-end">
+          <v-tooltip text="Editar">
+            <template v-slot:activator="{ props }">
+              <v-icon
+                style="color: #009c8c"
+                v-bind="props"
+                @click="editInventory(inve)"
+              >
+                mdi-pencil
+              </v-icon>
+            </template>
+          </v-tooltip>
+        </v-col></v-row
+      >
+    </v-col>
+
+    <v-text-field
+      v-model="filters.updated_at"
+      label="Fecha actualización"
+      clearable
+      @input="updatePage(1)"
+      @click:clear="clearFilter('updated_at')"
+    ></v-text-field>
+    <v-col v-for="inve in combinedData" :key="inve.id">
+      <v-row>
+        <v-col>
+          {{
+            inve.updatedAt
+              ? moment(inve.updatedAt)
+                  .tz("America/Bogota")
+                  .format("DD/MM/YYYY hh:mm A")
+              : "No actualizado"
+          }}
+        </v-col>
+        <v-col class="d-flex justify-end">
+          <v-tooltip text="Editar">
+            <template v-slot:activator="{ props }">
+              <v-icon
+                style="color: #009c8c"
+                v-bind="props"
+                @click="editInventory(inve)"
+              >
+                mdi-pencil
+              </v-icon>
+            </template>
+          </v-tooltip>
+        </v-col>
+      </v-row>
+    </v-col>
+  </v-table>
+
+  <v-table v-if="isMdAndUp">
+    <thead>
+      <tr>
+        <th class="text-left">
+          <v-text-field
+            v-model="filters.productName"
+            label="Producto vendido"
+            clearable
+            @input="updatePage(1)"
+            @click:clear="clearFilter('productName')"
+          ></v-text-field>
+        </th>
+        <th class="text-left">
+          <v-text-field
+            v-model="filters.status"
+            label="Estado de producto"
+            clearable
+            @input="updatePage(1)"
+            @click:clear="clearFilter('status')"
+          ></v-text-field>
+        </th>
+        <th class="text-left">
+          <v-text-field
+            v-model="filters.created_at"
+            label="Fecha de registro"
+            clearable
+            @input="updatePage(1)"
+            @click:clear="clearFilter('created_at')"
+          ></v-text-field>
+        </th>
+        <th class="text-left">
+          <v-text-field
+            v-model="filters.updated_at"
+            label="Fecha actualización"
+            clearable
+            @input="updatePage(1)"
+            @click:clear="clearFilter('updated_at')"
+          ></v-text-field>
+        </th>
+        <th class="text-left">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="inve in combinedData" :key="inve.id">
+        <td>{{ inve.productName }}</td>
+        <td>{{ inve.status }}</td>
+        <td>
+          {{
+            moment(inve.createdAt)
+              .tz("America/Bogota")
+              .format("DD/MM/YYYY/ hh:mm A")
+          }}
+        </td>
+        <td>
+          {{
+            inve.updatedAt
+              ? moment(inve.updatedAt)
+                  .tz("America/Bogota")
+                  .format("DD/MM/YYYY hh:mm A")
+              : "No actualizado"
+          }}
+        </td>
+        <td>
+          <v-tooltip text="Editar">
+            <template v-slot:activator="{ props }">
+              <v-icon
+                style="color: #009c8c"
+                v-bind="props"
+                @click="editInventory(inve)"
+              >
+                mdi-pencil
+              </v-icon>
+            </template>
+          </v-tooltip>
+        </td>
+      </tr>
+    </tbody>
+  </v-table>
+  <div v-if="noRecordsFound" style="text-align: center; margin-top: 20px">
+    <v-alert color="#009c8c" type="warning"
+      >No se encontraron registros.</v-alert
+    >
+  </div>
 
   <div class="text-center">
     <v-container>
@@ -208,6 +248,9 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+  <v-container v-if="isLoading">
+    <LoadingSpinner />
+  </v-container>
 </template>
 
 <script setup>
@@ -219,6 +262,7 @@ import InventoryUpdate from "./InventoryUpdate.vue";
 
 const CONFIG = useRuntimeConfig();
 const router = useRouter();
+const isLoading = ref(false);
 const { mdAndUp } = useDisplay();
 const isMdAndUp = mdAndUp;
 
@@ -241,6 +285,7 @@ const filters = ref({
 const noRecordsFound = ref(false);
 
 const getInventories = async () => {
+  isLoading.value = true;
   noRecordsFound.value = false;
   try {
     const { data, error } = await useFetch(
@@ -265,6 +310,7 @@ const getInventories = async () => {
     if (combinedData.value.length === 0) {
       noRecordsFound.value = true;
     }
+    isLoading.value = false;
   } catch (error) {
     console.log(error);
     noRecordsFound.value = true;
@@ -272,15 +318,14 @@ const getInventories = async () => {
 };
 
 const getSales = async () => {
+  isLoading.value = true;
   try {
-    const { data, error } = await useFetch(
-      `${CONFIG.public.API_BASE_URL}sales`,
-      {
-        method: "GET",
-      },
-    );
+    const { data } = await useFetch(`${CONFIG.public.API_BASE_URL}sales`, {
+      method: "GET",
+    });
     sales.value = data.value.data;
     combineData();
+    isLoading.value = false;
   } catch (error) {
     console.log(error);
   }

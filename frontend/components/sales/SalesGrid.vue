@@ -11,147 +11,139 @@
       @change="getSales"
     ></v-select>
   </div>
-  <v-container>
-    <v-responsive v-if="!isMdAndUp">
-      <v-table style="width: 100%">
-        <thead>
-          <th class="text-left">
-            <v-text-field
-              v-model="filters.categoryName"
-              label="Categoría"
-              clearable
-              @input="updatePage(1)"
-              @click:clear="clearFilter('categoryName')"
-            ></v-text-field>
-            <tr v-for="sal in combinedData" :key="sal.id">
-              <v-list-item>{{ sal.categoryName }}</v-list-item>
-            </tr>
-          </th>
-          <th class="text-left">
-            <v-text-field
-              v-model="filters.productName"
-              label="Producto"
-              clearable
-              @input="updatePage(1)"
-              @click:clear="clearFilter('productName')"
-            ></v-text-field>
-            <tr v-for="sal in combinedData" :key="sal.id">
-              <v-list-item>{{ sal.productName }}</v-list-item>
-            </tr>
-          </th>
-          <th class="text-left">
-            <v-text-field
-              v-model="filters.quantitySold"
-              label="Cantidad"
-              clearable
-              @input="updatePage(1)"
-              @click:clear="clearFilter('quantitySold')"
-            ></v-text-field>
-            <tr v-for="sal in combinedData" :key="sal.id">
-              <v-list-item>{{ sal.quantitySold }}</v-list-item>
-            </tr>
-          </th>
-          <th class="text-left">
-            <v-text-field
-              v-model="filters.salePrice"
-              label="Total"
-              clearable
-              @input="updatePage(1)"
-              @click:clear="clearFilter('salePrice')"
-            ></v-text-field>
-            <tr v-for="sal in combinedData" :key="sal.id">
-              <v-list-item>{{ sal.salePrice }}</v-list-item>
-            </tr>
-          </th>
-          <th class="text-left">
-            <v-text-field
-              v-model="filters.created_at"
-              label="Fecha"
-              clearable
-              @input="updatePage(1)"
-              @click:clear="clearFilter('created_at')"
-            ></v-text-field>
-            <tr v-for="sal in combinedData" :key="sal.id">
-              <v-list-item>{{ sal.createdAt }}</v-list-item>
-            </tr>
-          </th>
-        </thead>
-      </v-table>
-    </v-responsive>
 
-    <v-table v-if="isMdAndUp">
-      <thead>
-        <tr>
-          <th class="text-left">
-            <v-text-field
-              v-model="filters.categoryName"
-              label="Categoría"
-              clearable
-              @input="updatePage(1)"
-              @click:clear="clearFilter('categoryName')"
-            ></v-text-field>
-          </th>
-          <th class="text-left">
-            <v-text-field
-              v-model="filters.productName"
-              label="Producto"
-              clearable
-              @input="updatePage(1)"
-              @click:clear="clearFilter('productName')"
-            ></v-text-field>
-          </th>
-          <th class="text-left">
-            <v-text-field
-              v-model="filters.quantitySold"
-              label="Cantidad"
-              clearable
-              @input="updatePage(1)"
-              @click:clear="clearFilter('quantitySold')"
-            ></v-text-field>
-          </th>
-          <th class="text-left">
-            <v-text-field
-              v-model="filters.salePrice"
-              label="Total"
-              clearable
-              @input="updatePage(1)"
-              @click:clear="clearFilter('salePrice')"
-            ></v-text-field>
-          </th>
-          <th class="text-left">
-            <v-text-field
-              v-model="filters.created_at"
-              label="Fecha"
-              clearable
-              @input="updatePage(1)"
-              @click:clear="clearFilter('created_at')"
-            ></v-text-field>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="sal in combinedData" :key="sal.id">
-          <td>{{ sal.categoryName }}</td>
-          <td>{{ sal.productName }}</td>
-          <td>{{ sal.quantitySold }}</td>
-          <td>{{ sal.salePrice }}</td>
-          <td>
-            {{
-              moment(sal.createdAt)
-                .tz("America/Bogota")
-                .format("DD/MM/YYYY/ hh:mm A")
-            }}
-          </td>
-        </tr>
-      </tbody>
-    </v-table>
+  <v-table v-if="!isMdAndUp">
+    <thead>
+      <v-text-field
+        v-model="filters.categoryName"
+        label="Categoría"
+        clearable
+        @input="updatePage(1)"
+        @click:clear="clearFilter('categoryName')"
+      ></v-text-field>
+      <tr v-for="sal in combinedData" :key="sal.id">
+        <v-col>{{ sal.categoryName }}</v-col>
+      </tr>
 
-    <div v-if="noRecordsFound" style="text-align: center">
-      <v-alert color="#009c8c" type="warning">
-        No se encontraron registros.
-      </v-alert>
-    </div>
-  </v-container>
+      <v-text-field
+        v-model="filters.productName"
+        label="Producto"
+        clearable
+        @input="updatePage(1)"
+        @click:clear="clearFilter('productName')"
+      ></v-text-field>
+      <tr v-for="sal in combinedData" :key="sal.id">
+        <v-col>{{ sal.productName }}</v-col>
+      </tr>
+
+      <v-text-field
+        v-model="filters.quantitySold"
+        label="Cantidad"
+        clearable
+        @input="updatePage(1)"
+        @click:clear="clearFilter('quantitySold')"
+      ></v-text-field>
+      <tr v-for="sal in combinedData" :key="sal.id">
+        <v-col>{{ sal.quantitySold }}</v-col>
+      </tr>
+
+      <v-text-field
+        v-model="filters.salePrice"
+        label="Total"
+        clearable
+        @input="updatePage(1)"
+        @click:clear="clearFilter('salePrice')"
+      ></v-text-field>
+      <tr v-for="sal in combinedData" :key="sal.id">
+        <v-col>{{ sal.salePrice }}</v-col>
+      </tr>
+
+      <v-text-field
+        v-model="filters.created_at"
+        label="Fecha"
+        clearable
+        @input="updatePage(1)"
+        @click:clear="clearFilter('created_at')"
+      ></v-text-field>
+      <tr v-for="sal in combinedData" :key="sal.id">
+        <v-col>{{ sal.createdAt }}</v-col>
+      </tr>
+    </thead>
+  </v-table>
+
+  <v-table v-if="isMdAndUp">
+    <thead>
+      <tr>
+        <th class="text-left">
+          <v-text-field
+            v-model="filters.categoryName"
+            label="Categoría"
+            clearable
+            @input="updatePage(1)"
+            @click:clear="clearFilter('categoryName')"
+          ></v-text-field>
+        </th>
+        <th class="text-left">
+          <v-text-field
+            v-model="filters.productName"
+            label="Producto"
+            clearable
+            @input="updatePage(1)"
+            @click:clear="clearFilter('productName')"
+          ></v-text-field>
+        </th>
+        <th class="text-left">
+          <v-text-field
+            v-model="filters.quantitySold"
+            label="Cantidad"
+            clearable
+            @input="updatePage(1)"
+            @click:clear="clearFilter('quantitySold')"
+          ></v-text-field>
+        </th>
+        <th class="text-left">
+          <v-text-field
+            v-model="filters.salePrice"
+            label="Total"
+            clearable
+            @input="updatePage(1)"
+            @click:clear="clearFilter('salePrice')"
+          ></v-text-field>
+        </th>
+        <th class="text-left">
+          <v-text-field
+            v-model="filters.created_at"
+            label="Fecha"
+            clearable
+            @input="updatePage(1)"
+            @click:clear="clearFilter('created_at')"
+          ></v-text-field>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="sal in combinedData" :key="sal.id">
+        <td>{{ sal.categoryName }}</td>
+        <td>{{ sal.productName }}</td>
+        <td>{{ sal.quantitySold }}</td>
+        <td>{{ sal.salePrice }}</td>
+        <td>
+          {{
+            moment(sal.createdAt)
+              .tz("America/Bogota")
+              .format("DD/MM/YYYY/ hh:mm A")
+          }}
+        </td>
+      </tr>
+    </tbody>
+  </v-table>
+
+  <div v-if="noRecordsFound" style="text-align: center">
+    <v-alert color="#009c8c" type="warning">
+      No se encontraron registros.
+    </v-alert>
+  </div>
+
   <div class="text-center">
     <v-container>
       <v-row justify="center">
@@ -168,6 +160,9 @@
       </v-row>
     </v-container>
   </div>
+  <v-container v-if="isLoading">
+    <LoadingSpinner />
+  </v-container>
 </template>
 
 <script setup>
@@ -177,6 +172,7 @@ import moment from "moment-timezone";
 
 const CONFIG = useRuntimeConfig();
 const router = useRouter();
+const isLoading = ref(false);
 const { mdAndUp } = useDisplay();
 const isMdAndUp = mdAndUp;
 
@@ -200,6 +196,7 @@ const filters = ref({
 const noRecordsFound = ref(false);
 
 const getSales = async () => {
+  isLoading.value = true;
   noRecordsFound.value = false;
   try {
     const { data, error } = await useFetch(
@@ -220,6 +217,7 @@ const getSales = async () => {
     sales.value = data.value.data;
     totalPages.value = data.value.totalPages;
     combineData();
+    isLoading.value = true;
   } catch (error) {
     console.log(error);
     noRecordsFound.value = true;
@@ -227,24 +225,28 @@ const getSales = async () => {
 };
 
 const getCategories = async () => {
+  isLoading.value = true;
   try {
     const { data } = await useFetch(`${CONFIG.public.API_BASE_URL}categories`, {
       method: "GET",
     });
     categories.value = data.value.data;
     combineData();
+    isLoading.value = false;
   } catch (error) {
     console.log(error);
   }
 };
 
 const getProducts = async () => {
+  isLoading.value = true;
   try {
     const { data } = await useFetch(`${CONFIG.public.API_BASE_URL}products`, {
       method: "GET",
     });
     products.value = data.value.data;
     combineData();
+    isLoading.value = false;
   } catch (error) {
     console.log(error);
   }

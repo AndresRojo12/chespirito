@@ -2,7 +2,7 @@
   <v-card-title class="headline">Eliminar Producto</v-card-title>
   <v-card-text> ¿Estás seguro que quieres eliminar este producto? </v-card-text>
   <v-card-actions>
-    <v-btn color="#ffa726" text @click.prevent="deleteProduct"
+    <v-btn color="green darken-1" text @click.prevent="deleteProduct"
       >Sí, eliminar</v-btn
     >
   </v-card-actions>

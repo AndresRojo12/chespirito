@@ -50,11 +50,11 @@ class SalesServices {
     }
 
     if (filters.quantitySold) {
-      where.quantitySold = { [Op.eq]: parseInt(filters.quantitySold) };
+      where.quantitySold = { [Op.iLike]: `%${filters.quantitySold}%` };
     }
-
+    
     if (filters.salePrice) {
-      where.salePrice = { [Op.eq]: parseInt(filters.salePrice) };
+      where.salePrice = { [Op.iLike]: `%${filters.salePrice}%` };
     }
 
     if (filters.createdAt) {

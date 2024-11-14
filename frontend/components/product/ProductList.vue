@@ -105,6 +105,9 @@
       </v-card>
     </v-dialog>
   </div>
+  <v-container v-if="isLoading">
+    <LoadingSpinner />
+  </v-container>
 </template>
 
 <script setup>
@@ -115,6 +118,7 @@ import ProductDelete from "./ProductDelete.vue";
 
 const CONFIG = useRuntimeConfig();
 const router = useRouter();
+const isLoading = ref(false);
 
 const page = ref(1);
 const pageSize = ref(10);
@@ -127,6 +131,7 @@ const filteredProducts = ref({ data: [], totalPages: 1 });
 const search = ref("");
 
 const getProducts = async () => {
+  isLoading.value = true;
   try {
     const { data } = await useFetch(
       `${CONFIG.public.API_BASE_URL}products?page=${page.value}&pageSize=${pageSize.value}`,
@@ -139,6 +144,7 @@ const getProducts = async () => {
       data: data.value.data,
       totalPages: data.value.totalPages,
     };
+    isLoading.value = false;
   } catch (error) {
     filteredProducts.value = { data: [], totalPages: 1 };
   }
@@ -217,13 +223,12 @@ const handleDelete = async (productId) => {
 };
 
 const formatPrice = (price) => {
-  return new Intl.NumberFormat('es-MX', {
-    style: 'currency',
-    currency: 'MXN',
+  return new Intl.NumberFormat("es-MX", {
+    style: "currency",
+    currency: "MXN",
     minimumFractionDigits: 0,
   }).format(price);
 };
-
 
 const confirmDelete = (product) => {
   showDeleteDialog.value = true;
@@ -274,7 +279,7 @@ const product = () => {
   background: linear-gradient(45deg, #009c8c, #00b7a2);
   color: white;
   border: none;
-  border-radius: 2px;
+  border-radius: 5px;
 }
 .info {
   color: white;

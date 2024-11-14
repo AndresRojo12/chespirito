@@ -1,117 +1,122 @@
 <template>
-  <div class="header-container">
-    <v-btn @click.prevent="category" class="register-button"
-      >Registrar categoría</v-btn
-    >
-    <v-text-field
-      class="search-field"
-      v-model="search"
-      density="comfortable"
-      placeholder="Buscar categorías"
-      prepend-inner-icon="mdi-magnify"
-      variant="solo"
-      clearable
-      hide-details
-    ></v-text-field>
-  </div>
+  <div>
+    <div class="header-container">
+      <v-btn @click.prevent="category" class="register-button"
+        >Registrar categoría</v-btn
+      >
+      <v-text-field
+        class="search-field"
+        v-model="search"
+        density="comfortable"
+        placeholder="Buscar categorías"
+        prepend-inner-icon="mdi-magnify"
+        variant="solo"
+        clearable
+        hide-details
+      ></v-text-field>
+    </div>
 
-  <v-select
-    v-model="pageSize"
-    class="page-select"
-    :items="[10, 20, 30, 40, 50]"
-    label="Seleccionar categorías por página"
-    @change="getCategories"
-  ></v-select>
+    <v-select
+      v-model="pageSize"
+      class="page-select"
+      :items="[10, 20, 30, 40, 50]"
+      label="Seleccionar categorías por página"
+      @change="getCategories"
+    ></v-select>
 
-  <div class="category-container">
-    <div
-      class="category-item"
-      v-for="cate in filteredCategories.data || []"
-      :key="cate.id"
-    >
-      <div>
-        <img class="category-image" :src="getImageUrl(cate.imagePath)" />
+    <div class="category-container">
+      <div
+        class="category-item"
+        v-for="cate in filteredCategories.data || []"
+        :key="cate.id"
+      >
+        <div>
+          <img class="category-image" :src="getImageUrl(cate.imagePath)" />
+        </div>
+        <nuxt-link :to="`/categories/${cate.id}`">
+          <button class="category-info">
+            <h3>{{ cate.name }}</h3>
+            <p>{{ cate.description }}</p>
+          </button>
+        </nuxt-link>
+        <v-tooltip text="Editar">
+          <template v-slot:activator="{ props }">
+            <v-icon
+              v-bind="props"
+              @click="editCategory(cate)"
+              style="color: rgba(228, 192, 11, 0.663)"
+            >
+              mdi-pencil
+            </v-icon>
+          </template>
+        </v-tooltip>
+        <v-tooltip text="Eliminar">
+          <template v-slot:activator="{ props }">
+            <v-icon
+              v-bind="props"
+              @click="confirmDelete(cate)"
+              style="color: darkslategrey"
+            >
+              mdi-delete
+            </v-icon>
+          </template>
+        </v-tooltip>
       </div>
-      <nuxt-link :to="`/categories/${cate.id}`">
-        <button class="category-info">
-          <h3>{{ cate.name }}</h3>
-          <p>{{ cate.description }}</p>
-        </button>
-      </nuxt-link>
-      <v-tooltip text="Editar">
-        <template v-slot:activator="{ props }">
-          <v-icon
-            v-bind="props"
-            @click="editCategory(cate)"
-            style="color: rgba(228, 192, 11, 0.663)"
-          >
-            mdi-pencil
-          </v-icon>
-        </template>
-      </v-tooltip>
-      <v-tooltip text="Eliminar">
-        <template v-slot:activator="{ props }">
-          <v-icon
-            v-bind="props"
-            @click="confirmDelete(cate)"
-            style="color: darkslategrey"
-          >
-            mdi-delete
-          </v-icon>
-        </template>
-      </v-tooltip>
+    </div>
+
+    <div class="text-center">
+      <v-container>
+        <v-row justify="center">
+          <v-col cols="8">
+            <v-container class="max-width">
+              <v-pagination
+                v-model="page"
+                :length="filteredCategories.totalPages || 1"
+                class="my-4"
+                @input="getCategories"
+              ></v-pagination>
+            </v-container>
+          </v-col>
+        </v-row>
+      </v-container>
+
+      <v-dialog class="dialog" v-model="showEditDialog">
+        <v-card>
+          <h1 class="dialog-title">Editar Categoría</h1>
+          <v-card-text>
+            <CategoriesProductUpdate
+              :category="editingCategory"
+              @save="handleSave"
+            />
+          </v-card-text>
+          <v-card-actions>
+            <v-btn class="cancel-button" text @click="showEditDialog = false"
+              >Cancelar</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <v-dialog class="dialog" v-model="showDeleteDialog">
+        <v-card>
+          <v-card-text>
+            <CategoryDelete
+              :category="categoryToDelete"
+              @deleted="handleDelete"
+            />
+          </v-card-text>
+          <v-card-actions>
+            <v-btn color="blue darken-1" text @click="showDeleteDialog = false">
+              Cancelar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </div>
   </div>
-
-  <div class="text-center">
-    <v-container>
-      <v-row justify="center">
-        <v-col cols="8">
-          <v-container class="max-width">
-            <v-pagination
-              v-model="page"
-              :length="filteredCategories.totalPages || 1"
-              class="my-4"
-              @input="getCategories"
-            ></v-pagination>
-          </v-container>
-        </v-col>
-      </v-row>
-    </v-container>
-
-    <v-dialog class="dialog" v-model="showEditDialog">
-      <v-card>
-        <h1 class="dialog-title">Editar Categoría</h1>
-        <v-card-text>
-          <CategoriesProductUpdate
-            :category="editingCategory"
-            @save="handleSave"
-          />
-        </v-card-text>
-        <v-card-actions>
-          <v-btn class="cancel-button" text @click="showEditDialog = false"
-            >Cancelar</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog class="dialog" v-model="showDeleteDialog">
-      <v-card>
-        <v-card-text>
-          <CategoryDelete
-            :category="categoryToDelete"
-            @deleted="handleDelete"
-          />
-        </v-card-text>
-        <v-card-actions>
-          <v-btn color="blue darken-1" text @click="showDeleteDialog = false">
-            Cancelar
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
+  <v-container v-if="isLoading">
+    <LoadingSpinner />
+  </v-container>
 </template>
 
 <script setup>
@@ -119,9 +124,11 @@ import { ref, onMounted, watch, nextTick } from "vue";
 
 import CategoriesProductUpdate from "../categories/CategoriesProductUpdate.vue";
 import CategoryDelete from "../categories/CategoryDelete.vue";
+import LoadingSpinner from "../LoadingSpinner.vue";
 
 const CONFIG = useRuntimeConfig();
 const router = useRouter();
+const isLoading = ref(false);
 
 const page = ref(1);
 const pageSize = ref(10);
@@ -134,9 +141,10 @@ const filteredCategories = ref({ data: [], totalPages: 1 });
 const search = ref("");
 
 const getCategories = async () => {
+  isLoading.value = true;
   try {
     const { data } = await useFetch(
-      `${CONFIG.public.API_BASE_URL}categories?page=${page.value}&pageSize=${pageSize.value}`
+      `${CONFIG.public.API_BASE_URL}categories?page=${page.value}&pageSize=${pageSize.value}`,
     );
 
     if (data.value) {
@@ -145,12 +153,12 @@ const getCategories = async () => {
     } else {
       throw new Error("No se recibieron datos válidos");
     }
+    isLoading.value = false;
   } catch (error) {
     console.error("Error fetching categories:", error);
     filteredCategories.value = { data: [], totalPages: 1 };
   }
 };
-
 
 const getImageUrl = (imagePath) => {
   return imagePath;
@@ -229,7 +237,7 @@ const handleDelete = async (categoryId) => {
 
 const category = async () => {
   await nextTick();
- await router.push("/categories/register");
+  await router.push("/categories/register");
 };
 
 const confirmDelete = async (category) => {

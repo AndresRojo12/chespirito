@@ -182,6 +182,11 @@ const confirmLogout = () => {
     showCancelButton: true,
     confirmButtonText: "Si,cerrar sesión",
     cancelButtonText: "Cancelar",
+    confirmButtonColor: "#1179E1",
+    cancelButtonColor: "#2B2B2C",
+    background: "#f2f2f2",
+    color: "#333333",
+    iconColor: "#1179E1",
   }).then((result) => {
     if (result.isConfirmed) {
       handleLogout();

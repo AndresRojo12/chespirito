@@ -40,8 +40,8 @@
 
       <v-text-field
         class="input"
-        type="password"
         v-model="password"
+        :type="visible ? 'text' : 'password'"
         :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
         density="compact"
         placeholder="Ingrese su contraseña"
@@ -63,6 +63,9 @@
         Iniciar
       </v-btn>
     </v-card>
+    <div v-if="isLoading">
+      <LoadingSpinner />
+    </div>
   </div>
 </template>
 
@@ -72,6 +75,8 @@ import { useRouter } from "vue-router";
 import { useAuth } from "~/store/auth";
 import Swal from "sweetalert2";
 
+import LoadingSpinner from "../LoadingSpinner.vue";
+
 const CONFIG = useRuntimeConfig();
 const router = useRouter();
 const auth = useAuth();
@@ -79,8 +84,10 @@ const auth = useAuth();
 const email = ref("");
 const password = ref("");
 const visible = ref(false);
+const isLoading = ref(false);
 
 const login = async () => {
+  isLoading.value = true;
   try {
     const response = await fetch(`${CONFIG.public.API_BASE_URL}auth/login`, {
       method: "POST",
@@ -95,6 +102,7 @@ const login = async () => {
     const data = await response.json();
     if (response.ok) {
       auth.login(data.token);
+      isLoading.value = false;
       router.push("/user/gestion");
     } else {
       Swal.fire({
@@ -115,6 +123,10 @@ const login = async () => {
 
 const changePassword = () => {
   router.push("/user/change-password");
+};
+
+const togglePasswordVisibility = () => {
+  visible.value = !visible.value;
 };
 </script>
 

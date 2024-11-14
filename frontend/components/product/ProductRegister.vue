@@ -86,7 +86,6 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from "vue";
-import { z } from "zod";
 import Swal from "sweetalert2";
 
 const CONFIG = useRuntimeConfig();

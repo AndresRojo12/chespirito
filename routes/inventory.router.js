@@ -8,7 +8,7 @@ const { checkAdmindRole } = require('../middlewares/auth.handler');
 const {
   getInventorySchema,
   createInventorySchema,
-  updateInventorySchema
+  updateInventorySchema,
 } = require('../schemas/inventory.schema');
 
 const router = express.Router();
@@ -16,7 +16,15 @@ const service = new InventoryService();
 
 router.get('/', async (req, res, next) => {
   try {
-    const { page = 1, pageSize = 10, status, createdAt,salesId,productName,updatedAt  } = req.query
+    const {
+      page = 1,
+      pageSize = 10,
+      status,
+      createdAt,
+      salesId,
+      productName,
+      updatedAt,
+    } = req.query;
     const inventory = await service.find({
       page: parseInt(page, 10),
       pageSize: parseInt(pageSize, 10),
@@ -26,8 +34,7 @@ router.get('/', async (req, res, next) => {
         updatedAt: updatedAt || undefined,
         productName: productName || undefined,
         salesId: salesId || undefined,
-
-      }
+      },
     });
 
     res.json(inventory);
@@ -61,7 +68,8 @@ router.post(
   },
 );
 
-router.patch('/:id',
+router.patch(
+  '/:id',
   passport.authenticate('jwt', { session: false }),
   validatorHandler(getInventorySchema, 'params'),
   validatorHandler(updateInventorySchema, 'body'),
@@ -70,22 +78,19 @@ router.patch('/:id',
       const { id } = req.params;
       const body = req.body;
       const userId = req.user.id;
-      res.json(await service.update(id, body,userId))
+      res.json(await service.update(id, body, userId));
     } catch (error) {
       next(error);
     }
-  }
-)
+  },
+);
 
-router.delete(
-  '/:id',
-  async (req, res, next) => {
-    try {
-      const { id } = req.params;
-      res.json(await service.delete(id));
-    } catch (error) {
-      next(error);
-    }
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    res.json(await service.delete(id));
+  } catch (error) {
+    next(error);
   }
-)
+});
 module.exports = router;
