@@ -7,6 +7,21 @@
       max-width="390"
       rounded="lg"
     >
+
+      <div class="text-subtitle-1 text-medium-emphasis color-#009c8c">
+        <p class="form-text">Contraseña Actual</p>
+      </div>
+      <v-text-field
+        class="input"
+        v-model="currentPassword"
+        :type="visible ? 'text' : 'password'"
+        placeholder="Ingresa tu contraseña actual"
+        prepend-inner-icon="mdi-lock-outline"
+        variant="outlined"
+        :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+        @click:append-inner="togglePasswordVisibility"
+      ></v-text-field>
+
       <div class="text-subtitle-1 text-medium-emphasis color-#009c8c">
         <p class="form-text">Nueva contraseña</p>
       </div>
@@ -44,6 +59,7 @@ const CONFIG = useRuntimeConfig();
 const router = useRouter();
 const auth = useAuth();
 
+const currentPassword = ref("");
 const newPassword = ref("");
 const visible = ref(false);
 
@@ -58,6 +74,7 @@ const changePassword = async () => {
           Authorization: `Bearer ${auth.token}`,
         },
         body: JSON.stringify({
+          currentPassword: currentPassword.value,
           newPassword: newPassword.value,
         }),
       },
