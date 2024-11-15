@@ -12,6 +12,7 @@
       variant="solo"
       clearable
       hide-details
+      @click:clear="clearSearch"
     ></v-text-field>
   </div>
 
@@ -257,6 +258,11 @@ const confirmDelete = (product) => {
 
 const product = () => {
   router.push("/product/register");
+};
+
+const clearSearch = () => {
+  search.value = "";
+  noRecordsFound.value = false;
 };
 </script>
 

@@ -47,7 +47,8 @@
         placeholder="Ingrese su contraseña"
         prepend-inner-icon="mdi-lock-outline"
         variant="outlined"
-        @click:append-inner="togglePasswordVisibility"
+        @mousedown:append-inner="togglePasswordVisibility"
+        @touchstart:append-inner="togglePasswordVisibility"
         autocomplete="current-password"
         name="password"
         id="password"
@@ -87,6 +88,16 @@ const visible = ref(false);
 const isLoading = ref(false);
 
 const login = async () => {
+  if (!email.value || !password.value) {
+    Swal.fire({
+      icon: "warning",
+      title: "Campos incompletos",
+      text: "Por favor ingresa tu correo electrónico y contraseña.",
+      confirmButtonColor: "#1179E1",
+      iconColor: "#FF1E1E",
+    });
+    return;
+  }
   isLoading.value = true;
   try {
     const response = await fetch(`${CONFIG.public.API_BASE_URL}auth/login`, {
@@ -105,14 +116,18 @@ const login = async () => {
       isLoading.value = false;
       router.push("/user/gestion");
     } else {
+      isLoading.value = false;
       Swal.fire({
         icon: "error",
-        title: "Error",
-        text: data.message,
+        title: "Error de inicio de sesión",
+        text: data.message || "Usuario o contraseña incorrectos.",
+        confirmButtonColor: "#1179E1",
+        iconColor: "#FF1E1E",
       });
     }
   } catch (error) {
     console.error("Error logging in", error);
+    isLoading.value = false;
     Swal.fire({
       icon: "error",
       title: "Error",

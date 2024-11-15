@@ -13,9 +13,6 @@
   </div>
 
   <v-table v-if="!isMdAndUp">
-    <v-container v-if="isLoading">
-      <LoadingSpinner />
-    </v-container>
     <thead>
       <v-text-field
         v-model="filters.categoryName"
@@ -43,7 +40,7 @@
         v-model="filters.quantitySold"
         label="Cantidad"
         clearable
-        @input="updatePage(1)"
+        @input="handleInput('quantitySold')"
         @click:clear="clearFilter('quantitySold')"
       ></v-text-field>
       <tr v-for="sal in combinedData" :key="sal.id">
@@ -54,7 +51,7 @@
         v-model="filters.salePrice"
         label="Total"
         clearable
-        @input="updatePage(1)"
+        @input="handleInput('salePrice')"
         @click:clear="clearFilter('salePrice')"
       ></v-text-field>
       <tr v-for="sal in combinedData" :key="sal.id">
@@ -100,7 +97,7 @@
             v-model="filters.quantitySold"
             label="Cantidad"
             clearable
-            @input="updatePage(1)"
+            @input="handleInput('quantitySold')"
             @click:clear="clearFilter('quantitySold')"
           ></v-text-field>
         </th>
@@ -109,7 +106,7 @@
             v-model="filters.salePrice"
             label="Total"
             clearable
-            @input="updatePage(1)"
+            @input="handleInput('salePrice')"
             @click:clear="clearFilter('salePrice')"
           ></v-text-field>
         </th>
@@ -125,9 +122,6 @@
       </tr>
     </thead>
     <tbody>
-      <v-container v-if="isLoading">
-        <LoadingSpinner />
-      </v-container>
       <tr v-for="sal in combinedData" :key="sal.id">
         <td>{{ sal.categoryName }}</td>
         <td>{{ sal.productName }}</td>
@@ -170,15 +164,13 @@
 </template>
 
 <script setup>
+import debounce from "lodash/debounce";
 import { onMounted, watch, nextTick } from "vue";
 import { useDisplay } from "vuetify";
 import moment from "moment-timezone";
 
-import LoadingSpinner from "../LoadingSpinner.vue";
-
 const CONFIG = useRuntimeConfig();
 const router = useRouter();
-const isLoading = ref(false);
 const { mdAndUp } = useDisplay();
 const isMdAndUp = mdAndUp;
 
@@ -202,7 +194,6 @@ const filters = ref({
 const noRecordsFound = ref(false);
 
 const getSales = async () => {
-  isLoading.value = true;
   noRecordsFound.value = false;
   try {
     const { data, error } = await useFetch(
@@ -225,8 +216,6 @@ const getSales = async () => {
   } catch (error) {
     console.log(error);
     noRecordsFound.value = true;
-  } finally {
-    isLoading.value = false;
   }
 };
 
@@ -284,9 +273,20 @@ onMounted(async () => {
   await getProducts();
 });
 
-const updatePage = (newPage) => {
+const updatePage = debounce((newPage) => {
   page.value = newPage;
   getSales();
+}, 500);
+
+const handleInput = (field) => {
+  const value = filters.value[field];
+  if (isNaN(value)) {
+    noRecordsFound.value = true;
+    combinedData.value = [];
+  } else {
+    noRecordsFound.value = false;
+    updatePage(1);
+  }
 };
 
 watch([page, pageSize, filters], () => {
@@ -295,6 +295,7 @@ watch([page, pageSize, filters], () => {
 
 const clearFilter = (filterName) => {
   filters.value[filterName] = "";
+  noRecordsFound.value = false;
   updatePage(1);
   getSales();
 };

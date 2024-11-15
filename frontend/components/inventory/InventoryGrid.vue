@@ -14,9 +14,6 @@
   </div>
 
   <v-table v-if="!isMdAndUp">
-    <v-container v-if="isLoading">
-      <LoadingSpinner />
-    </v-container>
     <v-text-field
       v-model="filters.productName"
       label="Producto vendido"
@@ -180,9 +177,6 @@
       </tr>
     </thead>
     <tbody>
-      <v-container v-if="isLoading">
-        <LoadingSpinner />
-      </v-container>
       <tr v-for="inve in combinedData" :key="inve.id">
         <td>{{ inve.productName }}</td>
         <td>{{ inve.status }}</td>
@@ -257,6 +251,7 @@
 </template>
 
 <script setup>
+import debounce from "lodash/debounce";
 import { ref, onMounted, nextTick } from "vue";
 import moment from "moment-timezone";
 import { useDisplay } from "vuetify";
@@ -266,7 +261,6 @@ import LoadingSpinner from "../LoadingSpinner.vue";
 
 const CONFIG = useRuntimeConfig();
 const router = useRouter();
-const isLoading = ref(false);
 const { mdAndUp } = useDisplay();
 const isMdAndUp = mdAndUp;
 
@@ -289,7 +283,6 @@ const filters = ref({
 const noRecordsFound = ref(false);
 
 const getInventories = async () => {
-  isLoading.value = true;
   noRecordsFound.value = false;
   try {
     const { data, error } = await useFetch(
@@ -317,8 +310,6 @@ const getInventories = async () => {
   } catch (error) {
     console.log(error);
     noRecordsFound.value = true;
-  } finally {
-    isLoading.value = false;
   }
 };
 
@@ -352,10 +343,10 @@ const combineData = () => {
   }
 };
 
-const updatePage = (newPage) => {
+const updatePage = debounce((newPage) => {
   page.value = newPage;
   getInventories();
-};
+}, 500);
 
 watch([page, pageSize, filters], () => {
   getInventories();
@@ -363,6 +354,7 @@ watch([page, pageSize, filters], () => {
 
 const clearFilter = (filterName) => {
   filters.value[filterName] = "";
+  noRecordsFound.value = false;
   updatePage(1);
   getInventories();
 };

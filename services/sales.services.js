@@ -55,8 +55,8 @@ class SalesServices {
       const quantity = parseInt(filters.quantitySold, 10);
       if (!isNaN(quantity)) {
         where.quantitySold = {
-          [Op.gte]: quantity - 10,
-          [Op.lte]: quantity + 10,
+          [Op.gte]: quantity - 1000,
+          [Op.lte]: quantity + 1000,
         };
       }
     }
@@ -65,8 +65,8 @@ class SalesServices {
       const price = parseInt(filters.salePrice, 10);
       if (!isNaN(price)) {
         where.salePrice = {
-          [Op.gte]: price - 10,
-          [Op.lte]: price + 10,
+          [Op.gte]: Math.max(0, price - 10000),
+          [Op.lte]: Math.min(20000000, price + 10000),
         };
       }
     }

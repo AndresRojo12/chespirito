@@ -13,6 +13,7 @@
         variant="solo"
         clearable
         hide-details
+        @click:clear="clearSearch"
       ></v-text-field>
     </div>
 
@@ -260,6 +261,11 @@ const category = async () => {
 const confirmDelete = async (category) => {
   categoryToDelete.value = category;
   showDeleteDialog.value = true;
+};
+
+const clearSearch = () => {
+  search.value = "";
+  noRecordsFound.value = false;
 };
 </script>
 
