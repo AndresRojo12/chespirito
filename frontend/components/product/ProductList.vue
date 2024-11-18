@@ -40,12 +40,12 @@
         <img class="product-image" :src="getImageUrl(pro.imagePath1)" />
       </div>
       <div class="product-info">
-        <h1 class="info">
+        <h3>
           {{ pro.name }}
-        </h1>
-        <p class="info">Estado {{ pro.status }}</p>
-        <p class="info">{{ pro.description }}</p>
-        <p class="info">{{ formatPrice(pro.price) }}</p>
+        </h3>
+        <p>Estado {{ pro.status }}</p>
+        <p>{{ pro.description }}</p>
+        <p>{{ formatPrice(pro.price) }}</p>
       </div>
       <v-tooltip text="Editar">
         <template v-slot:activator="{ props }">
@@ -298,20 +298,13 @@ const clearSearch = () => {
 }
 .product-info {
   width: 100%;
-  padding: 5%;
+  padding: 10px;
   margin-top: 5px;
   font-family: "Arial", sans-serif;
-  text-align: start;
   background: linear-gradient(45deg, #009c8c, #00b7a2);
   color: white;
   border: none;
   border-radius: 5px;
-}
-.info {
-  color: white;
-  text-align: center;
-  font-size: 1vw;
-  margin-bottom: 3%;
 }
 .dialog {
   max-width: 500px;
