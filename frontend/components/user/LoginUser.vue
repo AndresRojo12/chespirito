@@ -42,17 +42,26 @@
         class="input"
         v-model="password"
         :type="visible ? 'text' : 'password'"
-        :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
         density="compact"
         placeholder="Ingrese su contraseña"
         prepend-inner-icon="mdi-lock-outline"
         variant="outlined"
-        @mousedown:append-inner="togglePasswordVisibility"
-        @touchstart:append-inner="togglePasswordVisibility"
         autocomplete="current-password"
         name="password"
         id="password"
-      ></v-text-field>
+      >
+        <template #append-inner>
+          <v-btn
+            icon
+            variant="text"
+            @click="togglePasswordVisibility"
+            aria-label="Toggle password visibility"
+            class="visibility-btn"
+          >
+            <v-icon>{{ visible ? "mdi-eye-off" : "mdi-eye" }}</v-icon>
+          </v-btn>
+        </template>
+      </v-text-field>
 
       <v-btn
         class="button mb-8"
@@ -171,6 +180,16 @@ const togglePasswordVisibility = () => {
   color: white;
   background: linear-gradient(to bottom, #009c8c, #00b7a2);
   font-family: "Arial", sans-serif;
+}
+.visibility-btn {
+  height: 32px; 
+  width: 32px;
+  min-width: 32px;
+  margin: 0;
+  padding: 0;
+}
+.visibility-btn .v-icon {
+  font-size: 20px;
 }
 @media (max-width: 430px) {
   .title {
