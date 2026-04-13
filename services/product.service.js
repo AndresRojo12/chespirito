@@ -8,9 +8,9 @@ const { config } = require('../config/config');
 const { models } = require('../libs/sequelize');
 const { createProductSchema } = require('../schemas/product.schema');
 
-// Configuración de AWS S3
-const s3 = new AWS.S3();
-const BUCKET_NAME = 'elasticbeanstalk-us-east-1-850995550371'; // Cambia esto a tu bucket
+const useS3 = process.env.NODE_ENV === 'production' && process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY;
+const s3 = useS3 ? new AWS.S3() : null;
+const BUCKET_NAME = process.env.AWS_BUCKET_NAME || 'elasticbeanstalk-us-east-1-850995550371';
 
 class ProductService {
   // Método para optimizar imagen
@@ -59,11 +59,11 @@ class ProductService {
     const optimizedImage1 = await this.optimizeImage(files.anverso[0].buffer);
     const optimizedImage2 = await this.optimizeImage(files.reverso[0].buffer);
 
-    const image1Path = process.env.NODE_ENV === 'production'
+    const image1Path = useS3
       ? await this.uploadImageToS3(optimizedImage1, files.anverso[0].originalname, files.anverso[0].mimetype)
       : await this.saveImageLocally(optimizedImage1, files.anverso[0].originalname);
 
-    const image2Path = process.env.NODE_ENV === 'production'
+    const image2Path = useS3
       ? await this.uploadImageToS3(optimizedImage2, files.reverso[0].originalname, files.reverso[0].mimetype)
       : await this.saveImageLocally(optimizedImage2, files.reverso[0].originalname);
 
@@ -91,7 +91,7 @@ class ProductService {
     if (files && files.anverso) {
       const optimizedImage1 = await this.optimizeImage(files.anverso[0].buffer);
 
-      if (process.env.NODE_ENV === 'production') {
+      if (useS3) {
         if (product.imagePath1) {
           const key = product.imagePath1.split(`${BUCKET_NAME}/`)[1];
           if (key) {
@@ -113,7 +113,7 @@ class ProductService {
     if (files && files.reverso) {
       const optimizedImage2 = await this.optimizeImage(files.reverso[0].buffer);
 
-      if (process.env.NODE_ENV === 'production') {
+      if (useS3) {
         if (product.imagePath2) {
           const key = product.imagePath2.split(`${BUCKET_NAME}/`)[1];
           if (key) {
@@ -186,16 +186,18 @@ class ProductService {
       throw boom.notFound('Product not found');
     }
 
-    if (product.imagePath1) {
-      const key = product.imagePath1.split(`${BUCKET_NAME}/`)[1];
-      if (key) {
-        await s3.deleteObject({ Bucket: BUCKET_NAME, Key: key }).promise();
+    if (useS3) {
+      if (product.imagePath1) {
+        const key = product.imagePath1.split(`${BUCKET_NAME}/`)[1];
+        if (key) {
+          await s3.deleteObject({ Bucket: BUCKET_NAME, Key: key }).promise();
+        }
       }
-    }
-    if (product.imagePath2) {
-      const key = product.imagePath2.split(`${BUCKET_NAME}/`)[1];
-      if (key) {
-        await s3.deleteObject({ Bucket: BUCKET_NAME, Key: key }).promise();
+      if (product.imagePath2) {
+        const key = product.imagePath2.split(`${BUCKET_NAME}/`)[1];
+        if (key) {
+          await s3.deleteObject({ Bucket: BUCKET_NAME, Key: key }).promise();
+        }
       }
     }
 

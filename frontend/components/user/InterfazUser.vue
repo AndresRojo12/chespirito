@@ -171,7 +171,15 @@ const getCategories = async () => {
 };
 
 const getImageUrl = (imagePath) => {
-  return imagePath;
+  if (!imagePath) return '';
+  const apiBase = CONFIG.public.API_BASE_URL?.replace(/\/$/, '') || (process.client ? window.location.origin : '');
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+  if (imagePath.startsWith('/')) {
+    return `${apiBase}${imagePath}`;
+  }
+  return `${apiBase}/${imagePath}`;
 };
 
 onMounted(async () => {

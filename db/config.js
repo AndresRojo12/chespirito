@@ -14,7 +14,7 @@ module.exports = {
     url: URI,
     dialect: 'postgres',
   },
-  production: {
+  /*production: {
     url: URI,
     dialect: 'postgres',
     dialectOptions: {
@@ -24,4 +24,5 @@ module.exports = {
       }: undefined,
     },
   },
+  */
 };

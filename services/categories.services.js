@@ -8,9 +8,9 @@ const { config } = require('../config/config');
 const { models } = require('../libs/sequelize');
 const { createCategorySchema } = require('../schemas/category.schema');
 
-// Configuración de AWS S3
-const s3 = new AWS.S3();
-const BUCKET_NAME = 'elasticbeanstalk-us-east-1-850995550371'; // Cambia esto a tu bucket
+const useS3 = process.env.NODE_ENV === 'production' && process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY;
+const s3 = useS3 ? new AWS.S3() : null;
+const BUCKET_NAME = process.env.AWS_BUCKET_NAME || 'elasticbeanstalk-us-east-1-850995550371';
 
 class CategoryService {
   // Método para optimizar imagen
@@ -59,12 +59,9 @@ class CategoryService {
     const optimizedImage = await this.optimizeImage(file);
 
     // Decide entre almacenamiento local o S3
-    let imagePath;
-    if (process.env.NODE_ENV === 'production') {
-      imagePath = await this.uploadImageToS3(optimizedImage, file.originalname, file.mimetype);
-    } else {
-      imagePath = await this.saveImageLocally(optimizedImage, file.originalname);
-    }
+    const imagePath = useS3
+      ? await this.uploadImageToS3(optimizedImage, file.originalname, file.mimetype)
+      : await this.saveImageLocally(optimizedImage, file.originalname);
 
     const categoryData = { ...data, imagePath };
 
@@ -86,7 +83,7 @@ class CategoryService {
     if (file) {
       const optimizedImage = await this.optimizeImage(file);
 
-      if (process.env.NODE_ENV === 'production') {
+      if (useS3) {
         // Si hay una imagen en S3, eliminarla antes de subir la nueva
         if (category.imagePath) {
           const key = category.imagePath.split(`${BUCKET_NAME}/`)[1];

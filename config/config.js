@@ -11,7 +11,7 @@ const config = {
   jwtSecret: process.env.JWT_SECRET,
   emailAdmin: process.env.EMAIL_ADMIN,
   passwordAdmin: process.env.PASSWORD_ADMIN,
-  imagesPath: process.env.IMAGESPATH,
+  imagesPath: process.env.IMAGESPATH || '/uploads/',
   DB_SSL: process.env.DB_SSL || 'false',
   //databaseUrl: process.env.DATABASE_URL
 };
